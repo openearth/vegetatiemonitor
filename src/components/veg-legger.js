@@ -10,7 +10,7 @@ export default {
       map: null,
     };
   },
-  mounted() {  },
+  mounted() {},
   methods: {
     deferredMountedTo(map) {
       this.map = map
@@ -19,11 +19,18 @@ export default {
         name: 'Vegetatielegger',
         icon: 'home',
         active: 'true',
-        visibility: 'true',
-        type: 'raster',
+        type: 'fill',
         source: {
-          type: 'raster',
-          url: 'mapbox://camvdvries.4m8jkd4w',
+          type: 'vector',
+          url: 'mapbox://ellispenning.bjwxtnwf',
+        },
+        'source-layer': 'vegetatie-vlakken-WM-3uqyuf',
+        paint: {
+          'fill-color': 'rgba(52, 220, 58, 0.26)',
+          'fill-outline-color': 'rgba(52, 220, 58, 1)'
+        },
+        layout: {
+          visibility: 'visible'
         },
         minzoom: 0,
         maxzoom: 22

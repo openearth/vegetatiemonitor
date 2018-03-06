@@ -19,6 +19,13 @@ export default {
   mounted() {
 
     this.map = this.$refs.map.map;
+
+    bus.$on('select-layers', (layers) => {
+      Vue.set(this, 'layers', layers);
+    });
+    bus.$on('add-layer', (layer) => {
+      this.layers.push(layer);
+    });
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
       this.map.addControl(new mapboxgl.NavigationControl());

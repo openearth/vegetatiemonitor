@@ -10,11 +10,12 @@
         </v-list-tile>
       </v-list>
     </v-toolbar>
+    <layer-control :layers="layers" :map="map"></layer-control>
+
   </v-navigation-drawer>
-  <layer-control :layers="layers" :map="map"></layer-control>
   <v-toolbar color="indigo" dark fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    <v-toolbar-title>Safer schools viewer</v-toolbar-title>
+    <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
   </v-toolbar>
   <v-content>
     <div id="map">
