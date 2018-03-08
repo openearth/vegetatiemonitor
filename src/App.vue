@@ -27,7 +27,7 @@
         id="map" ref="map">
         <v-veg-legger ref="veglegger"></v-veg-legger>
         <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
-
+        <v-streamlines ref="streamlines"></v-streamlines>
       </v-mapbox>
     </div>
   </v-content>
