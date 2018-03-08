@@ -2,9 +2,8 @@ import {
   bus
 } from '@/event-bus.js';
 
-
 export default {
-  name: 'v-veg-legger',
+  name: 'v-kadastrale-grens',
   data() {
     return {
       map: null,
@@ -15,31 +14,30 @@ export default {
     deferredMountedTo(map) {
       this.map = map
       var layer_json = {
-        id: 'Vegetatielegger',
-        name: 'Vegetatielegger',
+        id: 'Kadaster',
+        name: 'Kadaster',
         icon: 'home',
         active: 'true',
         type: 'fill',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.bjwxtnwf',
+          url: 'mapbox://ellispenning.0daxuyc8',
         },
-        'source-layer': 'vegetatie-vlakken-WM-3uqyuf',
+        'source-layer': 'kadaster-WM-3qwzj5',
         paint: {
-          'fill-color': 'rgba(52, 220, 58, 1)',
+          'fill-color': 'pink',
           'fill-outline-color': 'rgba(52, 220, 58, 1)'
         },
         layout: {
-          visibility: 'visible'
+          visibility: 'visible',
         },
-        minzoom: 0,
-        maxzoom: 16,
-        'z-order': 10
+
       }
       this.map.addLayer(layer_json);
       bus.$emit('add-layer', layer_json);
 
     }
-  }
+  },
+
 
 }

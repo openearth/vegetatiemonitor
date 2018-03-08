@@ -6,14 +6,15 @@ import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
 import LayerControl from './components/LayerControl';
 import VegLegger from './components/VegLegger';
-
+import KadastraleGrens from './components/KadastraleGrens';
 export default {
   name: 'app',
   data: function() {
     return {
       map: null,
       drawer: null,
-      layers: []
+      layers: [],
+
     };
   },
   mounted() {
@@ -34,6 +35,7 @@ export default {
   methods: {},
   components: {
     'layer-control': LayerControl,
-    'v-veg-legger': VegLegger
+    'v-veg-legger': VegLegger,
+    'v-kadastrale-grens': KadastraleGrens
   },
 };

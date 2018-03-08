@@ -1,5 +1,6 @@
 <template>
 <div class="layer-control">
+  <draggable v-model='computedList' @start="drag=true" @end="drag=false">
   <v-list dense pt-0 v-for="layer in layers" :key="layer.id">
     <v-list-tile>
       <v-list-tile-action>
@@ -17,6 +18,8 @@
       <div class='information' v-html="layer.info" >{{layer.info}} </div>
     </div>
   </v-list>
+</draggable>
+
 </div>
 </template>
 
