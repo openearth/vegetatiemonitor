@@ -21,12 +21,12 @@ export default {
         type: 'fill',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.0daxuyc8',
+          url: 'mapbox://ellispenning.5tu1qjtk',
         },
-        'source-layer': 'kadaster-WM-3qwzj5',
+        'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
-          'fill-color': 'pink',
-          'fill-outline-color': 'rgba(52, 220, 58, 1)'
+          'fill-color': 'rgba(32, 32, 32, 0.3)',
+          'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
         },
         layout: {
           visibility: 'visible',

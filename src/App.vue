@@ -26,8 +26,8 @@
       :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5"
         id="map" ref="map">
         <v-veg-legger ref="veglegger"></v-veg-legger>
-        <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
         <v-streamlines ref="streamlines"></v-streamlines>
+        <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
       </v-mapbox>
     </div>
   </v-content>
