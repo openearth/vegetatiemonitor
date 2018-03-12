@@ -30,7 +30,6 @@ export default {
     });
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
-      this.map.addControl(new mapboxgl.NavigationControl());
     });
   },
   methods: {},
