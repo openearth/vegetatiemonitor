@@ -1,6 +1,7 @@
 # vegetatiemonitor
 
-> Raijkswaterstaat Vegetatie Monitor. Live version: http://www.openearth.nl/vegetatiemonitor/
+> Rijkswaterstaat Vegetatie Monitor.
+> Live version: http://www.openearth.nl/vegetatiemonitor/
 
 ## Build Setup
 
