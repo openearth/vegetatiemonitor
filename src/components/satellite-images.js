@@ -77,11 +77,9 @@ export default {
           tiles: [mapUrl['url']],
           tileSize: 256
         }
-
       }
       this.map.addLayer(layer_json);
       bus.$emit('add-layer', layer_json);
     }
-
   }
 }
