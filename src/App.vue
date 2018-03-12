@@ -28,6 +28,7 @@
         <v-veg-legger ref="veglegger"></v-veg-legger>
         <v-streamlines ref="streamlines"></v-streamlines>
         <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
+        <v-satellite-images ref="satelliteimages"></v-satellite-images>
       </v-mapbox>
     </div>
   </v-content>
