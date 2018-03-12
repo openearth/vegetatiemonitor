@@ -16,6 +16,7 @@
   "dependencies": {
     "css-loader": "^0.28.10",
     "lodash": "^4.17.5",
+    "mapbox-gl": "^0.44.1",
     "material-icon": "^0.1.4",
     "update": "^0.7.4",
     "vue": "^2.5.2",
