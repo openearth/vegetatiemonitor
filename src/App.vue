@@ -18,17 +18,17 @@
   </v-toolbar>
   <v-content>
     <div id="map">
-
       <v-mapbox
-      access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
-      map-style="mapbox://styles/mapbox/satellite-streets-v10"
-      :center="[5.673272, 52.079502]"
-      :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5"
+        access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
+        map-style="mapbox://styles/mapbox/satellite-streets-v10"
+        :center="[5.673272, 52.079502]"
+        :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5"
         id="map" ref="map">
         <v-veg-legger ref="veglegger"></v-veg-legger>
         <v-streamlines ref="streamlines"></v-streamlines>
         <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
         <v-satellite-images ref="satelliteimages"></v-satellite-images>
+        <v-mapbox-navigation-control></v-mapbox-navigation-control>
       </v-mapbox>
     </div>
   </v-content>
