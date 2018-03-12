@@ -11,6 +11,7 @@
       </v-list>
     </v-toolbar>
     <layer-control :layers="layers" :map="map"></layer-control>
+    <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
   <v-toolbar color="indigo" dark fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>

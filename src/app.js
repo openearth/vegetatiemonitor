@@ -5,6 +5,7 @@ import {
 import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
 import LayerControl from './components/LayerControl';
+import AnalysisPanel from './components/AnalysisPanel';
 import VegLegger from './components/VegLegger';
 import VStreamlines from './components/VStreamlines';
 import KadastraleGrens from './components/KadastraleGrens';
@@ -38,6 +39,7 @@ export default {
   methods: {},
   components: {
     'layer-control': LayerControl,
+    'analysis-panel': AnalysisPanel,
     'v-veg-legger': VegLegger,
     'v-streamlines': VStreamlines,
     'v-kadastrale-grens': KadastraleGrens,
