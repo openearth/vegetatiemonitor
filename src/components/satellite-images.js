@@ -9,7 +9,10 @@ export default {
       map: null,
       dateBegin: "2016-07-20",
       dateEnd: "2016-07-21",
-      bands: ["red", "green", "blue"],
+      vis: { 
+        bands: ["red", "green", "blue"],
+        gamma: 2.0
+      }
     }
   },
 
@@ -25,7 +28,9 @@ export default {
       var json_data = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
-        bands: this.bands,
+        vis: {
+          bands: this.bands
+        },
         region: {
           "geodesic": true,
           "type": "Polygon",
