@@ -5,10 +5,8 @@ import {
 import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
 import LayerControl from './components/LayerControl';
-import VegLegger from './components/VegLegger';
-import VStreamlines from './components/VStreamlines';
-import KadastraleGrens from './components/KadastraleGrens';
-import SatelliteImages from './components/SatelliteImages';
+import MapLayers from './components/VMapLayers';
+
 export default {
   name: 'app',
   data: function() {
@@ -38,9 +36,6 @@ export default {
   methods: {},
   components: {
     'layer-control': LayerControl,
-    'v-veg-legger': VegLegger,
-    'v-streamlines': VStreamlines,
-    'v-kadastrale-grens': KadastraleGrens,
-    'v-satellite-images': SatelliteImages
+    'v-map-layers': MapLayers
   },
 };

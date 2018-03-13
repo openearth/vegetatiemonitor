@@ -38,9 +38,11 @@ export default {
   },
   methods: {
     sortLayers() {
-      _.each(_.initial(this.layers), (layer, i) => {
-        this.map.moveLayer(this.layers[i + 1].id, layer.id)
-      })
+      for (var i = this.layers.length - 2; i >= 0; --i) {
+        for (var thislayer = 0; thislayer < this.layers[i].data.length; ++thislayer ) {
+          this.map.moveLayer(this.layers[i].data[thislayer].id)
+        }
+      }
     },
     toggleLayers() {
       if (_.isNil(this.map)) {
@@ -52,14 +54,9 @@ export default {
         if (layer.active) {
           vis = "visible"
         }
-
-        if (layer.type === 'group') {
-          _.each(layer.data, (sublayer) => {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis);
-          })
-        } else {
-          this.map.setLayoutProperty(layer.id, "visibility", vis);
-        }
+        _.each(layer.data, (sublayer) => {
+          this.map.setLayoutProperty(sublayer.id, "visibility", vis);
+        })
       });
     }
   },
