@@ -14,7 +14,14 @@ export default {
       type: Object
     }
   },
-  mounted() {},
+  data() {
+    return {
+      beginDate: null,
+      endDate: null,
+      menu: false,
+      modal: false
+    };
+  },  mounted() {},
   watch: {
     // Watch "layers". This is a switch, which can toggle a layer on or off
     // When toggled, this watcher will activate the toggleLayers function.
