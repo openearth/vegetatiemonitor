@@ -6,6 +6,7 @@ import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
 import LayerControl from './components/LayerControl';
 import AnalysisPanel from './components/AnalysisPanel';
+import MapLayers from './components/VMapLayers';
 
 export default {
   name: 'app',
@@ -37,5 +38,6 @@ export default {
   components: {
     'layer-control': LayerControl,
     'analysis-panel': AnalysisPanel,
+    'v-map-layers': MapLayers
   },
 };

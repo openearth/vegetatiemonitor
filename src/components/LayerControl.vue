@@ -26,6 +26,10 @@
 <script src="./layer-control.js"></script>
 
 <style scoped>
+.layer-control {
+  overflow-y: scroll;
+  height:60vh;
+}
 .bartext {
   text-align: justify;
   width: 100%;

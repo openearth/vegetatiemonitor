@@ -1,42 +1,71 @@
 <template>
 <div class="analysis-panel">
-  <v-switch v-model="layer.active"></v-switch>
-  <v-tile dense pt-0>
-    Select range of dates to find Images
-    <v-layout row wrap>
-      <v-flex xs11 sm5>
-        <v-menu ref="menu" lazy :close-on-content-click="false" v-model="menu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="beginDate">
-          <v-text-field slot="activator" label="Start date" v-model="beginDate" prepend-icon="event" readonly></v-text-field>
-          <v-date-picker v-model="beginDate" no-title scrollable>
-            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-            <v-btn flat color="primary" @click="$refs.menu.save(beginDate)">OK</v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-flex>
-      <v-flex xs11 sm5>
-        <v-dialog ref="dialog" persistent v-model="modal" lazy full-width width="290px" :return-value.sync="endDate">
-          <v-text-field slot="activator" label="End date" v-model="endDate" prepend-icon="event" readonly></v-text-field>
-          <v-date-picker v-model="endDate" scrollable>
-            <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-            <v-btn flat color="primary" @click="$refs.dialog.save(endDate)">OK</v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-flex>
-    </v-layout>
-    <v-layout row wrap>
-      <v-flex xs11 sm5>
-        <v-select v-model="firstImage" label="Select Image 1" single-line></v-select>
-      </v-flex>
-      <v-flex xs11 sm5>
-        <v-select v-model="secondImage" label="Select Image 2" single-line></v-select>
-      </v-flex>
-    </v-layout>
-    </v-tile>
+  <v-toolbar flat>
+    <v-list>
+      <v-list-tile>
+        <v-list-tile-title class="title">
+          Analysis Panel
+        </v-list-tile-title>
+      </v-list-tile>
+    </v-list>
+  </v-toolbar>
+
+  <v-list dense pt-0>
+    <v-list-tile>
+      <v-switch :label="'Switch to compare mode'" v-model="imageMode"></v-switch>
+    </v-list-tile>
+    <v-list-tile>
+      <v-list-tile-title>Select the range of dates to get Images: </v-list-tile-title>
+    </v-list-tile>
+    <v-list-tile dense pt-0 id='selection'>
+      <v-layout row wrap>
+        <v-flex xs11 sm5>
+          <v-menu ref="beginMenu" lazy :close-on-content-click="false" v-model="beginMenu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="beginDate">
+            <v-text-field slot="activator" label="Start date" v-model="beginDate" prepend-icon="event" readonly></v-text-field>
+            <v-date-picker v-model="beginDate" no-title scrollable>
+              <v-btn flat color="primary" @click="beginMenu = false">Cancel</v-btn>
+              <v-btn flat color="primary" @click="$refs.beginMenu.save(beginDate)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
+        <v-flex xs11 sm5 offset-xs1>
+          <v-menu ref="endMenu" lazy :close-on-content-click="false" v-model="endMenu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="endDate">
+            <v-text-field slot="activator" label="End date" v-model="endDate" prepend-icon="event" readonly></v-text-field>
+            <v-date-picker v-model="endDate" no-title scrollable>
+              <v-btn flat color="primary" @click="endMenu = false">Cancel</v-btn>
+              <v-btn flat color="primary" @click="$refs.endMenu.save(endDate)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+
+          </v-dialog>
+        </v-flex>
+      </v-layout>
+    </v-list-tile>
+    <v-list-tile id='selection'>
+      <v-layout row wrap>
+        <v-flex xs11 sm5>
+          <v-select v-model="firstImage" :items="Image1" label="Image 1" prepend-icon="insert_photo" single-line></v-select>
+        </v-flex>
+        <v-flex xs11 sm5 offset-xs1>
+          <v-select v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
+        </v-flex>
+      </v-layout>
+    </v-list-tile>
+  </v-list>
 
 </div>
 </template>
 
 <script src="./analysis-panel.js"></script>
 
-<style scoped>
+<style>
+#selection {
+  padding: 0px;
+  width: 100%;
+}
+
+.analysis-panel {
+  bottom: 10vh;
+  height: 30vh;
+}
 </style>

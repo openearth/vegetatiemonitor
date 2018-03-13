@@ -18,10 +18,14 @@ export default {
     return {
       beginDate: null,
       endDate: null,
-      menu: false,
+      beginMenu: false,
+      endMenu: false,
       modal: false,
       firstImage: null,
-      secondImage: null
+      secondImage: null,
+      imageMode: false,
+      Image1: [],
+      Image2: []
     };
   },  mounted() {},
   watch: {
