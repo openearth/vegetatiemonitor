@@ -2,7 +2,7 @@ import {
   bus
 } from '@/event-bus.js';
 
-function getGeeSource(map, maplayer, dateBegin, dateEnd, bands) {
+function getGeeSource(map, maplayer, dateBegin, dateEnd, vis) {
   var lat_max = map.getBounds()['_ne']['lat']
   var lon_max = map.getBounds()['_ne']['lng']
   var lat_min = map.getBounds()['_sw']['lat']
@@ -10,7 +10,7 @@ function getGeeSource(map, maplayer, dateBegin, dateEnd, bands) {
   var json_data = {
     dateBegin: dateBegin,
     dateEnd: dateEnd,
-    bands: bands,
+    vis: vis,
     region: {
       "geodesic": true,
       "type": "Polygon",

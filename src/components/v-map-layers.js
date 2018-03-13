@@ -14,7 +14,10 @@ export default {
       map: null,
       dateBegin: "2016-07-20",
       dateEnd: "2016-07-21",
-      bands: ["red", "green", "blue"],
+      vis: {
+        bands: ["red", "green", "blue"],
+        gamma: 2.0
+      }
     }
   },
   methods: {
@@ -27,7 +30,7 @@ export default {
           })
           bus.$emit('add-layer', layer);
         } else if (layer.layertype === 'gee-layer') {
-          getGeeSource(map, layer, this.dateBegin, this.dateEnd, this.bands)
+          getGeeSource(map, layer, this.dateBegin, this.dateEnd, this.vis)
         }
       })
     }
