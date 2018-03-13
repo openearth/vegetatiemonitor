@@ -19,7 +19,9 @@ export default {
       beginDate: null,
       endDate: null,
       menu: false,
-      modal: false
+      modal: false,
+      firstImage: null,
+      secondImage: null
     };
   },  mounted() {},
   watch: {

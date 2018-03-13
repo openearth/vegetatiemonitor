@@ -1,6 +1,7 @@
 <template>
 <div class="analysis-panel">
-  <v-switch v-model="" <v-tile dense pt-0>
+  <v-switch v-model="layer.active"></v-switch>
+  <v-tile dense pt-0>
     Select range of dates to find Images
     <v-layout row wrap>
       <v-flex xs11 sm5>
@@ -13,21 +14,21 @@
         </v-menu>
       </v-flex>
       <v-flex xs11 sm5>
-        <v-dialog ref="dialog" persistent v-model="modal" lazy full-width width="290px" :return-value.sync="EndDate">
-          <v-text-field slot="activator" label="End date" v-model="EndDate" prepend-icon="event" readonly></v-text-field>
-          <v-date-picker v-model="EndDate" scrollable>
+        <v-dialog ref="dialog" persistent v-model="modal" lazy full-width width="290px" :return-value.sync="endDate">
+          <v-text-field slot="activator" label="End date" v-model="endDate" prepend-icon="event" readonly></v-text-field>
+          <v-date-picker v-model="endDate" scrollable>
             <v-btn flat color="primary" @click="modal = false">Cancel</v-btn>
-            <v-btn flat color="primary" @click="$refs.dialog.save(EndDate)">OK</v-btn>
+            <v-btn flat color="primary" @click="$refs.dialog.save(endDate)">OK</v-btn>
           </v-date-picker>
         </v-dialog>
       </v-flex>
     </v-layout>
     <v-layout row wrap>
       <v-flex xs11 sm5>
-        <v-select :items="items" v-model="e1" label="Select" single-line></v-select>
+        <v-select v-model="firstImage" label="Select Image 1" single-line></v-select>
       </v-flex>
       <v-flex xs11 sm5>
-        <v-select :items="items" v-model="e1" label="Select" single-line></v-select>
+        <v-select v-model="secondImage" label="Select Image 2" single-line></v-select>
       </v-flex>
     </v-layout>
     </v-tile>
