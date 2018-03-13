@@ -1,6 +1,6 @@
 <template>
 <v-app id="inspire">
-  <v-navigation-drawer fixed v-model="drawer">
+  <v-navigation-drawer app fixed v-model="drawer">
     <v-toolbar flat>
       <v-list>
         <v-list-tile>
@@ -25,10 +25,7 @@
         :center="[5.673272, 52.079502]"
         :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5"
         id="map" ref="map">
-        <v-veg-legger ref="veglegger"></v-veg-legger>
-        <v-streamlines ref="streamlines"></v-streamlines>
-        <v-kadastrale-grens ref="kadaster"></v-kadastrale-grens>
-        <v-satellite-images ref="satelliteimages"></v-satellite-images>
+        <v-map-layers></v-map-layers>
         <v-mapbox-navigation-control></v-mapbox-navigation-control>
       </v-mapbox>
     </div>
