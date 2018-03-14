@@ -3,6 +3,8 @@
 > Rijkswaterstaat Vegetatie Monitor.
 > Live version: http://www.openearth.nl/vegetatiemonitor/
 
+> Repository for App Engine service: https://github.com/openearth/vegetatiemointor-service
+
 ## Build Setup
 
 ``` bash
