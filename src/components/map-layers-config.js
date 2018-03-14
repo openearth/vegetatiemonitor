@@ -2,7 +2,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Kadaster',
     icon: 'home',
-    active: 'true',
+    active: false,
     data: [{
       id: 'Kadaster',
       type: 'fill',
@@ -15,9 +15,26 @@ const mapLayers = [{
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       },
-      layout: {
-        visibility: 'visible'
-      }
+    }]
+  },
+
+  {
+    layertype: 'mapbox-layer',
+    name: 'Stroombanen',
+    icon: 'home',
+    active: true,
+    data: [{
+      id: 'Streamlines',
+      type: 'fill',
+      source: {
+        type: 'vector',
+        url: 'mapbox://ellispenning.4puwiyv9',
+      },
+      'source-layer': 'stroombaan-8ndp71',
+      paint: {
+        'fill-color': 'rgba(51, 163, 255, 0.2)',
+        'fill-outline-color': 'rgba(51, 163, 255, 1)'
+      },
     }]
   },
 
@@ -25,7 +42,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'home',
-    active: 'true',
+    active: true,
     type: "group",
     data: [{
       id: 'Vegetatielegger',
@@ -81,10 +98,8 @@ const mapLayers = [{
           "default": "rgba(0, 0, 0, 0)"
         }
       },
-      layout: {
-        visibility: 'visible'
-      },
-    }, {
+    },
+    {
       id: 'Beheersgrenzen',
       type: 'line',
       source: {
@@ -95,54 +110,41 @@ const mapLayers = [{
       paint: {
         'line-color': 'rgb(80,155,255)'
       },
-      layout: {
-        visibility: 'visible'
-      }
     }]
-  },
-
-  {
-    layertype: 'mapbox-layer',
-    name: 'Stroombanen',
-    icon: 'home',
-    active: 'true',
-    data: [{
-      id: 'Streamlines',
-      type: 'fill',
-      source: {
-        type: 'vector',
-        url: 'mapbox://ellispenning.4puwiyv9',
-      },
-      'source-layer': 'stroombaan-8ndp71',
-      paint: {
-        'fill-color': 'rgba(51, 163, 255, 0.2)',
-        'fill-outline-color': 'rgba(51, 163, 255, 1)'
-      },
-      layout: {
-        visibility: 'visible',
-      }
-    }]
-
   },
 
   {
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
     icon: 'satellite',
-    active: 'true',
+    active: false,
     data: [{
       id: 'satellite',
       type: "raster",
-      layout: {
-        visibility: "none"
-      },
       source: {
         type: "raster",
         tiles: [],
         tileSize: 256
       }
     }]
-  }
+  },
+
+  {
+    layertype: 'gee-layer',
+    name: 'Vegetatie index (ndvi)',
+    icon: 'satellite',
+    active: false,
+    data: [{
+      id: 'ndvi',
+      type: "raster",
+      source: {
+        type: "raster",
+        tiles: [],
+        tileSize: 256
+      }
+    }]
+  },
+
 ]
 
 export {
