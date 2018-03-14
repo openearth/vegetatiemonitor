@@ -5,6 +5,7 @@ import {
 import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
 import LayerControl from './components/LayerControl';
+import AnalysisPanel from './components/AnalysisPanel';
 import MapLayers from './components/VMapLayers';
 
 export default {
@@ -18,6 +19,7 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map;
+
 
     bus.$on('select-layers', (layers) => {
       Vue.set(this, 'layers', layers);
@@ -36,6 +38,7 @@ export default {
   methods: {},
   components: {
     'layer-control': LayerControl,
+    'analysis-panel': AnalysisPanel,
     'v-map-layers': MapLayers
   },
 };

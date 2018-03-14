@@ -14,7 +14,7 @@ const mapLayers = [{
       paint: {
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
-      },
+      }
     }]
   },
 
@@ -34,7 +34,7 @@ const mapLayers = [{
       paint: {
         'fill-color': 'rgba(51, 163, 255, 0.2)',
         'fill-outline-color': 'rgba(51, 163, 255, 1)'
-      },
+      }
     }]
   },
 
@@ -109,7 +109,7 @@ const mapLayers = [{
       'source-layer': 'beheergrens-8l9whd',
       paint: {
         'line-color': 'rgb(80,155,255)'
-      },
+      }
     }]
   },
 
@@ -143,8 +143,7 @@ const mapLayers = [{
         tileSize: 256
       }
     }]
-  },
-
+  }
 ]
 
 export {
