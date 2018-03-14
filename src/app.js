@@ -20,6 +20,7 @@ export default {
   mounted() {
     this.map = this.$refs.map.map;
 
+
     bus.$on('select-layers', (layers) => {
       Vue.set(this, 'layers', layers);
     });

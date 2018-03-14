@@ -9,10 +9,12 @@
       </v-list-tile>
     </v-list>
   </v-toolbar>
-
   <v-list dense pt-0>
     <v-list-tile>
-      <v-switch :label="'Switch to compare mode'" v-model="imageMode"></v-switch>
+      <v-list-tile-action>
+        <v-switch v-model="imageMode"></v-switch>
+      </v-list-tile-action>
+      <v-list-tile-title>Switch to compare mode</v-list-tile-title>
     </v-list-tile>
     <v-list-tile>
       <v-list-tile-title>Select the range of dates to get Images: </v-list-tile-title>
@@ -36,7 +38,6 @@
               <v-btn flat color="primary" @click="$refs.endMenu.save(endDate)">OK</v-btn>
             </v-date-picker>
           </v-menu>
-
           </v-dialog>
         </v-flex>
       </v-layout>
@@ -46,13 +47,12 @@
         <v-flex xs11 sm5>
           <v-select v-model="firstImage" :items="Image1" label="Image 1" prepend-icon="insert_photo" single-line></v-select>
         </v-flex>
-        <v-flex xs11 sm5 offset-xs1>
-          <v-select v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
-        </v-flex>
+      <v-flex xs11 sm5 offset-xs1>
+        <v-select v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
+      </v-flex>
       </v-layout>
     </v-list-tile>
   </v-list>
-
 </div>
 </template>
 
@@ -64,8 +64,13 @@
   width: 100%;
 }
 
+#analysis-panel {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
 .analysis-panel {
   bottom: 10vh;
-  height: 30vh;
+  height: 50vh;
 }
 </style>
