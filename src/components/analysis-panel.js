@@ -3,6 +3,9 @@ import draggable from 'vuedraggable'
 import {
   bus
 } from '@/event-bus.js';
+import {
+  getGeeImage
+} from './get-gee-layers.js'
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 
@@ -29,8 +32,12 @@ export default {
       imageMode: false,
       Image1: [],
       Image2: [],
-      firstImages: {}
-    };
+      firstImages: {},
+      vis: {
+        bands: ["red", "green", "blue"],
+        gamma: 2.0
+      }
+    }
   },
   mounted() {
     this.changeDates()
@@ -50,17 +57,20 @@ export default {
     },
     firstImage: {
       handler: function(firstImage) {
-        console.log(this.firstImage)
-        console.log(this.firstImages[this.firstImage])
-        // TODO: add new layer to the map
-        // this.layers
-        // getGeeSource(this.map, maplayer, this.beginDate, endDate, vis)
+        bus.$emit('firstImage-changed', (firstImage))
+        // TODO: make it for all datasets that are swithced on
+        var menulayer = _.find(this.layers, 'dataset', 'satellite')
+        var checkDate = _.find(menulayer.data, {'date': firstImage})
+        if (checkDate == undefined) {
+          getGeeImage(this.map, 'satellite', this.firstImage, this.firstImages[this.firstImage], this.vis)
+        } else  {}
       },
       deep: true
     }
   },
   methods: {
     changeDates() {
+      // TODO: change coordinates using this.map.getBounds()['_ne']['lat'] etc...
       var json_data = {
         "dateBegin": this.beginDate,
         "dateEnd": this.endDate,
@@ -120,10 +130,8 @@ export default {
           this.Image1 = response['image_times']
           this.Image2 = response['image_times']
           _.each(response['image_times'], (image_time, i) => {
-            console.log(image_time, i)
             this.firstImages[image_time] = response['image_ids'][i]
-          } )
-          console.log(this.firstImages)
+          })
         })
 
 

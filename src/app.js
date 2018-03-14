@@ -20,6 +20,15 @@ export default {
   mounted() {
     this.map = this.$refs.map.map;
 
+    bus.$on('add-data-layer', (data) => {
+      console.log(data)
+      _.each(this.layers, (layer) => {
+        if (layer['dataset'] === data['dataset']) {
+          console.log(data['layer'])
+          layer.data.push(data['layer'])
+        }
+      })
+    })
 
     bus.$on('select-layers', (layers) => {
       Vue.set(this, 'layers', layers);
@@ -34,6 +43,9 @@ export default {
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
     });
+    this.map.on('click', (event) => {
+      console.log('layers', this.layers)
+    })
   },
   methods: {},
   components: {

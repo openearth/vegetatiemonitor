@@ -118,15 +118,8 @@ const mapLayers = [{
     name: 'Satelliet beelden',
     icon: 'satellite',
     active: false,
-    data: [{
-      id: 'satellite',
-      type: "raster",
-      source: {
-        type: "raster",
-        tiles: [],
-        tileSize: 256
-      }
-    }]
+    dataset: 'satellite',  // important! this argument is needed to call the service
+    data: []
   },
 
   {
@@ -134,15 +127,8 @@ const mapLayers = [{
     name: 'Vegetatie index (ndvi)',
     icon: 'satellite',
     active: false,
-    data: [{
-      id: 'ndvi',
-      type: "raster",
-      source: {
-        type: "raster",
-        tiles: [],
-        tileSize: 256
-      }
-    }]
+    dataset: 'ndvi',
+    data: []
   }
 ]
 

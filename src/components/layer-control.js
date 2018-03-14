@@ -12,9 +12,13 @@ export default {
     },
     map: {
       type: Object
-    }
+    },
   },
-  mounted() {},
+  data: function() {
+    return {
+      firstImage: null
+    };
+  },
   computed: {
     computedList: {
       get() {
@@ -34,12 +38,23 @@ export default {
         this.sortLayers()
       },
       deep: true
+    },
+    firstImage: {
+      handler: function(firstImage) {
+        this.toggleLayers();
+      },
+      deep: true
     }
+  },
+  mounted() {
+    bus.$on('firstImage-changed', (firstImage) => {
+      this.firstImage = firstImage
+    })
   },
   methods: {
     sortLayers() {
       for (var i = this.layers.length - 2; i >= 0; --i) {
-        for (var thislayer = 0; thislayer < this.layers[i].data.length; ++thislayer ) {
+        for (var thislayer = 0; thislayer < this.layers[i].data.length; ++thislayer) {
           this.map.moveLayer(this.layers[i].data[thislayer].id)
         }
       }
@@ -49,13 +64,16 @@ export default {
         return;
       }
       // Function to toggle the visibility of the layers.
+      var vis = ['none', 'visible']
+
       _.each(this.layers, (layer) => {
-        var vis = "none"
-        if (layer.active) {
-          vis = "visible"
-        }
         _.each(layer.data, (sublayer) => {
-          this.map.setLayoutProperty(sublayer.id, "visibility", vis);
+          if (layer.active && (layer.layertype == "mapbox-layer" ||
+              (layer.layertype == "gee-layer" && sublayer.date === this.firstImage))) {
+            this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+          } else {
+            this.map.setLayoutProperty(sublayer.id, "visibility", vis[0])
+          }
         })
       });
     }
