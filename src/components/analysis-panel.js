@@ -36,8 +36,6 @@ export default {
     this.changeDates()
   },
   watch: {
-    // Watch "layers". This is a switch, which can toggle a layer on or off
-    // When toggled, this watcher will activate the toggleLayers function.
     beginDate: {
       handler: function(beginDate) {
         this.changeDates()
