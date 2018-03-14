@@ -16,8 +16,8 @@
   <v-toolbar color="indigo" dark fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
-    <span class="white--text">&copy; 2018</span>
-
+    <!-- <img src="static/images/deltares.png">
+    <img src="static/images/Rijkswaterstaat.png"> -->
   </v-toolbar>
   <v-content>
     <div id="map">
