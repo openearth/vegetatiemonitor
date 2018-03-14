@@ -1,24 +1,11 @@
 <template>
 <div class="analysis-panel">
   <v-toolbar flat>
-    <v-list>
-      <v-list-tile>
-        <v-list-tile-title class="title">
-          Analysis Panel
-        </v-list-tile-title>
-      </v-list-tile>
-    </v-list>
+    <v-toolbar-title>
+      Analysis
+    </v-toolbar-title>
   </v-toolbar>
-  <v-list dense pt-0>
-    <v-list-tile>
-      <v-list-tile-action>
-        <v-switch v-model="imageMode"></v-switch>
-      </v-list-tile-action>
-      <v-list-tile-title>Switch to compare mode</v-list-tile-title>
-    </v-list-tile>
-    <v-list-tile>
-      <v-list-tile-title>Select the range of dates to get Images: </v-list-tile-title>
-    </v-list-tile>
+  <v-list dense pt-0 three-line>
     <v-list-tile dense pt-0 id='selection'>
       <v-layout row wrap>
         <v-flex xs11 sm5>
@@ -42,14 +29,26 @@
         </v-flex>
       </v-layout>
     </v-list-tile>
+    <v-divider></v-divider>
+    <v-list-tile>
+      <v-radio-group row>
+        <v-radio label="Composite" value="radio-composite"></v-radio>
+        <v-radio label="1 image mode" value="radio-1-image"></v-radio>
+        <v-radio label="2 image mode" value="radio-2-image"></v-radio>
+      </v-radio-group>
+    </v-list-tile>
+    <v-divider></v-divider>
+    <v-list-tile>
+      <v-list-tile-title>Select the range of dates to get Images: </v-list-tile-title>
+    </v-list-tile>
     <v-list-tile id='selection'>
       <v-layout row wrap>
         <v-flex xs11 sm5>
           <v-select v-model="firstImage" :items="Image1" label="Image 1" prepend-icon="insert_photo" single-line></v-select>
         </v-flex>
-      <v-flex xs11 sm5 offset-xs1>
-        <v-select v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
-      </v-flex>
+        <v-flex xs11 sm5 offset-xs1>
+          <v-select v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
+        </v-flex>
       </v-layout>
     </v-list-tile>
   </v-list>
