@@ -4,12 +4,13 @@ import {
   bus
 } from '@/event-bus.js';
 import {
-  getGeeImage,
   getGeeComposite
 } from './get-gee-layers.js'
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
-var datasets = ["satellite"]
+
+// TODO: Fix this by looping over datasets in this.layers. This is an ugly fix
+var datasets = ["satellite", "ndvi", "landuse"]
 
 export default {
   name: 'layer-control',
@@ -35,10 +36,6 @@ export default {
       Image1: [],
       Image2: [],
       firstImages: {},
-      vis: {
-        bands: ["red", "green", "blue"],
-        gamma: 2.0
-      },
       region: {
         "coordinates": [
           [
@@ -116,7 +113,9 @@ export default {
           bus.$emit('remove-data-layer', ({
             'dataset': dataset
           }))
-          getGeeComposite(this.map, dataset, this.beginDate, this.endDate, this.region, this.vis)
+          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var vis = menulayer.vis
+          getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
         })
       }
     },
@@ -128,36 +127,42 @@ export default {
           'date': this.firstImage
         })
         if (checkDate == undefined) {
-          getGeeImage(this.map, dataset, this.firstImage, this.firstImages[this.firstImage], this.vis)
+          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var vis = menulayer.vis
+          getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
         }
       })
     },
     changeDates() {
       // TODO: change coordinates using this.map.getBounds()['_ne']['lat'] etc...
-      var json_data = {
-        "dateBegin": this.beginDate,
-        "dateEnd": this.endDate,
-        "region": this.region,
-        "vis": this.vis
-      }
-      var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
-          method: "POST",
-          body: JSON.stringify(json_data),
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        .then((res) => {
-          return res.json();
-        })
-        .then((response) => {
-          this.Image1 = response['image_times']
-          this.Image2 = response['image_times']
-          _.each(response['image_times'], (image_time, i) => {
-            this.firstImages[image_time] = response['image_ids'][i]
+      _.each(datasets, (dataset) => {
+
+        var vis = _.find(this.layers, 'dataset', "satellite")['vis']
+        var json_data = {
+          "dateBegin": this.beginDate,
+          "dateEnd": this.endDate,
+          "region": this.region,
+          "vis": vis
+        }
+        var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
+            method: "POST",
+            body: JSON.stringify(json_data),
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json'
+            }
           })
-        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((response) => {
+            this.Image1 = response['image_times']
+            this.Image2 = response['image_times']
+            _.each(response['image_times'], (image_time, i) => {
+              this.firstImages[image_time] = response['image_ids'][i]
+            })
+          })
+      })
     }
   },
   components: {}

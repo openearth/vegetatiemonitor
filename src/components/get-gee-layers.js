@@ -4,7 +4,7 @@ import {
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 
-function getGeeComposite(map, dataset, dateBegin, dateEnd, region, vis) {
+function getGeeComposite(map, dataset, dateBegin, region, vis, dateEnd = null) {
   var maplayer_json = {
     id: dataset + '_composite',
     type: "raster",
@@ -15,15 +15,18 @@ function getGeeComposite(map, dataset, dateBegin, dateEnd, region, vis) {
       tileSize: 256
     }
   }
+  var json_body = {
+    "dateBegin": dateBegin,
+    "region": region,
+    "vis": vis
+  }
+  if (dateEnd) {
+    json_body['dateEnd'] = dateEnd
+  }
 
   fetch(SERVER_URL + '/map/' + dataset + '/', {
       method: "POST",
-      body: JSON.stringify({
-        "dateBegin": dateBegin,
-        "dateEnd": dateEnd,
-        "region": region,
-        "vis": vis
-      }),
+      body: JSON.stringify(json_body),
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json'
@@ -42,38 +45,6 @@ function getGeeComposite(map, dataset, dateBegin, dateEnd, region, vis) {
     })
 }
 
-function getGeeImage(map, dataset, date, sourceId, vis) {
-  var maplayer_json = {
-    id: dataset + '_' + date,
-    type: "raster",
-    date: date,
-    source: {
-      type: "raster",
-      tiles: [],
-      tileSize: 256
-    }
-  }
-  fetch(SERVER_URL + '/image/?id=' + sourceId, {
-      method: "POST",
-      body: JSON.stringify(vis),
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then((res) => {
-      return res.json();
-    })
-    .then((mapUrl) => {
-      maplayer_json.source['tiles'] = [mapUrl]
-      map.addLayer(maplayer_json)
-      bus.$emit('add-data-layer', {
-        dataset: dataset,
-        layer: maplayer_json
-      })
-    })
-}
 export {
-  getGeeImage,
   getGeeComposite
 }

@@ -112,7 +112,24 @@ const mapLayers = [{
       }
     }]
   },
-
+  {
+    layertype: 'gee-layer',
+    name: 'Classificatie',
+    icon: 'satellite',
+    active: false,
+    dataset: 'landuse',  // important! this argument is needed to call the service
+    data: [],
+    vis: {}
+  },
+  {
+    layertype: 'gee-layer',
+    name: 'Vegetatie (NDVI)',
+    icon: 'satellite',
+    active: false,
+    dataset: 'ndvi',  // important! this argument is needed to call the service
+    data: [],
+    vis: {}
+  },
   {
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
@@ -125,18 +142,6 @@ const mapLayers = [{
       gamma: 2.0
     }
   },
-  {
-    layertype: 'gee-layer',
-    name: 'Vegetatie index (ndvi)',
-    icon: 'satellite',
-    active: false,
-    dataset: 'ndvi',  // important! this argument is needed to call the service
-    data: [],
-    vis: {
-      bands: ["red", "green", "blue"],
-      gamma: 2.0
-    }
-  }
 ]
 
 export {

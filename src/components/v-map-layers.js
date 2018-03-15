@@ -16,10 +16,6 @@ export default {
       dateEnd: "2017-07-21",
       beginDate: "",
       endDate: "",
-      vis: {
-        bands: ["red", "green", "blue"],
-        gamma: 2.0
-      }
     }
   },
   methods: {

@@ -27,7 +27,7 @@
 
 <style scoped>
 .layer-control {
-  height:40vh;
+  height:50vh;
 }
 .bartext {
   text-align: justify;
