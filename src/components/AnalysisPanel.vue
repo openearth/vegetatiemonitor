@@ -70,8 +70,9 @@
 }
 
 .analysis-panel {
-  bottom: 10vh;
-  height: 50vh;
+  top: 50vh;
+  max-height: 50vh;
+  overflow-y: auto;
 }
 
 </style>
