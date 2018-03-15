@@ -1,6 +1,6 @@
 <template>
 <v-app id="inspire">
-  <v-navigation-drawer id="navdrawer" app v-model="drawer">
+  <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
     <v-toolbar flat>
       <v-list>
         <v-list-tile>
@@ -13,11 +13,11 @@
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
-  <v-toolbar color="indigo" dark fixed app>
+  <v-toolbar xs6 color="indigo" dark fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
-    <span class="white--text">&copy; 2018</span>
-
+    <!-- <img src="static/images/deltares.png">
+    <img src="static/images/Rijkswaterstaat.png"> -->
   </v-toolbar>
   <v-content>
     <div id="map">
@@ -32,12 +32,13 @@
 
 <script src="./app.js"></script>
 
-<style >
+<style>
 @import 'mapbox-gl/dist/mapbox-gl.css';
 @import 'material-design-icons/iconfont/material-icons.css';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
+  font-size: smaller !important;
 }
 
 #map {
@@ -49,6 +50,9 @@
   height: inherit !important;
   margin-top: 0px;
   max-height: none !important;
-  width: 300px;
+}
+
+.list--dense .list__tile label :items {
+    font-size: 12px;
 }
 </style>

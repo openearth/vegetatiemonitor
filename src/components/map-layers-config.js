@@ -112,38 +112,36 @@ const mapLayers = [{
       }
     }]
   },
-
+  {
+    layertype: 'gee-layer',
+    name: 'Classificatie',
+    icon: 'satellite',
+    active: false,
+    dataset: 'landuse',  // important! this argument is needed to call the service
+    data: [],
+    vis: {}
+  },
+  {
+    layertype: 'gee-layer',
+    name: 'Vegetatie (NDVI)',
+    icon: 'satellite',
+    active: false,
+    dataset: 'ndvi',  // important! this argument is needed to call the service
+    data: [],
+    vis: {}
+  },
   {
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
     icon: 'satellite',
     active: false,
-    data: [{
-      id: 'satellite',
-      type: "raster",
-      source: {
-        type: "raster",
-        tiles: [],
-        tileSize: 256
-      }
-    }]
+    dataset: 'satellite',  // important! this argument is needed to call the service
+    data: [],
+    vis: {
+      bands: ["red", "green", "blue"],
+      gamma: 2.0
+    }
   },
-
-  {
-    layertype: 'gee-layer',
-    name: 'Vegetatie index (ndvi)',
-    icon: 'satellite',
-    active: false,
-    data: [{
-      id: 'ndvi',
-      type: "raster",
-      source: {
-        type: "raster",
-        tiles: [],
-        tileSize: 256
-      }
-    }]
-  }
 ]
 
 export {

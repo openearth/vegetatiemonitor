@@ -20,6 +20,31 @@ export default {
   mounted() {
     this.map = this.$refs.map.map;
 
+    // This is needed to remove duplicate layers (happens for the composite layers)
+    bus.$on('remove-data-layer', (data) => {
+      _.each(this.layers, (layer) => {
+        if (layer['dataset'] === data['dataset']) {
+          _.each(layer.data, (datalayer, i) => {
+            if (datalayer != undefined) {
+              if (datalayer.id === data['dataset'] + '_composite') {
+                layer.data.splice(i, 1)
+                this.map.removeLayer(datalayer['id'])
+                this.map.removeSource(datalayer['id'])
+              }
+            }
+          })
+        }
+      })
+    })
+
+    // This is needed to cache the layers already shown on the map in this.layers
+    bus.$on('add-data-layer', (data) => {
+      _.each(this.layers, (layer) => {
+        if (layer['dataset'] === data['dataset']) {
+          layer.data.push(data['layer'])
+        }
+      })
+    })
 
     bus.$on('select-layers', (layers) => {
       Vue.set(this, 'layers', layers);
@@ -34,6 +59,10 @@ export default {
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
     });
+
+    this.map.on('click', (event) => {
+      console.log(this.layers)
+    })
   },
   methods: {},
   components: {

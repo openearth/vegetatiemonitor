@@ -3,8 +3,14 @@ import draggable from 'vuedraggable'
 import {
   bus
 } from '@/event-bus.js';
+import {
+  getGeeComposite
+} from './get-gee-layers.js'
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
+
+// TODO: Fix this by looping over datasets in this.layers. This is an ugly fix
+var datasets = ["satellite", "ndvi", "landuse"]
 
 export default {
   name: 'layer-control',
@@ -29,104 +35,134 @@ export default {
       imageMode: false,
       Image1: [],
       Image2: [],
-      firstImages: {}
-    };
+      firstImages: {},
+      region: {
+        "coordinates": [
+          [
+            [
+              5.846,
+              51.984
+            ],
+            [
+              5.849,
+              51.961
+            ],
+            [
+              5.91,
+              51.96
+            ],
+            [
+              5.916,
+              51.985
+            ],
+            [
+              5.877,
+              51.99
+            ],
+            [
+              5.846,
+              51.984
+            ]
+          ]
+        ],
+        "geodesic": true,
+        "type": "Polygon"
+      },
+      radioButtons: "radio-composite"
+    }
   },
   mounted() {
-    this.changeDates()
+    bus.$on('map-loaded', (event) => {
+      this.changeModus()
+      this.changeDates()
+    })
   },
   watch: {
     beginDate: {
       handler: function(beginDate) {
         this.changeDates()
+        this.changeModus()
       },
       deep: true
     },
     endDate: {
       handler: function(endDate) {
         this.changeDates()
+        this.changeModus()
+      },
+      deep: true
+    },
+    radioButtons: {
+      handler: function(radioButtons) {
+        this.changeModus()
       },
       deep: true
     },
     firstImage: {
       handler: function(firstImage) {
-        console.log(this.firstImage)
-        console.log(this.firstImages[this.firstImage])
-        // TODO: add new layer to the map
-        // this.layers
-        // getGeeSource(this.map, maplayer, this.beginDate, endDate, vis)
+        this.changeFirstImageDate()
       },
       deep: true
     }
   },
   methods: {
-    changeDates() {
-      var json_data = {
-        "dateBegin": this.beginDate,
-        "dateEnd": this.endDate,
-        "region": {
-          "coordinates": [
-            [
-              [
-                5.846,
-                51.984
-              ],
-              [
-                5.849,
-                51.961
-              ],
-              [
-                5.91,
-                51.96
-              ],
-              [
-                5.916,
-                51.985
-              ],
-              [
-                5.877,
-                51.99
-              ],
-              [
-                5.846,
-                51.984
-              ]
-            ]
-          ],
-          "geodesic": true,
-          "type": "Polygon"
-        },
-        "vis": {
-          "bands": [
-            "red",
-            "green",
-            "blue"
-          ],
-          "gamma": 2
-        }
+    changeModus() {
+      bus.$emit('firstImage-changed', ('composite'))
+      if (this.radioButtons == "radio-composite") {
+        _.each(datasets, (dataset) => {
+          bus.$emit('remove-data-layer', ({
+            'dataset': dataset
+          }))
+          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var vis = menulayer.vis
+          getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
+        })
       }
-      var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
-          method: "POST",
-          body: JSON.stringify(json_data),
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+    },
+    changeFirstImageDate() {
+      bus.$emit('firstImage-changed', (this.firstImage))
+      _.each(datasets, (dataset) => {
+        var menulayer = _.find(this.layers, 'dataset', dataset)
+        var checkDate = _.find(menulayer.data, {
+          'date': this.firstImage
         })
-        .then((res) => {
-          return res.json();
-        })
-        .then((response) => {
-          this.Image1 = response['image_times']
-          this.Image2 = response['image_times']
-          _.each(response['image_times'], (image_time, i) => {
-            console.log(image_time, i)
-            this.firstImages[image_time] = response['image_ids'][i]
-          } )
-          console.log(this.firstImages)
-        })
+        if (checkDate == undefined) {
+          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var vis = menulayer.vis
+          getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
+        }
+      })
+    },
+    changeDates() {
+      // TODO: change coordinates using this.map.getBounds()['_ne']['lat'] etc...
+      _.each(datasets, (dataset) => {
 
-
+        var vis = _.find(this.layers, 'dataset', "satellite")['vis']
+        var json_data = {
+          "dateBegin": this.beginDate,
+          "dateEnd": this.endDate,
+          "region": this.region,
+          "vis": vis
+        }
+        var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
+            method: "POST",
+            body: JSON.stringify(json_data),
+            mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((response) => {
+            this.Image1 = response['image_times']
+            this.Image2 = response['image_times']
+            _.each(response['image_times'], (image_time, i) => {
+              this.firstImages[image_time] = response['image_ids'][i]
+            })
+          })
+      })
     }
   },
   components: {}
