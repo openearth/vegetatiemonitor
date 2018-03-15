@@ -119,16 +119,23 @@ const mapLayers = [{
     icon: 'satellite',
     active: false,
     dataset: 'satellite',  // important! this argument is needed to call the service
-    data: []
+    data: [],
+    vis: {
+      bands: ["red", "green", "blue"],
+      gamma: 2.0
+    }
   },
-
   {
     layertype: 'gee-layer',
     name: 'Vegetatie index (ndvi)',
     icon: 'satellite',
     active: false,
-    dataset: 'ndvi',
-    data: []
+    dataset: 'ndvi',  // important! this argument is needed to call the service
+    data: [],
+    vis: {
+      bands: ["red", "green", "blue"],
+      gamma: 2.0
+    }
   }
 ]
 

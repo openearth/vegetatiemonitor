@@ -27,8 +27,7 @@
 
 <style scoped>
 .layer-control {
-  overflow-y: scroll;
-  height:50vh;
+  height:40vh;
 }
 .bartext {
   text-align: justify;
