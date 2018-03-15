@@ -29,7 +29,6 @@ export default {
       endDate: "2016-07-21",
       beginMenu: false,
       endMenu: false,
-      modal: false,
       firstImage: null,
       secondImage: null,
       imageMode: false,
