@@ -23,7 +23,6 @@ function getGeeComposite(map, dataset, dateBegin, region, vis, dateEnd = null) {
   if (dateEnd) {
     json_body['dateEnd'] = dateEnd
   }
-
   fetch(SERVER_URL + '/map/' + dataset + '/', {
       method: "POST",
       body: JSON.stringify(json_body),

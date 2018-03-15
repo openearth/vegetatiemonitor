@@ -66,7 +66,6 @@
 #analysis-panel {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
-  font-size: 'smaller';
 }
 
 .analysis-panel {

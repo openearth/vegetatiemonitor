@@ -22,28 +22,25 @@ export default {
 
     // This is needed to remove duplicate layers (happens for the composite layers)
     bus.$on('remove-data-layer', (data) => {
-      _.each(this.layers, (layer) => {
-        if (layer['dataset'] === data['dataset']) {
-          _.each(layer.data, (datalayer, i) => {
-            if (datalayer != undefined) {
-              if (datalayer.id === data['dataset'] + '_composite') {
-                layer.data.splice(i, 1)
-                this.map.removeLayer(datalayer['id'])
-                this.map.removeSource(datalayer['id'])
-              }
-            }
-          })
+
+      var menulayer = _.find(this.layers, {
+        'dataset': data['dataset']
+      })
+      _.each(menulayer['data'], (datalayer, i) => {
+        if (datalayer['id'] === data['dataset'] + '_composite') {
+          menulayer['data'].splice(i, 1)
+          this.map.removeLayer(datalayer['id'])
+          this.map.removeSource(datalayer['id'])
         }
       })
     })
 
     // This is needed to cache the layers already shown on the map in this.layers
     bus.$on('add-data-layer', (data) => {
-      _.each(this.layers, (layer) => {
-        if (layer['dataset'] === data['dataset']) {
-          layer.data.push(data['layer'])
-        }
+      var menulayer = _.find(this.layers, {
+        'dataset': data['dataset']
       })
+      menulayer.data.push(data['layer'])
     })
 
     bus.$on('select-layers', (layers) => {

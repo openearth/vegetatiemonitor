@@ -52,7 +52,7 @@
   max-height: none !important;
 }
 
-.list--dense .list__tile label :items {
+.list--dense .list__tile label {
     font-size: 12px;
 }
 </style>
