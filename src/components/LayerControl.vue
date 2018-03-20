@@ -1,24 +1,30 @@
 <template>
 <div class="layer-control">
-  <draggable v-model='computedList' @start="drag=true" @end="drag=false">
-    <v-list dense pt-0 v-for="layer in layers" :key="layer.id">
-      <v-list-tile>
-        <v-list-tile-action>
-          <v-switch v-model="layer.active"></v-switch>
-        </v-list-tile-action>
-        <v-list-tile-title>{{layer.name}}</v-list-tile-title>
-        <v-list-tile-action>
-          <v-icon>{{layer.icon}}</v-icon>
-        </v-list-tile-action>
-      </v-list-tile>
-
-      <div class="bar-wrapper">
-        <div :style="layer.css" class='bar' v-if="layer.css"></div>
-        <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
-        <div class='information' v-html="layer.info">{{layer.info}} </div>
-      </div>
-    </v-list>
-  </draggable>
+  <v-expansion-panel class="">
+    <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false">
+      <v-expansion-panel-content v-for="layer in layers" :key="layer.id">
+        <div class="header" slot="header">
+          <v-list dense class="ma-0 pa-0" >
+            <v-list-tile class="ma-0 pa-0"> 
+              <v-list-tile-action >
+                <v-switch v-model="layer.active"></v-switch>
+              </v-list-tile-action>
+              <v-list-tile-title>{{layer.name}}</v-list-tile-title>
+              <v-list-tile-avatar>
+                <v-icon>{{layer.icon}}</v-icon>
+              </v-list-tile-avatar>
+            </v-list-tile>
+          </v-list>
+        </div>
+        <div class="bar-wrapper">
+          <p>layer panel goes here...</p>
+          <div :style="layer.css" class='bar' v-if="layer.css"></div>
+          <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
+          <div class='information' v-html="layer.info">{{layer.info}} </div>
+        </div>
+      </v-expansion-panel-content>
+    </draggable>
+  </v-expansion-panel>
 
 </div>
 </template>
@@ -30,7 +36,9 @@
   max-height: 50vh;
   overflow-y: auto;
 }
-
+.draggable {
+  width: 100%;
+}
 .bartext {
   text-align: justify;
   width: 100%;
