@@ -53,6 +53,14 @@
 }
 
 .list--dense .list__tile label {
-    font-size: 12px;
+    font-size: small !important;
+}
+
+label {
+    font-size: small !important;
+}
+
+.expansion-panel__header {
+  padding: 5px;
 }
 </style>

@@ -2,6 +2,7 @@ const mapLayers = [{
     layertype: 'gee-layer',
     name: 'Classificatie',
     icon: 'satellite',
+    opacity: 100,
     active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
     data: [],
@@ -11,6 +12,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Kadaster',
     icon: 'home',
+    opacity: 100,
     active: false,
     data: [{
       id: 'Kadaster',
@@ -25,12 +27,14 @@ const mapLayers = [{
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       }
     }]
+
   },
 
   {
     layertype: 'mapbox-layer',
     name: 'Stroombanen',
     icon: 'home',
+    opacity: 100,
     active: true,
     data: [{
       id: 'Streamlines',
@@ -51,6 +55,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'home',
+    opacity: 100,
     active: true,
     type: "group",
     data: [{
@@ -126,6 +131,7 @@ const mapLayers = [{
     layertype: 'gee-layer',
     name: 'Vegetatie (NDVI)',
     icon: 'satellite',
+    opacity: 100,
     active: false,
     dataset: 'ndvi', // important! this argument is needed to call the service
     data: [],
@@ -135,6 +141,7 @@ const mapLayers = [{
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
     icon: 'satellite',
+    opacity: 100,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
     data: [],

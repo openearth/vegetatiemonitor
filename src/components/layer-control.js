@@ -63,19 +63,40 @@ export default {
       if (_.isNil(this.map)) {
         return;
       }
-      // Function to toggle the visibility of the layers.
+      // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
 
       _.each(this.layers, (layer) => {
         _.each(layer.data, (sublayer) => {
           if (layer.active && (layer.layertype == "mapbox-layer" ||
               (layer.layertype == "gee-layer" && sublayer.date === this.firstImage))) {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                this.setOpacity(layer, sublayer);
           } else {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis[0])
+            this.map.setLayoutProperty(sublayer.id, "visibility", vis[0]);
           }
         })
       });
+    },
+    setOpacity(layer, sublayer) {
+      if (layer.opacity) {
+        try {
+          var opacity = Math.max(layer.opacity * 0.01, 0.01);
+          var property;
+          if (layer.layertype == "gee-layer") {
+            property = "raster-opacity";
+          } else if (sublayer.type == "fill") {
+            property = "fill-opacity";
+          } else if (sublayer.type == "line") {
+            property = "line-opacity";
+          }
+          if (property) {
+            this.map.setPaintProperty(sublayer.id, property, opacity);  
+          }
+        } catch(err) {
+          console.log("error setting opacity: " + opacity + "(" + err.message + ")");
+        }
+      }
     }
   },
   components: {
