@@ -16,8 +16,12 @@
             </v-list-tile>
           </v-list>
         </div>
-        <div class="ma-0 pl-3 pr-5">
-          <v-slider hide-details class="pa-0 ma-0" title="opacity:" label="opacity" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
+        <div class="ma-0 pl-5 pr-5">
+          <v-slider hide-details class="pa-0 ma-0" title="opacity:" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
+          <div class="mt-1" v-if="layer.layertype == 'gee-layer'">
+            <div class="color-ramp" :style="colorRamp(layer)"></div>
+            <div class='range-ramp'>{{layer.range}}</div>
+          </div> 
           <!-- <div :style="layer.css" class='bar' v-if="layer.css"></div>
           <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
           <div class='information' v-html="layer.info">{{layer.info}} </div> -->
@@ -39,13 +43,16 @@
 .draggable {
   width: 100%;
 }
-.bartext {
+.color-ramp {
+  height: 10px;
+}
+.range-ramp {
   text-align: justify;
+  text-align-last: justify;
   width: 100%;
-  clear: left;
 }
 .bar {
-  width: 100%;
+  display: inline-block ;
   height: 10px;
 }
 

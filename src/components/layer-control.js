@@ -97,6 +97,11 @@ export default {
           console.log("error setting opacity: " + opacity + "(" + err.message + ")");
         }
       }
+    },
+    colorRamp(layer) {
+      if (layer.colors) {
+        return "background: linear-gradient(to right, " + layer.colors.join() + ");"  
+      }
     }
   },
   components: {

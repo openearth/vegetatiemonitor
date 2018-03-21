@@ -130,17 +130,21 @@ const mapLayers = [{
   {
     layertype: 'gee-layer',
     name: 'Vegetatie (NDVI)',
-    icon: 'static/images/legend-rgb.png',
+    icon: 'static/images/legend-ndvi.png',
     opacity: 100,
     active: false,
     dataset: 'ndvi', // important! this argument is needed to call the service
+    colors: ['#000000', '#252525', '#525252', '#737373', '#969696', '#bdbdbd',
+             '#d9d9d9', '#f0f0f0', '#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0',
+             '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
+    range: '-1 1',
     data: [],
     vis: {}
   },
   {
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
-    icon: 'static/images/legend-ndvi.png',
+    icon: 'static/images/legend-rgb.png',
     opacity: 100,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
