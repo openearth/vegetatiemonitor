@@ -76,9 +76,9 @@ export default {
                     this.map.setPaintProperty(sublayer.id, "raster-opacity", layer.opacity / 100); 
                   }
                   else {
-                    //TODO: fix this ?
+                    //TODO: fix this, see also https://github.com/mapbox/mapbox-gl-js/issues/4090
                     console.log("vector layer opacity not working: " + sublayer.id);
-                    this.map.setPaintProperty(sublayer.id, "opacity", layer.opacity / 100);    
+                    this.map.setPaintProperty(sublayer.id, "fill-opacity", layer.opacity / 100);    
                   }
                 }
 
