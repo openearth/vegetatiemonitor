@@ -1,7 +1,7 @@
 <template>
 <div class="layer-control">
   <v-expansion-panel class="">
-    <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false">
+    <draggable :options="{handle:'.header'}" class="draggable" v-model="computedList" @start="drag=true" @end="drag=false">
       <v-expansion-panel-content v-for="layer in layers" :key="layer.id">
         <div class="header" slot="header">
           <v-list dense class="ma-0 pa-0" >
@@ -16,11 +16,11 @@
             </v-list-tile>
           </v-list>
         </div>
-        <div class="bar-wrapper">
-          <p>layer panel goes here...</p>
-          <div :style="layer.css" class='bar' v-if="layer.css"></div>
+        <div class="ma-0 pl-5 pr-5">
+          <v-slider hide-details class="pa-0 ma-0" title="opacity:" label="opacity" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
+          <!-- <div :style="layer.css" class='bar' v-if="layer.css"></div>
           <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
-          <div class='information' v-html="layer.info">{{layer.info}} </div>
+          <div class='information' v-html="layer.info">{{layer.info}} </div> -->
         </div>
       </v-expansion-panel-content>
     </draggable>
@@ -39,12 +39,17 @@
 .draggable {
   width: 100%;
 }
+.opacity {
+  margin-top: 0px !important; 
+  margin-left: 40px !important;
+  margin-bottom: 0px !important;
+  margin-right: 24px !important;
+}
 .bartext {
   text-align: justify;
   width: 100%;
   clear: left;
 }
-
 .bar {
   width: 100%;
   height: 10px;
@@ -59,13 +64,6 @@
   /* TODO: remove span trick? */
   margin-top: -1rem;
   text-align: left;
-}
-
-.bar-wrapper {
-  padding: 0 16px;
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
 }
 
 .legend .list__tile {

@@ -63,14 +63,25 @@ export default {
       if (_.isNil(this.map)) {
         return;
       }
-      // Function to toggle the visibility of the layers.
+      // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
 
       _.each(this.layers, (layer) => {
         _.each(layer.data, (sublayer) => {
           if (layer.active && (layer.layertype == "mapbox-layer" ||
               (layer.layertype == "gee-layer" && sublayer.date === this.firstImage))) {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                if (layer.opacity) {
+                  if (layer.layertype == "gee-layer") {
+                    this.map.setPaintProperty(sublayer.id, "raster-opacity", layer.opacity / 100); 
+                  }
+                  else {
+                    //TODO: fix this ?
+                    console.log("vector layer opacity not working: " + sublayer.id);
+                    this.map.setPaintProperty(sublayer.id, "opacity", layer.opacity / 100);    
+                  }
+                }
+
           } else {
             this.map.setLayoutProperty(sublayer.id, "visibility", vis[0])
           }
