@@ -1,23 +1,15 @@
 <template>
 <v-app id="inspire">
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
-    <v-toolbar flat>
-      <v-list>
-        <v-list-tile>
-          <v-list-tile-title class="title">
-            Layers
-          </v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
-  <v-toolbar xs6 color="indigo" dark fixed app>
+  <v-toolbar xs6 color="brown lighten-4" fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
-    <!-- <img src="static/images/deltares.png">
-    <img src="static/images/Rijkswaterstaat.png"> -->
+    <v-spacer></v-spacer>
+    <img class="logos mr-2" src="static/images/deltares.png">
+    <img class="logos mr-2" src="static/images/Rijkswaterstaat.png">
   </v-toolbar>
   <v-content>
     <div id="map">
@@ -53,14 +45,35 @@
 }
 
 .list--dense .list__tile label {
-    font-size: small !important;
+  font-size: small !important;
 }
 
 label {
-    font-size: small !important;
+  font-size: small !important;
 }
 
 .expansion-panel__header {
-  padding: 5px;
+  padding: 0px;
+}
+
+list__tile {
+  padding: 0px;
+}
+
+.logos {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.input-group__selections__comma {
+  font-size: small !important;
+}
+
+input{
+  font-size: small !important;
+}
+
+.list__tile__title {
+  font-size: small !important;
 }
 </style>
