@@ -34,6 +34,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Stroombanen',
     icon: 'home',
+    opacity: 100,
     active: true,
     data: [{
       id: 'Streamlines',
@@ -54,6 +55,7 @@ const mapLayers = [{
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'home',
+    opacity: 100,
     active: true,
     type: "group",
     data: [{
