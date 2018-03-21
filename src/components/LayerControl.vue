@@ -17,16 +17,23 @@
           </v-list>
         </div>
         <div class="ma-0 pl-5 pr-5">
-          <v-slider hide-details class="pa-0 ma-0" title="opacity:" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
-          <div class="mt-2" v-if="layer.layertype == 'gee-layer'">
-            <div class="color-ramp" :style="colorRamp(layer)"></div>
-            <div class='range-ramp'>{{layer.range}}</div>
+          <v-slider v-if="layer.opacity" hide-details class="pa-0 ma-0" title="transparantie" :min="1" :max="100" v-model="layer.opacity"></v-slider>
+          <div v-if="layer.legend">
+            <template v-if="layer.legend.range">
+              <div v-if="layer.legend.colors" class="color-ramp" :style="colorRamp(layer.legend)" ></div>
+              <div class='range-ramp'>{{layer.legend.range}}</div>
+            </template>
+            <template v-if="layer.legend.colors && layer.legend.labels">
+              <div v-for="i in layer.legend.colors.length" :key="i" class="color-label"  >
+                <span class="colored-span" :style="'background-color: ' + layer.legend.colors[i-1]"></span>
+                <label class="ma-1" >{{layer.legend.labels[i-1]}}</label>
+              </div>
+            </template>
           </div> 
         </div>
       </v-expansion-panel-content>
     </draggable>
   </v-expansion-panel>
-
 </div>
 </template>
 
@@ -47,5 +54,14 @@
   text-align: justify;
   text-align-last: justify;
   width: 100%;
+}
+.color-label {
+  display: flex;
+}
+.colored-span {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  margin: 4px;
 }
 </style>

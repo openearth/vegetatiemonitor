@@ -98,9 +98,9 @@ export default {
         }
       }
     },
-    colorRamp(layer) {
-      if (layer.colors) {
-        return "background: linear-gradient(to right, " + layer.colors.join() + ");"  
+    colorRamp(legend) {
+      if (legend && legend.colors) {
+        return "background: linear-gradient(to right, " + legend.colors.join() + ");"  
       }
     }
   },
