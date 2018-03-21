@@ -16,8 +16,8 @@
             </v-list-tile>
           </v-list>
         </div>
-        <div class="ma-0 pl-5 pr-5">
-          <v-slider hide-details class="pa-0 ma-0" title="opacity:" label="opacity" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
+        <div class="ma-0 pl-3 pr-5">
+          <v-slider hide-details class="pa-0 ma-0" title="opacity:" label="opacity" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
           <!-- <div :style="layer.css" class='bar' v-if="layer.css"></div>
           <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
           <div class='information' v-html="layer.info">{{layer.info}} </div> -->
@@ -38,12 +38,6 @@
 }
 .draggable {
   width: 100%;
-}
-.opacity {
-  margin-top: 0px !important; 
-  margin-left: 40px !important;
-  margin-bottom: 0px !important;
-  margin-right: 24px !important;
 }
 .bartext {
   text-align: justify;
@@ -66,7 +60,4 @@
   text-align: left;
 }
 
-.legend .list__tile {
-  height: 200px;
-}
 </style>
