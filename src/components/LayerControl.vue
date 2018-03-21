@@ -18,13 +18,10 @@
         </div>
         <div class="ma-0 pl-5 pr-5">
           <v-slider hide-details class="pa-0 ma-0" title="opacity:" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
-          <div class="mt-1" v-if="layer.layertype == 'gee-layer'">
+          <div class="mt-2" v-if="layer.layertype == 'gee-layer'">
             <div class="color-ramp" :style="colorRamp(layer)"></div>
             <div class='range-ramp'>{{layer.range}}</div>
           </div> 
-          <!-- <div :style="layer.css" class='bar' v-if="layer.css"></div>
-          <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
-          <div class='information' v-html="layer.info">{{layer.info}} </div> -->
         </div>
       </v-expansion-panel-content>
     </draggable>
@@ -51,20 +48,4 @@
   text-align-last: justify;
   width: 100%;
 }
-.bar {
-  display: inline-block ;
-  height: 10px;
-}
-
-.barspan {
-  width: 100%;
-  display: inline-block;
-}
-
-.information {
-  /* TODO: remove span trick? */
-  margin-top: -1rem;
-  text-align: left;
-}
-
 </style>
