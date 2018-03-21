@@ -56,8 +56,8 @@ label {
   padding: 0px;
 }
 
-.toolbar {
-  padding: 0px !important;
+list__tile {
+  padding: 0px;
 }
 
 .logos {

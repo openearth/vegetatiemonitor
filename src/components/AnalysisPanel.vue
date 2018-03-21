@@ -10,7 +10,7 @@
       <v-list-tile dense pt-0 id='selection'>
         <v-layout row wrap>
           <v-flex xs8 sm5>
-            <v-menu font-size="12px" ref="beginMenu" lazy :close-on-content-click="false" v-model="beginMenu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="beginDate">
+            <v-menu ref="beginMenu" lazy :close-on-content-click="false" v-model="beginMenu" transition="scale-transition" offset-y full-width :nudge-right="40" min-width="290px" :return-value.sync="beginDate">
               <v-text-field slot="activator" label="Start date" v-model="beginDate" prepend-icon="event" readonly></v-text-field>
               <v-date-picker v-model="beginDate" no-title scrollable>
                 <v-btn flat color="primary" @click="beginMenu = false">Cancel</v-btn>
@@ -48,7 +48,7 @@
             <v-select :disabled="radioButtons == 'radio-composite'" v-model="firstImage" :items="Image1" label="Image 1" prepend-icon="insert_photo" single-line></v-select>
           </v-flex>
           <v-flex xs8 sm5 offset-xs1>
-            <v-select font-size=smaller disabled v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
+            <v-select smaller disabled v-model="secondImage" :items="Image2" label="Image 2" prepend-icon="insert_photo" single-line></v-select>
           </v-flex>
         </v-layout>
       </v-list-tile>

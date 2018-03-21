@@ -19,6 +19,10 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map;
+    this.map.addControl(new mapboxgl.ScaleControl({
+    maxWidth: 80,
+    unit: 'imperial'
+}));
     // This is needed to remove duplicate layers (happens for the composite layers)
     bus.$on('remove-data-layer', (data) => {
 
