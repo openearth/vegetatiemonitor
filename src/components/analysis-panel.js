@@ -6,6 +6,7 @@ import {
 import {
   getGeeComposite
 } from './get-gee-layers.js'
+import moment from 'moment';
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 
@@ -112,7 +113,9 @@ export default {
           bus.$emit('remove-data-layer', ({
             'dataset': dataset
           }))
-          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var menulayer = _.find(this.layers, {
+            'dataset': dataset
+          })
           var vis = menulayer.vis
           getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
         })
@@ -126,9 +129,10 @@ export default {
           'date': this.firstImage
         })
         if (checkDate == undefined) {
-          var menulayer = _.find(this.layers, {'dataset': dataset})
+          var menulayer = _.find(this.layers, {
+            'dataset': dataset
+          })
           var vis = menulayer.vis
-          var begin = Date(this.firstImage)
           getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
         }
       })
@@ -156,11 +160,19 @@ export default {
             return res.json();
           })
           .then((response) => {
-            this.Image1 = response['image_times']
-            this.Image2 = response['image_times']
+            // this.Image1 = response['image_times']
+            // this.Image2 = response['image_times']
+            // _.each(response['image_times'], (image_time, i) => {
+            //   this.firstImages[image_time] = response['image_ids'][i]
+            // })
+            var imagesList = []
             _.each(response['image_times'], (image_time, i) => {
+              console.log(response['image_ids'][i])
+              imagesList.push(moment(response['image_times'][i]).format('YYYY-MM-DD'))
               this.firstImages[image_time] = response['image_ids'][i]
             })
+            this.Image1 = imagesList
+            this.Image2 = imagesList
           })
       })
     }
