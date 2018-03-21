@@ -11,7 +11,7 @@
               </v-list-tile-action>
               <v-list-tile-title>{{layer.name}}</v-list-tile-title>
               <v-list-tile-avatar>
-                <v-icon>{{layer.icon}}</v-icon>
+                <img :src="layer.icon"/>
               </v-list-tile-avatar>
             </v-list-tile>
           </v-list>

@@ -63,4 +63,7 @@ label {
 .expansion-panel__header {
   padding: 5px;
 }
+.list__tile__avatar {
+  min-width: 40px;
+}
 </style>
