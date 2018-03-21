@@ -1,17 +1,4 @@
-const mapLayers = [{
-    layertype: 'gee-layer',
-    name: 'Classificatie',
-    icon: 'static/images/legend-classified.png',
-    opacity: 100,
-    active: false,
-    dataset: 'landuse', // important! this argument is needed to call the service
-    legend: {
-      colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36' ],
-      labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel'],
-    },
-    data: [],
-    vis: {}
-  },
+const mapLayers = [
   {
     layertype: 'mapbox-layer',
     name: 'Kadaster',
@@ -55,6 +42,21 @@ const mapLayers = [{
     }]
   },
 
+  {
+    layertype: 'gee-layer',
+    name: 'Classificatie',
+    icon: 'static/images/legend-classified.png',
+    opacity: 100,
+    active: false,
+    dataset: 'landuse', // important! this argument is needed to call the service
+    legend: {
+      colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36' ],
+      labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel'],
+    },
+    data: [],
+    vis: {}
+  },
+  
   {
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
