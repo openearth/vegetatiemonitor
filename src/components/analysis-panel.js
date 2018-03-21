@@ -128,6 +128,7 @@ export default {
         if (checkDate == undefined) {
           var menulayer = _.find(this.layers, {'dataset': dataset})
           var vis = menulayer.vis
+          var begin = Date(this.firstImage)
           getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
         }
       })
