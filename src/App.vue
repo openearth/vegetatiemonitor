@@ -59,16 +59,16 @@ label {
 }
 
 .expansion-panel__header {
-  padding: 0px;
+  padding: 0px !important;
 }
 
 list__tile {
-  padding: 0px;
+  padding: 0px !important;
 }
 
 .logos {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
 .input-group__selections__comma {
@@ -83,6 +83,6 @@ input{
   font-size: small !important;
 }
 .list__tile__avatar {
-  min-width: 40px;
+  min-width: 40px !important;
 }
 </style>
