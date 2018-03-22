@@ -1,16 +1,11 @@
 <template>
 <div class="layer-control">
-  <v-toolbar class="toolbar" flat color="grey lighten-4">
-    <v-toolbar-title>
-      Kaartlagen
-    </v-toolbar-title>
-  </v-toolbar>
-  <v-expansion-panel class="">
-    <draggable :options="{handle:'.header'}" class="draggable" v-model="computedList" @start="drag=true" @end="drag=false">
-      <v-expansion-panel-content v-for="layer in layers" :key="layer.id">
+  <v-expansion-panel class="panel">
+    <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.header__icon'}">
+      <v-expansion-panel-content v-for="layer in layers" :key="layer.id" focusable expand-icon="more_vert">
         <div class="header" slot="header">
-          <v-list dense class="ma-0 pa-0">
-            <v-list-tile class="ma-0 pa-0">
+          <v-list dense class="ma-1 pa-0">
+            <v-list-tile class="ma-0 pa-0" v-on:click.stop=";">
               <v-list-tile-action>
                 <v-switch v-model="layer.active"></v-switch>
               </v-list-tile-action>

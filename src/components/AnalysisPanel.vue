@@ -26,7 +26,6 @@
                 <v-btn flat color="primary" @click="$refs.endMenu.save(endDate)">OK</v-btn>
               </v-date-picker>
             </v-menu>
-            </v-dialog>
           </v-flex>
         </v-layout>
       </v-list-tile>
