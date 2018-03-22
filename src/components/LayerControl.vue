@@ -2,7 +2,7 @@
 <div class="layer-control">
   <v-toolbar class="toolbar" flat color="brown lighten-4">
     <v-toolbar-title>
-      Layers
+      Kaartlagen
     </v-toolbar-title>
   </v-toolbar>
   <v-expansion-panel class="">

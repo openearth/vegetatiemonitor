@@ -3,7 +3,7 @@
   <v-expansion-panel-content>
     <v-toolbar class="toolbar " flat slot="header" color="brown lighten-4">
       <v-toolbar-title>
-        Analysis
+        Analyse
       </v-toolbar-title>
     </v-toolbar>
     <v-list dense pt-0 three-line>
