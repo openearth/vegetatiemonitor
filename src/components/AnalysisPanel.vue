@@ -1,7 +1,7 @@
 <template>
 <v-expansion-panel class="analysis-panel">
   <v-expansion-panel-content>
-    <v-toolbar class="toolbar " flat slot="header" color="brown lighten-4">
+    <v-toolbar class="toolbar " flat slot="header" >
       <v-toolbar-title>
         Analyse
       </v-toolbar-title>
@@ -26,7 +26,6 @@
                 <v-btn flat color="primary" @click="$refs.endMenu.save(endDate)">OK</v-btn>
               </v-date-picker>
             </v-menu>
-            </v-dialog>
           </v-flex>
         </v-layout>
       </v-list-tile>
