@@ -27,7 +27,6 @@
 <style>
 @import 'mapbox-gl/dist/mapbox-gl.css';
 @import 'material-design-icons/iconfont/material-icons.css';
-@import "vue-material-design-icons/styles.css";
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
