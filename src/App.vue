@@ -1,6 +1,11 @@
 <template>
 <v-app id="inspire">
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
+    <v-toolbar class="toolbar" flat >
+      <v-toolbar-title>
+        Kaartlagen
+      </v-toolbar-title>
+    </v-toolbar>
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
@@ -54,16 +59,16 @@ label {
 }
 
 .expansion-panel__header {
-  padding: 0px;
+  padding: 0px !important;
 }
 
 list__tile {
-  padding: 0px;
+  padding: 0px !important;
 }
 
 .logos {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
 .input-group__selections__comma {
@@ -78,6 +83,6 @@ input{
   font-size: small !important;
 }
 .list__tile__avatar {
-  min-width: 40px;
+  min-width: 40px !important;
 }
 </style>
