@@ -1,6 +1,15 @@
 <template>
 <v-app id="inspire">
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
+    <v-toolbar flat>
+      <v-list>
+        <v-list-tile>
+          <v-list-tile-title class="title">
+            Kaartlagen
+          </v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-toolbar>
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
@@ -53,7 +62,10 @@ label {
 }
 
 .expansion-panel__header {
-  padding: 0px;
+  padding-top: 4px;
+  padding-right: 4px;
+  padding-bottom: 4px;
+  padding-left: 4px;
 }
 
 list__tile {

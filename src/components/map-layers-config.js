@@ -1,13 +1,4 @@
-const mapLayers = [{
-    layertype: 'gee-layer',
-    name: 'Classificatie',
-    icon: 'static/images/legend-classified.png',
-    opacity: 100,
-    active: false,
-    dataset: 'landuse', // important! this argument is needed to call the service
-    data: [],
-    vis: {}
-  },
+const mapLayers = [
   {
     layertype: 'mapbox-layer',
     name: 'Kadaster',
@@ -52,12 +43,31 @@ const mapLayers = [{
   },
 
   {
+    layertype: 'gee-layer',
+    name: 'Classificatie',
+    icon: 'static/images/legend-classified.png',
+    opacity: 100,
+    active: false,
+    dataset: 'landuse', // important! this argument is needed to call the service
+    legend: {
+      colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36' ],
+      labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel'],
+    },
+    data: [],
+    vis: {}
+  },
+  
+  {
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'static/images/legend-legger.png',
     opacity: 100,
     active: true,
     type: "group",
+    legend: {
+      colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36', '#ffec80', '#f2d218', '#d9bb16' ],
+      labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel', 'mengklasse 90/10', 'mengklasse 70/30', 'mengklasse 50/50'],
+    },
     data: [{
         id: 'Vegetatielegger',
         type: 'fill',
@@ -134,10 +144,12 @@ const mapLayers = [{
     opacity: 100,
     active: false,
     dataset: 'ndvi', // important! this argument is needed to call the service
-    colors: ['#000000', '#252525', '#525252', '#737373', '#969696', '#bdbdbd',
-             '#d9d9d9', '#f0f0f0', '#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0',
-             '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
-    range: '-1 1',
+    legend: {
+      colors: ['#000000', '#252525', '#525252', '#737373', '#969696', '#bdbdbd',
+               '#d9d9d9', '#f0f0f0', '#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0',
+               '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
+      range: '-1 1',
+    },
     data: [],
     vis: {}
   },
