@@ -4,12 +4,12 @@
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
-  <v-toolbar xs6 color="brown lighten-4" fixed app>
+  <v-toolbar xs6 color="grey lighten-4" fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
-    <img class="logos mr-2" src="static/images/deltares.png">
-    <img class="logos mr-2" src="static/images/Rijkswaterstaat.png">
+    <img class="logos mr-2" src="static/images/deltares.svg">
+    <img class="logos mr-2" src="static/images/Rijkswaterstaat.svg">
   </v-toolbar>
   <v-content>
     <div id="map">

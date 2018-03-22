@@ -11,7 +11,7 @@ import moment from 'moment';
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 
 // TODO: Fix this by looping over datasets in this.layers. This is an ugly fix
-var datasets = ["satellite", "ndvi", "landuse"]
+var datasets = ["satellite", "ndvi", "landuse", "landuse-vs-legger"]
 
 export default {
   name: 'layer-control',

@@ -1,6 +1,6 @@
 <template>
 <div class="layer-control">
-  <v-toolbar class="toolbar" flat color="brown lighten-4">
+  <v-toolbar class="toolbar" flat color="grey lighten-4">
     <v-toolbar-title>
       Kaartlagen
     </v-toolbar-title>
