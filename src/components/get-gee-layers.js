@@ -1,14 +1,15 @@
 import {
   bus
 } from '@/event-bus.js';
+import moment from 'moment';
 
 var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 
 function getGeeComposite(map, dataset, dateBegin, region, vis, dateEnd = null) {
   var maplayer_json = {
-    id: dataset + '_composite',
+    id: dataset + '_' + dateBegin,
     type: "raster",
-    date: 'composite',
+    date: dateBegin,
     source: {
       type: "raster",
       tiles: [],
@@ -16,12 +17,14 @@ function getGeeComposite(map, dataset, dateBegin, region, vis, dateEnd = null) {
     }
   }
   var json_body = {
-    "dateBegin": dateBegin,
+    "dateBegin": moment(dateBegin).format('YYYY-MM-DD'),
     "region": region,
     "vis": vis
   }
   if (dateEnd) {
     json_body['dateEnd'] = dateEnd
+    maplayer_json['id'] = dataset + '_composite'
+    maplayer_json['date'] = 'composite'
   }
   fetch(SERVER_URL + '/map/' + dataset + '/', {
       method: "POST",

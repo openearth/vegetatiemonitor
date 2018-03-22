@@ -19,7 +19,10 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map;
-
+    this.map.addControl(new mapboxgl.ScaleControl({
+    maxWidth: 80,
+    unit: 'imperial'
+}));
     // This is needed to remove duplicate layers (happens for the composite layers)
     bus.$on('remove-data-layer', (data) => {
 
@@ -27,7 +30,7 @@ export default {
         'dataset': data['dataset']
       })
       _.each(menulayer['data'], (datalayer, i) => {
-        if (datalayer['id'] === data['dataset'] + '_composite') {
+        if (datalayer != undefined && datalayer['id'] === data['dataset'] + '_composite') {
           menulayer['data'].splice(i, 1)
           this.map.removeLayer(datalayer['id'])
           this.map.removeSource(datalayer['id'])
