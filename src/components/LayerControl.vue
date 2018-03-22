@@ -1,10 +1,5 @@
 <template>
 <div class="layer-control">
-  <v-toolbar class="toolbar" flat >
-    <v-toolbar-title>
-      Kaartlagen
-    </v-toolbar-title>
-  </v-toolbar>
   <v-expansion-panel class="panel">
     <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.header__icon'}">
       <v-expansion-panel-content v-for="layer in layers" :key="layer.id" focusable expand-icon="more_vert">

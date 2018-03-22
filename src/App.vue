@@ -1,6 +1,11 @@
 <template>
 <v-app id="inspire">
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
+    <v-toolbar class="toolbar" flat >
+      <v-toolbar-title>
+        Kaartlagen
+      </v-toolbar-title>
+    </v-toolbar>
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
