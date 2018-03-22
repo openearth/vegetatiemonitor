@@ -44,6 +44,21 @@ const mapLayers = [
 
   {
     layertype: 'gee-layer',
+    name: 'Classificatie vs Legger',
+    icon: 'static/images/legend-classified.png',
+    opacity: 100,
+    active: false,
+    dataset: 'landuse-vs-legger', 
+    legend: {
+      colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
+      range: '-5 5',
+    },
+    data: [],
+    vis: {}
+  },
+  
+  {
+    layertype: 'gee-layer',
     name: 'Classificatie',
     icon: 'static/images/legend-classified.png',
     opacity: 100,

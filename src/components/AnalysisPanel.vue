@@ -1,7 +1,7 @@
 <template>
 <v-expansion-panel class="analysis-panel">
   <v-expansion-panel-content>
-    <v-toolbar class="toolbar " flat slot="header" >
+    <v-toolbar class="toolbar " flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
         Analyse
       </v-toolbar-title>
