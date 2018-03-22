@@ -20,6 +20,7 @@
     "moment": "^2.21.0",
     "update": "^0.7.4",
     "vue": "^2.5.2",
+    "vue-material-design-icons": "^1.2.1",
     "vue2mapbox-gl": "^0.3.1",
     "vuedraggable": "^2.16.0",
     "vuetify": "^1.0.10"

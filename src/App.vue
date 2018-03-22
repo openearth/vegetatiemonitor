@@ -4,7 +4,7 @@
     <layer-control :layers="layers" :map="map"></layer-control>
     <analysis-panel :layers="layers" :map="map"></analysis-panel>
   </v-navigation-drawer>
-  <v-toolbar xs6 color="brown lighten-4" fixed app>
+  <v-toolbar xs6 fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
@@ -27,6 +27,8 @@
 <style>
 @import 'mapbox-gl/dist/mapbox-gl.css';
 @import 'material-design-icons/iconfont/material-icons.css';
+@import "vue-material-design-icons/styles.css";
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
@@ -53,10 +55,7 @@ label {
 }
 
 .expansion-panel__header {
-  padding-top: 4px;
-  padding-right: 4px;
-  padding-bottom: 4px;
-  padding-left: 4px;
+  padding: 0px;
 }
 
 list__tile {
