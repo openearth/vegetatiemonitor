@@ -5,7 +5,7 @@
       <v-list>
         <v-list-tile>
           <v-list-tile-title class="title">
-            Layers
+            Kaartlagen
           </v-list-tile-title>
         </v-list-tile>
       </v-list>
@@ -61,8 +61,11 @@ label {
 }
 
 .expansion-panel__header {
-  padding: 5px;
-}
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    }
 .list__tile__avatar {
   min-width: 40px;
 }
