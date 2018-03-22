@@ -1,12 +1,17 @@
 <template>
 <div class="layer-control">
+  <v-toolbar class="toolbar" flat color="brown lighten-4">
+    <v-toolbar-title>
+      Layers
+    </v-toolbar-title>
+  </v-toolbar>
   <v-expansion-panel class="">
     <draggable :options="{handle:'.header'}" class="draggable" v-model="computedList" @start="drag=true" @end="drag=false">
       <v-expansion-panel-content v-for="layer in layers" :key="layer.id">
         <div class="header" slot="header">
-          <v-list dense class="ma-0 pa-0" >
-            <v-list-tile class="ma-0 pa-0"> 
-              <v-list-tile-action >
+          <v-list dense class="ma-0 pa-0">
+            <v-list-tile class="ma-0 pa-0">
+              <v-list-tile-action>
                 <v-switch v-model="layer.active"></v-switch>
               </v-list-tile-action>
               <v-list-tile-title>{{layer.name}}</v-list-tile-title>
