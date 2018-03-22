@@ -76,4 +76,7 @@ input{
 .list__tile__title {
   font-size: small !important;
 }
+.list__tile__avatar {
+  min-width: 40px;
+}
 </style>

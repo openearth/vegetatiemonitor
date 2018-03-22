@@ -16,16 +16,17 @@
               </v-list-tile-action>
               <v-list-tile-title>{{layer.name}}</v-list-tile-title>
               <v-list-tile-avatar>
-                <v-icon>{{layer.icon}}</v-icon>
+                <img :src="layer.icon"/>
               </v-list-tile-avatar>
             </v-list-tile>
           </v-list>
         </div>
-        <div class="ma-0 pl-3 pr-5">
-          <v-slider hide-details class="pa-0 ma-0" title="opacity:" label="opacity" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
-          <!-- <div :style="layer.css" class='bar' v-if="layer.css"></div>
-          <div class='bartext'>{{layer.range}} <span class='barspan'> </span> </div>
-          <div class='information' v-html="layer.info">{{layer.info}} </div> -->
+        <div class="ma-0 pl-5 pr-5">
+          <v-slider hide-details class="pa-0 ma-0" title="opacity:" :min="1" :max="100" v-model="layer.opacity" v-if="layer.opacity"></v-slider>
+          <div class="mt-2" v-if="layer.layertype == 'gee-layer'">
+            <div class="color-ramp" :style="colorRamp(layer)"></div>
+            <div class='range-ramp'>{{layer.range}}</div>
+          </div> 
         </div>
       </v-expansion-panel-content>
     </draggable>
@@ -41,30 +42,15 @@
   max-height: 50vh;
   overflow-y: auto;
 }
-
 .draggable {
   width: 100%;
 }
-
-.bartext {
-  text-align: justify;
-  width: 100%;
-  clear: left;
-}
-
-.bar {
-  width: 100%;
+.color-ramp {
   height: 10px;
 }
-
-.barspan {
+.range-ramp {
+  text-align: justify;
+  text-align-last: justify;
   width: 100%;
-  display: inline-block;
-}
-
-.information {
-  /* TODO: remove span trick? */
-  margin-top: -1rem;
-  text-align: left;
 }
 </style>

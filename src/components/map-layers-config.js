@@ -1,7 +1,7 @@
 const mapLayers = [{
     layertype: 'gee-layer',
     name: 'Classificatie',
-    icon: 'satellite',
+    icon: 'static/images/legend-classified.png',
     opacity: 100,
     active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
@@ -11,7 +11,7 @@ const mapLayers = [{
   {
     layertype: 'mapbox-layer',
     name: 'Kadaster',
-    icon: 'home',
+    icon: 'static/images/legend-kadaster.png',
     opacity: 100,
     active: false,
     data: [{
@@ -33,7 +33,7 @@ const mapLayers = [{
   {
     layertype: 'mapbox-layer',
     name: 'Stroombanen',
-    icon: 'home',
+    icon: 'static/images/legend-stroombaan.png',
     opacity: 100,
     active: true,
     data: [{
@@ -54,7 +54,7 @@ const mapLayers = [{
   {
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
-    icon: 'home',
+    icon: 'static/images/legend-legger.png',
     opacity: 100,
     active: true,
     type: "group",
@@ -130,17 +130,21 @@ const mapLayers = [{
   {
     layertype: 'gee-layer',
     name: 'Vegetatie (NDVI)',
-    icon: 'satellite',
+    icon: 'static/images/legend-ndvi.png',
     opacity: 100,
     active: false,
     dataset: 'ndvi', // important! this argument is needed to call the service
+    colors: ['#000000', '#252525', '#525252', '#737373', '#969696', '#bdbdbd',
+             '#d9d9d9', '#f0f0f0', '#ffffff', '#f7fcf5', '#e5f5e0', '#c7e9c0',
+             '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
+    range: '-1 1',
     data: [],
     vis: {}
   },
   {
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
-    icon: 'satellite',
+    icon: 'static/images/legend-rgb.png',
     opacity: 100,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
