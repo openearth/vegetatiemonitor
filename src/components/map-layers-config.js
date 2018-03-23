@@ -65,7 +65,7 @@ const mapLayers = [
     active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
     legend: {
-      colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36' ],
+      colors: ['#bdeeff', '#ff817e', '#eefad4', '#debdde', '#73bf73', '#d97a36' ],
       labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel'],
     },
     data: [],
