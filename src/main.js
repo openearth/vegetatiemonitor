@@ -1,3 +1,6 @@
+// Required to work on MSIE 11
+import 'babel-polyfill'
+
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 
