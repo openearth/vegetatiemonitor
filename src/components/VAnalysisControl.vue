@@ -6,8 +6,11 @@
         Analyse
       </v-toolbar-title>
     </v-toolbar>
-    <v-card id="snalysistable">
-      <v-data-table :headers="headers" :items="items" hide-actions class="elevation-1 ">
+    <v-card id="analysistable">
+        <v-btn v-on:click.native="closeSelectMode()" v-if="selectMode" outline color="indigo">Verwijder selectie
+          <v-icon right>close</v-icon>
+        </v-btn>
+      <v-data-table :headers="headers" rows-per-page-text="" :rows-per-page-items="[]" :items="items" :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
           <td class="text-xs6-left">{{ props.item.name }}</td>
           <td class="text-xs6-left">{{ props.item.data }}</td>

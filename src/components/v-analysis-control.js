@@ -22,53 +22,94 @@ export default {
           text: 'Eigenschap',
           align: 'left',
           sortable: false,
-          value: 'name'
+          value: 'name',
+          width: '40%'
         },
         {
           text: 'Kwantiteit',
-          value: 'data'
+          value: 'data',
+          align: 'left',
+          sortable: false,
+          width: '60%'
         }
       ],
       items: [],
-      polygonSelected: false
+      polygonSelected: false,
+      pagination: {
+        rowsPerPage: 4
+      },
+      selectMode: false,
     }
   },
+  watch: {},
   mounted() {
     bus.$on('map-loaded', (event) => {
+      var canvas = document.getElementById("doughnut-chart")
+      canvas.style.display = 'none';
+      // When hovering over the kadaster polygons, change the data in the table
+      // and make an outline of the polygon underneath the mouse pointer.
       this.map.on('mousemove', (e) => {
+
         this.map.getCanvas().style.cursor = '';
         var features_list = this.map.queryRenderedFeatures(e.point);
-        this.map.setFilter("kadasterlijnen", ["==", "name", ""]);
-        // Check if Kadaster layer is on top
-        if (_.find(features_list[0], {
-            'id': 'Kadaster'
-          }) !== undefined) {
-          this.map.getCanvas().style.cursor = 'pointer';
-          this.map.setFilter("kadasterlijnen", ["==", "name", e.features[0].properties.name]);
+        this.map.setFilter("Kadasterlijnen", ["==", "ADMINPERCE", ""]);
 
-          var kadasterLayer = _.find(this.layers, {
-            'name': 'Kadaster'
-          })
-          this.items = []
-          _.each(kadasterLayer.tableproperties, (prop) => {
-            this.items.push({
-              value: false,
-              name: prop.name,
-              data: features_list[0].properties[prop.key]
+        var feature = _.find(features_list[0], {
+          'id': 'Kadaster'
+        })
+        // Check if Kadaster layer is on top
+        if (feature !== undefined) {
+          this.map.getCanvas().style.cursor = 'pointer';
+          this.map.setFilter("Kadasterlijnen", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
+          if (this.selectMode === false) {
+            this.items = []
+            var kadasterLayer = _.find(this.layers, {
+              'name': 'Kadaster'
             })
-          })
+
+            _.each(features_list, (hoverfeature) => {
+              if (hoverfeature.layer['id'] === 'Kadaster') {
+                _.each(kadasterLayer.tableproperties, (prop) => {
+                  this.items.push({
+                    value: false,
+                    name: prop.name,
+                    data: hoverfeature.properties[prop.key]
+                  })
+                })
+              }
+            })
+          }
         }
       })
 
-      var popup = new mapboxgl.Popup({})
+      // When clicked on a polygon, show this polygons data in the table and
+      // make a pie chart. When clicked again go back to the hover mode.
       this.map.on('click', (e) => {
-        popup.remove()
+
         var features_list = this.map.queryRenderedFeatures(e.point);
         var feature = _.find(features_list[0], {
           'id': 'Kadaster'
         })
+        this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
         if (feature !== undefined) {
-          new Chart(document.getElementById("doughnut-chart"), {
+          this.items = []
+          this.selectMode = true
+          canvas.style.display = 'block';
+          var kadasterLayer = _.find(this.layers, {
+            'name': 'Kadaster'
+          })
+          _.each(features_list, (hoverfeature) => {
+            if (hoverfeature.layer['id'] === 'Kadaster') {
+              _.each(kadasterLayer.tableproperties, (prop) => {
+                this.items.push({
+                  value: false,
+                  name: prop.name,
+                  data: hoverfeature.properties[prop.key]
+                })
+              })
+            }
+          })
+          new Chart(canvas, {
             type: 'doughnut',
             data: {
               labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
@@ -85,13 +126,18 @@ export default {
               }
             }
           });
-
-
         }
       })
     })
   },
-  watch: {},
-  methods: {},
-  components: {}
+  methods: {
+    closeSelectMode() {
+      this.selectMode = false
+      this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
+      var canvas = document.getElementById("doughnut-chart")
+      canvas.style.display = 'none';
+    }
+  },
+  components: {},
+  computed: {}
 };

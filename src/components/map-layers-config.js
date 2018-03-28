@@ -17,6 +17,40 @@ const mapLayers = [
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       }
+    },
+    {
+      id: 'Kadasterlijnen',
+      type: 'line',
+      source: {
+        type: 'vector',
+        url: 'mapbox://ellispenning.5tu1qjtk',
+      },
+      'source-layer': 'kadaster-vlakken-1i9erw',
+      "paint": {
+        "line-color": {
+          "type": "identity",
+          "property": "stroke"
+        },
+        "line-width": 4
+      },
+      "filter": ["==", "ADMINPERCE", ""]
+    },
+    {
+      id: 'KadasterSelect',
+      type: 'line',
+      source: {
+        type: 'vector',
+        url: 'mapbox://ellispenning.5tu1qjtk',
+      },
+      'source-layer': 'kadaster-vlakken-1i9erw',
+      "paint": {
+        "line-color": {
+          "type": "identity",
+          "property": "stroke"
+        },
+        "line-width": 4
+      },
+      "filter": ["==", "ADMINPERCE", ""]
     }],
     tableproperties: [
       {

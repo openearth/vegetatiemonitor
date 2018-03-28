@@ -1,6 +1,6 @@
 <template>
 <v-expansion-panel class="v-selection-panel">
-  <v-expansion-panel-content>
+  <v-expansion-panel-content value=true>
     <v-toolbar class="toolbar " flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
         Kaartlagen

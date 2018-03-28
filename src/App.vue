@@ -43,7 +43,7 @@
 #navdrawer {
   height: 100vh !important;
   max-height: inherit !important;
-  overflow-y: scroll !important;
+  overflow-y: auto !important;
 }
 
 .list--dense .list__tile label {
