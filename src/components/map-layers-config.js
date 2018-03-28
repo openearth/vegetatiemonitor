@@ -17,8 +17,25 @@ const mapLayers = [
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       }
-    }]
-
+    }],
+    tableproperties: [
+      {
+        name: 'Perceel nummer',
+        key: 'ADMINPERCE'
+      },
+      {
+        name: 'Gemeente',
+        key: 'GEMEENTE'
+      },
+      {
+        name: 'Gerechtigde',
+        key: 'GERECHTIGD'
+      },
+      {
+        name: 'Grootte',
+        key: 'GROOTTE'
+      },
+    ]
   },
 
   {
@@ -48,7 +65,7 @@ const mapLayers = [
     icon: 'static/images/legend-classified.png',
     opacity: 100,
     active: false,
-    dataset: 'landuse-vs-legger', 
+    dataset: 'landuse-vs-legger',
     legend: {
       colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
       range: '-5 5',
@@ -56,7 +73,7 @@ const mapLayers = [
     data: [],
     vis: {}
   },
-  
+
   {
     layertype: 'gee-layer',
     name: 'Classificatie',
@@ -71,7 +88,7 @@ const mapLayers = [
     data: [],
     vis: {}
   },
-  
+
   {
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',

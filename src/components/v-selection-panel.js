@@ -14,7 +14,7 @@ var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
 var datasets = ["satellite", "ndvi", "landuse", "landuse-vs-legger"]
 
 export default {
-  name: 'layer-control',
+  name: 'v-selection-panel',
   props: {
     layers: {
       type: Array,
@@ -160,14 +160,8 @@ export default {
             return res.json();
           })
           .then((response) => {
-            // this.Image1 = response['image_times']
-            // this.Image2 = response['image_times']
-            // _.each(response['image_times'], (image_time, i) => {
-            //   this.firstImages[image_time] = response['image_ids'][i]
-            // })
             var imagesList = []
             _.each(response['image_times'], (image_time, i) => {
-              console.log(response['image_ids'][i])
               imagesList.push(moment(response['image_times'][i]).format('YYYY-MM-DD'))
               this.firstImages[image_time] = response['image_ids'][i]
             })

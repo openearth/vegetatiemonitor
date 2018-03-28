@@ -1,13 +1,9 @@
 <template>
 <v-app id="inspire">
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
-    <v-toolbar class="toolbar" flat >
-      <v-toolbar-title>
-        Kaartlagen
-      </v-toolbar-title>
-    </v-toolbar>
-    <layer-control :layers="layers" :map="map"></layer-control>
-    <analysis-panel :layers="layers" :map="map"></analysis-panel>
+    <v-layer-control :layers="layers" :map="map"></v-layer-control>
+    <v-selection-panel :layers="layers" :map="map"></v-selection-panel>
+    <v-analysis-control :layers="layers" :map="map"></v-analysis-control>
   </v-navigation-drawer>
   <v-toolbar xs6 color="grey lighten-4" fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -45,9 +41,9 @@
 }
 
 #navdrawer {
-  height: inherit !important;
-  margin-top: 0px;
-  max-height: none !important;
+  height: 100vh !important;
+  max-height: inherit !important;
+  overflow-y: scroll !important;
 }
 
 .list--dense .list__tile label {
@@ -75,13 +71,14 @@ list__tile {
   font-size: small !important;
 }
 
-input{
+input {
   font-size: small !important;
 }
 
 .list__tile__title {
   font-size: small !important;
 }
+
 .list__tile__avatar {
   min-width: 40px !important;
 }
