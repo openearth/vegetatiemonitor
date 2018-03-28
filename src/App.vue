@@ -13,8 +13,8 @@
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
-    <img class="logos mr-2" src="static/images/deltares.svg">
-    <img class="logos mr-2" src="static/images/Rijkswaterstaat.svg">
+    <img class="logo1 mr-2" src="static/images/deltares.svg">
+    <img class="logo2 mr-2" src="static/images/Rijkswaterstaat.svg">
   </v-toolbar>
   <v-content>
     <div id="map">
@@ -66,9 +66,14 @@ list__tile {
   padding: 0px !important;
 }
 
-.logos {
-  max-width: 100% !important;
-  max-height: 100% !important;
+.logo1 {
+  height: 64px;
+  width: 138px;
+}
+
+.logo2 {
+  height: 64px;
+  width: 192px;
 }
 
 .input-group__selections__comma {
