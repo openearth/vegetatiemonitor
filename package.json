@@ -14,6 +14,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.5",
     "mapbox-gl": "^0.44.1",
     "material-icon": "^0.1.4",
