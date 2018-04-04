@@ -5,6 +5,40 @@ import {
 import mapboxgl from 'mapbox-gl';
 import Chart from 'chart.js'
 
+var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
+
+var colors = [{
+    type: '1',
+    name: 'Water',
+    color: '#bdeeff'
+  }, {
+    type: '2',
+    name: 'Verhard oppervlak',
+    color: '#ff817e',
+  }, {
+    type: '3',
+    name: 'Gras en Akker',
+    color: '#eefad4',
+  }, {
+    type: '4',
+    name: 'Riet en Ruigte',
+    color: '#debdde',
+  }, {
+    type: '5',
+    name: 'Bos',
+    color: '#73bf73',
+  }, {
+    type: '6',
+    name: 'Struweel',
+    color: '#d97a36',
+  },
+  {
+    type: '0',
+    name: '',
+    color: '#00000',
+  }
+]
+
 export default {
   name: 'v-analysis-control',
   props: {
@@ -18,6 +52,8 @@ export default {
   },
   data() {
     return {
+      piechart: null,
+      progressActive: false,
       headers: [{
           text: 'Eigenschap',
           align: 'left',
@@ -85,11 +121,17 @@ export default {
       // When clicked on a polygon, show this polygons data in the table and
       // make a pie chart. When clicked again go back to the hover mode.
       this.map.on('click', (e) => {
-
+        if (this.piechart !== null) {
+          this.piechart.destroy()
+        }
+        this.progressActive = true
+        canvas.style.display = 'none';
         var features_list = this.map.queryRenderedFeatures(e.point);
+
         var feature = _.find(features_list[0], {
           'id': 'Kadaster'
         })
+
         this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
         if (feature !== undefined) {
           this.items = []
@@ -109,33 +151,86 @@ export default {
               })
             }
           })
-          new Chart(canvas, {
-            type: 'doughnut',
-            data: {
-              labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
-              datasets: [{
-                label: "Population (millions)",
-                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
-                data: [2478, 5267, 734, 784, 433]
+          var json_body = {
+            "region": {
+              "type": "FeatureCollection",
+              "features": [{
+                "type": "Feature",
+                "geometry": features_list["0"].geometry,
+                "properties": {
+                  "id": 1
+                }
               }]
             },
-            options: {
-              title: {
-                display: true,
-                text: 'Predicted world population (millions) in 2050'
+            "scale": 100
+          }
+          var datatype = 'legger'
+          fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
+              method: "POST",
+              body: JSON.stringify(json_body),
+              mode: 'cors',
+              headers: {
+                'Content-Type': 'application/json'
               }
-            }
-          });
+            })
+            .then((res) => {
+              return res.json();
+            })
+            .then((chartData) => {
+              var labels = []
+              var pieData = []
+              var pieColors = []
+              var totalArea = 0
+
+              // two loops to use the total area in the second loop.
+              _.each(chartData[0].area_per_type, (d) => {
+                totalArea = totalArea + d.area
+              })
+              _.each(chartData[0].area_per_type, (d) => {
+                labels.push(_.find(colors, {
+                  'type': d.type
+                }).name)
+                pieData.push((d.area / totalArea * 100).toFixed(2))
+                pieColors.push(_.find(colors, {
+                  'type': d.type
+                }).color)
+              })
+              this.progressActive = false
+              this.makePieChart(canvas, labels, pieData, pieColors, totalArea)
+            })
         }
       })
     })
   },
   methods: {
+    // Create a pie chart with received data for vegetation classes.
+    makePieChart(canvas, labels, pieData, pieColors, totalArea) {
+      this.piechart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Vegetatie klassen",
+            backgroundColor: pieColors,
+            data: pieData
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Verdeling van vegetatieklassen binnen kadaster polygoon [%]'
+          }
+        }
+      });
+    },
+
     closeSelectMode() {
       this.selectMode = false
       this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
       var canvas = document.getElementById("doughnut-chart")
       canvas.style.display = 'none';
+      this.piechart.destroy()
+      this.piechart = null;
     }
   },
   components: {},
