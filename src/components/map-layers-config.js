@@ -1,3 +1,61 @@
+// see: http://forum.step.esa.int/t/list-of-band-combinations-for-sentinel-2 (posted by albert)
+const pseudoColors = [
+  {
+    name: 'Natural colors',
+    vis: {
+      bands: ['red', 'green', 'blue'],
+      min: 0.05,
+      max: [0.35, 0.35, 0.45],
+      gamma: 1.4 
+    }
+  },
+  {
+    name: 'False color infrared',
+    vis: {
+      bands: ['nir', 'red', 'green'],
+      min: 0.05,
+      max: 0.35,
+      gamma: 1.4 
+    }
+  },
+  {
+    name: 'False color urban',
+    vis: {
+      bands: ['swir2', 'swir', 'red'],
+      min: 0.05,
+      max: 0.35,
+      gamma: 1.4 
+    }
+  },
+  {
+    name: 'Agriculture',
+    vis: {
+      bands: ['swir', 'nir', 'blue'],
+      min: 0.05,
+      max: 0.35,
+      gamma: 1.4 
+    }
+  },
+  {
+    name: 'Healthy vegetation',
+    vis: {
+      bands: ['nir', 'swir', 'blue'],
+      min: 0.05,
+      max: 0.35,
+      gamma: 1.4 
+    }
+  },
+  {
+    name: 'Vegetation Analysis',
+    vis: {
+      bands: ['swir', 'nir', 'red'],
+      min: 0.05,
+      max: 0.35,
+      gamma: 1.4 
+    }
+  }
+]
+
 const mapLayers = [
   {
     layertype: 'mapbox-layer',
@@ -227,12 +285,8 @@ const mapLayers = [
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
     data: [],
-    vis: {
-      bands: ['red', 'green', 'blue'],
-      min: 0.05,
-      max: 0.35,
-      gamma: 2.0
-    }
+    vis: pseudoColors[0].vis,
+    visualisations: pseudoColors
   },
 ]
 

@@ -24,17 +24,18 @@
           </div>
           <div class="ma-0 pl-5 pr-5">
             <v-slider v-if="layer.opacity" hide-details class="pa-0 ma-0" title="transparantie" :min="1" :max="100" v-model="layer.opacity"></v-slider>
+            <v-select v-if="layer.visualisations" :items="layer.visualisations" item-text="name" item-value="name" v-model="falseColor" item></v-select>
             <div v-if="layer.legend">
               <template v-if="layer.legend.range">
               <div v-if="layer.legend.colors" class="color-ramp" :style="colorRamp(layer.legend)" ></div>
               <div class='range-ramp'>{{layer.legend.range}}</div>
-            </template>
+              </template>
               <template v-if="layer.legend.colors && layer.legend.labels">
               <div v-for="i in layer.legend.colors.length" :key="i" class="color-label"  >
                 <span class="colored-span" :style="'background-color: ' + layer.legend.colors[i-1]"></span>
                 <label class="ma-1" >{{layer.legend.labels[i-1]}}</label>
               </div>
-            </template>
+              </template>
             </div>
           </div>
         </v-expansion-panel-content>
@@ -42,7 +43,6 @@
     </v-expansion-panel>
   </v-expansion-panel-content>
 </v-expansion-panel>
-</div>
 </template>
 
 <script src="./v-layer-control.js"></script>
