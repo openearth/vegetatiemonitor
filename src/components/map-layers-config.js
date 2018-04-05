@@ -6,24 +6,24 @@ const mapLayers = [
     opacity: 100,
     active: false,
     data: [{
-      id: 'Kadaster',
-      type: 'fill',
-      source: {
-        type: 'vector',
-        url: 'mapbox://ellispenning.5tu1qjtk',
+      'id': 'Kadaster',
+      'type': 'fill',
+      'source': {
+        'type': 'vector',
+        'url': 'mapbox://ellispenning.5tu1qjtk',
       },
       'source-layer': 'kadaster-vlakken-1i9erw',
-      paint: {
+      'paint': {
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       }
     },
     {
-      id: 'Kadasterlijnen',
-      type: 'line',
-      source: {
-        type: 'vector',
-        url: 'mapbox://ellispenning.5tu1qjtk',
+      'id': 'Kadasterlijnen',
+      'type': 'line',
+      'source': {
+        'type': 'vector',
+        'url': 'mapbox://ellispenning.5tu1qjtk',
       },
       'source-layer': 'kadaster-vlakken-1i9erw',
       'paint': {
@@ -36,11 +36,11 @@ const mapLayers = [
       'filter': ['==', 'ADMINPERCE', '']
     },
     {
-      id: 'KadasterSelect',
-      type: 'line',
-      source: {
-        type: 'vector',
-        url: 'mapbox://ellispenning.5tu1qjtk',
+      'id': 'KadasterSelect',
+      'type': 'line',
+      'source': {
+        'type': 'vector',
+        'url': 'mapbox://ellispenning.5tu1qjtk',
       },
       'source-layer': 'kadaster-vlakken-1i9erw',
       'paint': {
@@ -79,14 +79,14 @@ const mapLayers = [
     opacity: 100,
     active: true,
     data: [{
-      id: 'Streamlines',
-      type: 'fill',
-      source: {
-        type: 'vector',
-        url: 'mapbox://ellispenning.4puwiyv9',
+      'id': 'Streamlines',
+      'type': 'fill',
+      'source': {
+        'type': 'vector',
+        'url': 'mapbox://ellispenning.4puwiyv9',
       },
       'source-layer': 'stroombaan-8ndp71',
-      paint: {
+      'paint': {
         'fill-color': 'rgba(51, 163, 255, 0.2)',
         'fill-outline-color': 'rgba(51, 163, 255, 1)'
       }
@@ -135,14 +135,14 @@ const mapLayers = [
       labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel', 'mengklasse 90/10', 'mengklasse 70/30', 'mengklasse 50/50'],
     },
     data: [{
-        id: 'Vegetatielegger',
-        type: 'fill',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q',
+        'id': 'Vegetatielegger',
+        'type': 'fill',
+        'source': {
+          'type': 'vector',
+          'url': 'mapbox://ellispenning.87a2u39q',
         },
         'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
+        'paint': {
           'fill-color': {
             'base': 1,
             'type': 'categorical',
@@ -190,14 +190,14 @@ const mapLayers = [
         },
       },
       {
-        id: 'Beheersgrenzen',
-        type: 'line',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.dbeqewih',
+        'id': 'Beheersgrenzen',
+        'type': 'line',
+        'source': {
+          'type': 'vector',
+          'url': 'mapbox://ellispenning.dbeqewih',
         },
         'source-layer': 'beheergrens-8l9whd',
-        paint: {
+        'paint': {
           'line-color': 'rgb(80,155,255)'
         }
       }
