@@ -16,6 +16,7 @@
     <div id="map">
       <v-mapbox access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA" map-style="mapbox://styles/mapbox/light-v9" :center="[5.673272, 52.079502]" :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5" id="map" ref="map">
         <v-map-layers></v-map-layers>
+        <v-mapbox-geocoder></v-mapbox-geocoder>
         <v-mapbox-navigation-control></v-mapbox-navigation-control>
       </v-mapbox>
     </div>
@@ -27,6 +28,7 @@
 
 <style>
 @import 'mapbox-gl/dist/mapbox-gl.css';
+@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 @import 'material-design-icons/iconfont/material-icons.css';
 
 html, doc {
