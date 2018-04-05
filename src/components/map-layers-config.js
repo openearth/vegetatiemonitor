@@ -17,8 +17,59 @@ const mapLayers = [
         'fill-color': 'rgba(32, 32, 32, 0.3)',
         'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
       }
-    }]
-
+    },
+    {
+      id: 'Kadasterlijnen',
+      type: 'line',
+      source: {
+        type: 'vector',
+        url: 'mapbox://ellispenning.5tu1qjtk',
+      },
+      'source-layer': 'kadaster-vlakken-1i9erw',
+      "paint": {
+        "line-color": {
+          "type": "identity",
+          "property": "stroke"
+        },
+        "line-width": 4
+      },
+      "filter": ["==", "ADMINPERCE", ""]
+    },
+    {
+      id: 'KadasterSelect',
+      type: 'line',
+      source: {
+        type: 'vector',
+        url: 'mapbox://ellispenning.5tu1qjtk',
+      },
+      'source-layer': 'kadaster-vlakken-1i9erw',
+      "paint": {
+        "line-color": {
+          "type": "identity",
+          "property": "stroke"
+        },
+        "line-width": 4
+      },
+      "filter": ["==", "ADMINPERCE", ""]
+    }],
+    tableproperties: [
+      {
+        name: 'Perceel nummer',
+        key: 'ADMINPERCE'
+      },
+      {
+        name: 'Gemeente',
+        key: 'GEMEENTE'
+      },
+      {
+        name: 'Gerechtigde',
+        key: 'GERECHTIGD'
+      },
+      {
+        name: 'Grootte',
+        key: 'GROOTTE'
+      },
+    ]
   },
 
   {
@@ -48,7 +99,7 @@ const mapLayers = [
     icon: 'static/images/legend-classified.png',
     opacity: 100,
     active: false,
-    dataset: 'landuse-vs-legger', 
+    dataset: 'landuse-vs-legger',
     legend: {
       colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
       range: '-5 5',
@@ -56,7 +107,7 @@ const mapLayers = [
     data: [],
     vis: {}
   },
-  
+
   {
     layertype: 'gee-layer',
     name: 'Classificatie',
@@ -71,7 +122,7 @@ const mapLayers = [
     data: [],
     vis: {}
   },
-  
+
   {
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',

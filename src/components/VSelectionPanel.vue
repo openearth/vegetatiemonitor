@@ -1,9 +1,9 @@
 <template>
-<v-expansion-panel class="analysis-panel">
+<v-expansion-panel class="v-selection-panel">
   <v-expansion-panel-content>
     <v-toolbar class="toolbar " flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
-        Analyse
+        Selecteer Beeld
       </v-toolbar-title>
     </v-toolbar>
     <v-list dense pt-0 three-line>
@@ -56,7 +56,7 @@
 </v-expansion-panel>
 </template>
 
-<script src="./analysis-panel.js"></script>
+<script src="./v-selection-panel.js"></script>
 
 <style scoped>
 #selection {

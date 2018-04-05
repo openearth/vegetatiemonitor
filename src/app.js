@@ -4,8 +4,9 @@ import {
 
 import Vue from 'vue';
 import mapboxgl from 'mapbox-gl';
-import LayerControl from './components/LayerControl';
-import AnalysisPanel from './components/AnalysisPanel';
+import LayerControl from './components/VLayerControl';
+import AnalysisControl from './components/VAnalysisControl';
+import SelectionPanel from './components/VSelectionPanel';
 import MapLayers from './components/VMapLayers';
 
 export default {
@@ -59,15 +60,12 @@ export default {
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
     });
-
-    this.map.on('click', (event) => {
-      console.log(this.layers)
-    })
   },
   methods: {},
   components: {
-    'layer-control': LayerControl,
-    'analysis-panel': AnalysisPanel,
-    'v-map-layers': MapLayers
+    'v-layer-control': LayerControl,
+    'v-selection-panel': SelectionPanel,
+    'v-map-layers': MapLayers,
+    'v-analysis-control': AnalysisControl
   },
 };
