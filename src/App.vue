@@ -29,7 +29,7 @@
 @import 'mapbox-gl/dist/mapbox-gl.css';
 @import 'material-design-icons/iconfont/material-icons.css';
 
-html {
+html, doc {
   overflow: hidden;
 }
 
