@@ -26,14 +26,14 @@ const mapLayers = [
         url: 'mapbox://ellispenning.5tu1qjtk',
       },
       'source-layer': 'kadaster-vlakken-1i9erw',
-      "paint": {
-        "line-color": {
-          "type": "identity",
-          "property": "stroke"
+      'paint': {
+        'line-color': {
+          'type': 'identity',
+          'property': 'stroke'
         },
-        "line-width": 4
+        'line-width': 4
       },
-      "filter": ["==", "ADMINPERCE", ""]
+      'filter': ['==', 'ADMINPERCE', '']
     },
     {
       id: 'KadasterSelect',
@@ -43,14 +43,14 @@ const mapLayers = [
         url: 'mapbox://ellispenning.5tu1qjtk',
       },
       'source-layer': 'kadaster-vlakken-1i9erw',
-      "paint": {
-        "line-color": {
-          "type": "identity",
-          "property": "stroke"
+      'paint': {
+        'line-color': {
+          'type': 'identity',
+          'property': 'stroke'
         },
-        "line-width": 4
+        'line-width': 4
       },
-      "filter": ["==", "ADMINPERCE", ""]
+      'filter': ['==', 'ADMINPERCE', '']
     }],
     tableproperties: [
       {
@@ -129,7 +129,7 @@ const mapLayers = [
     icon: 'static/images/legend-legger.png',
     opacity: 100,
     active: true,
-    type: "group",
+    type: 'group',
     legend: {
       colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36', '#ffec80', '#f2d218', '#d9bb16' ],
       labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel', 'mengklasse 90/10', 'mengklasse 70/30', 'mengklasse 50/50'],
@@ -144,48 +144,48 @@ const mapLayers = [
         'source-layer': 'vegetatie-vlakken-596nr3',
         paint: {
           'fill-color': {
-            "base": 1,
-            "type": "categorical",
-            "property": "KLASSE",
-            "stops": [
+            'base': 1,
+            'type': 'categorical',
+            'property': 'KLASSE',
+            'stops': [
               [
-                "Water",
-                "rgba(191, 239, 255, 255)"
+                'Water',
+                'rgba(191, 239, 255, 255)'
               ],
               [
-                "Verhard oppervlak",
-                "rgb(255, 129, 126)"
+                'Verhard oppervlak',
+                'rgb(255, 129, 126)'
               ],
               [
-                "Gras en Akker",
-                "rgb(238, 250, 212)"
+                'Gras en Akker',
+                'rgb(238, 250, 212)'
               ],
               [
-                "Riet en Ruigte",
-                "rgb(222, 189, 222)"
+                'Riet en Ruigte',
+                'rgb(222, 189, 222)'
               ],
               [
-                "Bos",
-                "rgb(115, 191, 115)"
+                'Bos',
+                'rgb(115, 191, 115)'
               ],
               [
-                "Struweel",
-                "rgb(217, 122, 54)"
+                'Struweel',
+                'rgb(217, 122, 54)'
               ],
               [
-                "90-10",
-                "rgb(255, 236, 128)"
+                '90-10',
+                'rgb(255, 236, 128)'
               ],
               [
-                "70-30",
-                "rgb(242, 210, 24)"
+                '70-30',
+                'rgb(242, 210, 24)'
               ],
               [
-                "50-50",
-                "rgb(217, 187, 22)"
+                '50-50',
+                'rgb(217, 187, 22)'
               ]
             ],
-            "default": "rgba(0, 0, 0, 0)"
+            'default': 'rgba(0, 0, 0, 0)'
           }
         },
       },
@@ -228,7 +228,7 @@ const mapLayers = [
     dataset: 'satellite', // important! this argument is needed to call the service
     data: [],
     vis: {
-      bands: ["red", "green", "blue"],
+      bands: ['red', 'green', 'blue'],
       min: 0.05,
       max: 0.35,
       gamma: 2.0
