@@ -9,13 +9,14 @@
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
-    <img class="logos mr-2" src="static/images/deltares.svg">
-    <img class="logos mr-2" src="static/images/Rijkswaterstaat.svg">
+    <div class="logo1 mr-2"><img class="logos" src="static/images/deltares.svg"></div>
+    <div class="logo2 mr-2"><img class="logos" src="static/images/Rijkswaterstaat.svg"></div>
   </v-toolbar>
   <v-content>
     <div id="map">
       <v-mapbox access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA" map-style="mapbox://styles/mapbox/light-v9" :center="[5.673272, 52.079502]" :zoom="7.88" :pitch="0" :bearing="0" :min-zoom="5" id="map" ref="map">
         <v-map-layers></v-map-layers>
+        <v-mapbox-geocoder></v-mapbox-geocoder>
         <v-mapbox-navigation-control></v-mapbox-navigation-control>
       </v-mapbox>
     </div>
@@ -27,6 +28,7 @@
 
 <style>
 @import 'mapbox-gl/dist/mapbox-gl.css';
+@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 @import 'material-design-icons/iconfont/material-icons.css';
 
 html, doc {
@@ -67,8 +69,18 @@ list__tile {
 }
 
 .logos {
-  max-width: 100% !important;
   max-height: 100% !important;
+  max-width: 100% !important;
+}
+
+.logo1 {
+  height: 64px !important;
+  width: 138px !important;
+}
+
+.logo2 {
+  height: 64px !important;
+  width: 192px !important;
 }
 
 .input-group__selections__comma {

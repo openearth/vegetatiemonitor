@@ -16,7 +16,8 @@ export default {
   },
   data: function() {
     return {
-      firstImage: null
+      firstImage: null,
+      falseColor: 'Natural colors'
     };
   },
   computed: {
@@ -44,11 +45,17 @@ export default {
         this.toggleLayers();
       },
       deep: true
+    },
+    // apply false color scheme to satellite layer(s)
+    falseColor: {
+      handler: function(falseColor) {
+        this.setFalseColor(falseColor);
+      }
     }
   },
   mounted() {
     bus.$on('firstImage-changed', (firstImage) => {
-      this.firstImage = firstImage
+      this.firstImage = firstImage;
     })
   },
   methods: {
@@ -97,6 +104,15 @@ export default {
           console.log("error setting opacity: " + opacity + "(" + err.message + ")");
         }
       }
+    },
+    setFalseColor(name) {
+      _.each(this.layers, (layer) => {
+        if (layer.visualisations) {
+          layer.vis = layer.visualisations.find(v => v.name == this.falseColor).vis
+        }
+      })
+      // TODO: implement a more efficient way to reload the satellite layer only
+      bus.$emit('map-loaded', this.map)
     },
     colorRamp(legend) {
       if (legend && legend.colors) {
