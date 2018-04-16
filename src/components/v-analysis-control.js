@@ -52,7 +52,8 @@ export default {
   },
   data() {
     return {
-      piechart: null,
+      canvas: {},
+      chart: {},
       progressActive: false,
       headers: [{
           text: 'Eigenschap',
@@ -69,7 +70,7 @@ export default {
           width: '60%'
         }
       ],
-      items: [],
+      polygons: [],
       polygonSelected: false,
       pagination: {
         rowsPerPage: 4
@@ -80,9 +81,12 @@ export default {
   watch: {},
   mounted() {
     bus.$on('map-loaded', (event) => {
-      var canvas = document.getElementById("doughnut-chart")
-      canvas.style.display = 'none';
-      // When hovering over the kadaster polygons, change the data in the table
+      this.canvas['legger'] = document.getElementById("legger-chart")
+      this.canvas['legger'].style.display = 'none';
+      this.canvas['landuse'] = document.getElementById("landuse-chart")
+      this.canvas['landuse'].style.display = 'none';
+      
+      // When hovering over the kadaster polygons, update the data in the table
       // and make an outline of the polygon underneath the mouse pointer.
       this.map.on('mousemove', (e) => {
 
@@ -95,18 +99,19 @@ export default {
         })
         // Check if Kadaster layer is on top
         if (feature !== undefined) {
+          // highlight polygon outline
           this.map.getCanvas().style.cursor = 'pointer';
           this.map.setFilter("Kadasterlijnen", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
           if (this.selectMode === false) {
-            this.items = []
+            this.polygons = []
             var kadasterLayer = _.find(this.layers, {
               'name': 'Kadaster'
             })
-
+            // list highlighted polygons
             _.each(features_list, (hoverfeature) => {
               if (hoverfeature.layer['id'] === 'Kadaster') {
                 _.each(kadasterLayer.tableproperties, (prop) => {
-                  this.items.push({
+                  this.polygons.push({
                     value: false,
                     name: prop.name,
                     data: hoverfeature.properties[prop.key]
@@ -121,29 +126,34 @@ export default {
       // When clicked on a polygon, show this polygons data in the table and
       // make a pie chart. When clicked again go back to the hover mode.
       this.map.on('click', (e) => {
-        if (this.piechart !== null) {
-          this.piechart.destroy()
+        if (this.chart['legger']) {
+          this.chart['legger'].destroy()
         }
+        this.canvas['legger'].style.display = 'none';
+        if (this.chart['landuse']) {
+          this.chart['landuse'].destroy()
+        }
+        this.canvas['landuse'].style.display = 'none';
+        
         this.progressActive = true
-        canvas.style.display = 'none';
         var features_list = this.map.queryRenderedFeatures(e.point);
 
         var feature = _.find(features_list[0], {
           'id': 'Kadaster'
         })
-
+        // highlight polygon outline
         this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
         if (feature !== undefined) {
-          this.items = []
+          this.polygons = []
           this.selectMode = true
-          canvas.style.display = 'block';
           var kadasterLayer = _.find(this.layers, {
             'name': 'Kadaster'
           })
+          // list highlighted polygons
           _.each(features_list, (hoverfeature) => {
             if (hoverfeature.layer['id'] === 'Kadaster') {
               _.each(kadasterLayer.tableproperties, (prop) => {
-                this.items.push({
+                this.polygons.push({
                   value: false,
                   name: prop.name,
                   data: hoverfeature.properties[prop.key]
@@ -151,6 +161,7 @@ export default {
               })
             }
           })
+          // query polygon feature
           var json_body = {
             "region": {
               "type": "FeatureCollection",
@@ -164,48 +175,53 @@ export default {
             },
             "scale": 100
           }
-          var datatype = 'legger'
-          fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
-              method: "POST",
-              body: JSON.stringify(json_body),
-              mode: 'cors',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            })
-            .then((res) => {
-              return res.json();
-            })
-            .then((chartData) => {
-              var labels = []
-              var pieData = []
-              var pieColors = []
-              var totalArea = 0
-
-              // two loops to use the total area in the second loop.
-              _.each(chartData[0].area_per_type, (d) => {
-                totalArea = totalArea + d.area
-              })
-              _.each(chartData[0].area_per_type, (d) => {
-                labels.push(_.find(colors, {
-                  'type': d.type
-                }).name)
-                pieData.push((d.area / totalArea * 100).toFixed(2))
-                pieColors.push(_.find(colors, {
-                  'type': d.type
-                }).color)
-              })
-              this.progressActive = false
-              this.makePieChart(canvas, labels, pieData, pieColors, totalArea)
-            })
+          //this.loadPieChart('legger', json_body)
+          this.loadPieChart('landuse', json_body)
         }
       })
     })
   },
   methods: {
+    // load the data required for plotting a pie chart of landuse per polygon
+    loadPieChart(datatype, json_body) {
+      fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
+        method: "POST",
+        body: JSON.stringify(json_body),
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
+        return res.json();
+      })
+      .then((chartData) => {
+        var labels = []
+        var pieData = []
+        var pieColors = []
+        var totalArea = 0
+
+        // two loops to use the total area in the second loop.
+        _.each(chartData[0].area_per_type, (d) => {
+          totalArea = totalArea + d.area
+        })
+        _.each(chartData[0].area_per_type, (d) => {
+          labels.push(_.find(colors, {
+            'type': d.type
+          }).name)
+          pieData.push((d.area / totalArea * 100).toFixed(2))
+          pieColors.push(_.find(colors, {
+            'type': d.type
+          }).color)
+        })
+        this.progressActive = datatype != 'landuse'
+        this.canvas[datatype].style.display = 'block'
+        this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
+      })
+    },
     // Create a pie chart with received data for vegetation classes.
-    makePieChart(canvas, labels, pieData, pieColors, totalArea) {
-      this.piechart = new Chart(canvas, {
+    makePieChart(canvas, labels, pieData, pieColors, totalArea, title) {
+      return new Chart(canvas, {
         type: 'doughnut',
         data: {
           labels: labels,
@@ -218,7 +234,7 @@ export default {
         options: {
           title: {
             display: true,
-            text: 'Verdeling van vegetatieklassen binnen kadaster polygoon [%]'
+            text: title
           }
         }
       });
@@ -227,10 +243,12 @@ export default {
     closeSelectMode() {
       this.selectMode = false
       this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
-      var canvas = document.getElementById("doughnut-chart")
-      canvas.style.display = 'none';
-      this.piechart.destroy()
-      this.piechart = null;
+      document.getElementById("legger-chart").style.display = 'none'
+      document.getElementById("landuse-chart").style.display = 'none'
+      if (this.chart['legger']) {
+        this.chart['legger'].destroy()
+        this.chart['legger'] = null
+      }
     }
   },
   components: {},

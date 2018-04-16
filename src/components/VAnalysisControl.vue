@@ -10,18 +10,17 @@
       <v-btn v-on:click.native="closeSelectMode()" v-if="selectMode" outline color="indigo">Verwijder selectie
         <v-icon right>close</v-icon>
       </v-btn>
-      <v-data-table :headers="headers" rows-per-page-text="" :rowsPerPageItems="[10]" :items="items" :pagination.sync="pagination">
+      <v-data-table :headers="headers" rows-per-page-text="" :rowsPerPageItems="[10]" :items="polygons" :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
           <td class="text-xs6-left">{{ props.item.name }}</td>
           <td class="text-xs6-left">{{ props.item.data }}</td>
         </template>
       </v-data-table>
-            <v-flex xs2 offset-xs5>
-      <v-progress-circular v-if="progressActive" indeterminate >
-      </v-progress-circular>
-    </v-flex>
-      <canvas id="doughnut-chart">
-      </canvas>
+      <v-flex xs2 offset-xs5>
+        <v-progress-circular v-if="progressActive" indeterminate ></v-progress-circular>
+      </v-flex>
+      <canvas id="legger-chart"></canvas>
+      <canvas id="landuse-chart"></canvas>
     </v-card>
   </v-expansion-panel-content>
 </v-expansion-panel>
@@ -35,7 +34,7 @@
   text-align: center;
 }
 
-#doughnut-chart {
+#legger-chart {
   width: 100%;
   height: 100%;
 }
