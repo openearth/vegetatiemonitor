@@ -175,7 +175,7 @@ export default {
             },
             "scale": 100
           }
-          //this.loadPieChart('legger', json_body)
+          this.loadPieChart('legger', json_body)
           this.loadPieChart('landuse', json_body)
         }
       })
@@ -214,9 +214,9 @@ export default {
             'type': d.type
           }).color)
         })
-        this.progressActive = datatype != 'landuse'
         this.canvas[datatype].style.display = 'block'
         this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
+        if (datatype === 'landuse') this.progressActive = false
       })
     },
     // Create a pie chart with received data for vegetation classes.
