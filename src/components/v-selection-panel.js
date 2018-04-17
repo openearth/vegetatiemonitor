@@ -22,6 +22,9 @@ export default {
     },
     map: {
       type: Object
+    },
+    selection: {
+      type: Object
     }
   },
   data() {
@@ -139,36 +142,31 @@ export default {
     },
     changeDates() {
       // TODO: change coordinates using this.map.getBounds()['_ne']['lat'] etc...
-      _.each(datasets, (dataset) => {
-
-        var vis = _.find(this.layers, 'dataset', "satellite")['vis']
-        var json_data = {
-          "dateBegin": this.beginDate,
-          "dateEnd": this.endDate,
-          "region": this.region,
-          "vis": vis
-        }
-        var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
-            method: "POST",
-            body: JSON.stringify(json_data),
-            mode: 'cors',
-            headers: {
-              'Content-Type': 'application/json'
-            }
+      var json_data = {
+        "dateBegin": this.beginDate,
+        "dateEnd": this.endDate,
+        "region": this.region,
+      }
+      var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
+          method: "POST",
+          body: JSON.stringify(json_data),
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          return res.json();
+        })
+        .then((response) => {
+          var imagesList = []
+          _.each(response['image_times'], (image_time, i) => {
+            imagesList.push(moment(response['image_times'][i]).format('YYYY-MM-DD'))
+            this.firstImages[image_time] = response['image_ids'][i]
           })
-          .then((res) => {
-            return res.json();
-          })
-          .then((response) => {
-            var imagesList = []
-            _.each(response['image_times'], (image_time, i) => {
-              imagesList.push(moment(response['image_times'][i]).format('YYYY-MM-DD'))
-              this.firstImages[image_time] = response['image_ids'][i]
-            })
-            this.Image1 = imagesList
-            this.Image2 = imagesList
-          })
-      })
+          this.Image1 = imagesList
+          this.Image2 = imagesList
+        })
     }
   },
   components: {}
