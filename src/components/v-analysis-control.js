@@ -42,11 +42,14 @@ var colors = [{
 export default {
   name: 'v-analysis-control',
   props: {
+    map: {
+      type: Object
+    },
     layers: {
       type: Array,
       required: true
     },
-    map: {
+    selection: {
       type: Object
     }
   },
@@ -163,6 +166,8 @@ export default {
           })
           // query polygon feature
           var json_body = {
+            "dateBegin": this.selection.beginDate,
+            "dateEnd": this.selection.endDate,
             "region": {
               "type": "FeatureCollection",
               "features": [{
@@ -173,12 +178,17 @@ export default {
                 }
               }]
             },
-            "scale": 100
+            "scale": 10
           }
           this.loadPieChart('legger', json_body)
           this.loadPieChart('landuse', json_body)
         }
       })
+    }),
+    // Event to update date selection
+    bus.$on('selection-changed', (selection) => {
+      if (selection.beginDate) this.selection.beginDate = selection.beginDate
+      if (selection.endDate) this.selection.endDate = selection.endDate
     })
   },
   methods: {

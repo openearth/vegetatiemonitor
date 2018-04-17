@@ -39,7 +39,7 @@
       </v-list-tile>
       <v-divider></v-divider>
       <v-list-tile>
-        <v-list-tile-title>Select the range of dates to get Images: </v-list-tile-title>
+        <v-list-tile-title>Selecteer beeld(en) voor analyse: </v-list-tile-title>
       </v-list-tile>
       <v-list-tile id='selection'>
         <v-layout row wrap>
