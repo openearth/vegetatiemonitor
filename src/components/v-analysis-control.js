@@ -57,7 +57,7 @@ export default {
     return {
       canvas: {},
       chart: {},
-      progressActive: false,
+      workLoad: 0,
       headers: [{
           text: 'Eigenschap',
           align: 'left',
@@ -138,7 +138,6 @@ export default {
         }
         this.canvas['landuse'].style.display = 'none';
         
-        this.progressActive = true
         var features_list = this.map.queryRenderedFeatures(e.point);
 
         var feature = _.find(features_list[0], {
@@ -194,6 +193,7 @@ export default {
   methods: {
     // load the data required for plotting a pie chart of landuse per polygon
     loadPieChart(datatype, json_body) {
+      this.workLoad++
       fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
         method: "POST",
         body: JSON.stringify(json_body),
@@ -226,7 +226,7 @@ export default {
         })
         this.canvas[datatype].style.display = 'block'
         this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
-        if (datatype === 'landuse') this.progressActive = false
+        this.workLoad--
       })
     },
     // Create a pie chart with received data for vegetation classes.

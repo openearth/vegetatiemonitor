@@ -17,7 +17,7 @@
         </template>
       </v-data-table>
       <v-flex xs2 offset-xs5>
-        <v-progress-circular v-if="progressActive" indeterminate ></v-progress-circular>
+        <v-progress-circular v-if="workLoad > 0" indeterminate ></v-progress-circular>
       </v-flex>
       <canvas id="legger-chart"></canvas>
       <canvas id="landuse-chart"></canvas>
