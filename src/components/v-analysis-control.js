@@ -179,6 +179,7 @@ export default {
             },
             "scale": 10
           }
+          this.workLoad = 0
           this.loadPieChart('legger', json_body)
           this.loadPieChart('landuse', json_body)
         }
@@ -226,6 +227,10 @@ export default {
         })
         this.canvas[datatype].style.display = 'block'
         this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
+        this.workLoad--
+      })
+      .catch(function(error) { 
+        console.log('Error loading zonal chart data: ' + error.message )
         this.workLoad--
       })
     },
