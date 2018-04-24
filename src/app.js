@@ -14,8 +14,14 @@ export default {
   data: function() {
     return {
       map: null,
-      drawer: null,
-      layers: []
+      layers: [],
+      selection: {
+        beginDate: "2016-07-20",
+        endDate: "2016-07-21",
+        firstImage: null,
+        secondImage: null,
+      },
+      drawer: null
     };
   },
   mounted() {
@@ -49,12 +55,12 @@ export default {
 
     bus.$on('select-layers', (layers) => {
       Vue.set(this, 'layers', layers);
-    });
+    })
 
     // Event to add a json containing a mapbox layer to this.layers
     bus.$on('add-layer', (layer) => {
       this.layers.push(layer);
-    });
+    })
 
     // Send out map-loaded event when the map is loaded and add controls
     this.map.on('load', (event) => {
