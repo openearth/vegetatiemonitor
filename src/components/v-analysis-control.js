@@ -264,6 +264,11 @@ export default {
         this.chart['legger'].destroy()
         this.chart['legger'] = null
       }
+      if (this.chart['landuse']) {
+        this.chart['landuse'].destroy()
+        this.chart['landuse'] = null
+      }
+
     }
   },
   components: {},
