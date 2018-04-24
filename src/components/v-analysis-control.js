@@ -5,7 +5,7 @@ import {
 import mapboxgl from 'mapbox-gl';
 import Chart from 'chart.js'
 
-var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
+var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
 
 var colors = [{
     type: '1',

@@ -3,7 +3,7 @@ import {
 } from '@/event-bus.js';
 import moment from 'moment';
 
-var SERVER_URL = 'http://vegetatie-monitor.appspot.com'
+var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
 
 // Function to send out a post request and receive images and add them to the map
 function getGeeComposite(map, dataset, dateBegin, region, vis, dateEnd = null) {
