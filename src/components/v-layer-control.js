@@ -98,7 +98,7 @@ export default {
             property = "line-opacity";
           }
           if (property) {
-            this.map.setPaintProperty(sublayer.id, property, opacity);  
+            this.map.setPaintProperty(sublayer.id, property, opacity);
           }
         } catch(err) {
           console.log("error setting opacity: " + opacity + "(" + err.message + ")");
@@ -112,11 +112,11 @@ export default {
         }
       })
       // TODO: implement a more efficient way to reload the satellite layer only
-      bus.$emit('map-loaded', this.map)
+      bus.$emit('change-false-color', name)
     },
     colorRamp(legend) {
       if (legend && legend.colors) {
-        return "background: linear-gradient(to right, " + legend.colors.join() + ");"  
+        return "background: linear-gradient(to right, " + legend.colors.join() + ");"
       }
     }
   },
