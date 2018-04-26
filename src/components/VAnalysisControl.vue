@@ -7,8 +7,11 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-card id="analysistable">
-      <v-btn v-on:click.native="closeSelectMode()" v-if="selectMode" outline color="indigo">Verwijder selectie
+      <v-btn v-on:click.native="closeSelectMode()" v-if="selectMode" outline color="indigo">Verwijder
         <v-icon right>close</v-icon>
+      </v-btn>
+      <v-btn v-on:click.native="downloadSelection()" v-if="selectMode" outline color="indigo">Download
+        <v-icon right>file_download</v-icon>
       </v-btn>
       <v-data-table :headers="headers" rows-per-page-text="" :rowsPerPageItems="[10]" :items="polygons" :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
