@@ -259,6 +259,7 @@ export default {
       });
     },
 
+    // Remove the piecharts of the selected  figure
     closeSelectMode() {
       this.selectMode = false
       this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
@@ -274,8 +275,9 @@ export default {
       }
 
     },
+
+    // Build pdf with table, two piecharts and snapshot of mapbox
     downloadSelection() {
-      // Build pdf with table, two piecharts and snapshot of mapbox
       var doc = new jsPDF()
       var W = doc.internal.pageSize.width;
       var H = doc.internal.pageSize.height;
@@ -296,6 +298,9 @@ export default {
         })
     },
 
+    // Note: Normally the preserveDrawerBuffer in the mapbox options is used. However This
+    // is not yet build in vue2mapbox-gl and using this function the rendering of the image
+    // will not reduce the performance of the mapbox components.
     takeScreenshot(map) {
       return new Promise(function(resolve, reject) {
         map.once("render", function() {
