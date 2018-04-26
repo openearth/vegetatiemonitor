@@ -6,7 +6,6 @@ import mapboxgl from 'mapbox-gl'
 import Chart from 'chart.js'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import html2canvas from 'html2canvas'
 
 var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
 
@@ -276,6 +275,7 @@ export default {
 
     },
     downloadSelection() {
+      // Build pdf with table, two piecharts and snapshot of mapbox
       var doc = new jsPDF()
       var W = doc.internal.pageSize.width;
       var H = doc.internal.pageSize.height;
