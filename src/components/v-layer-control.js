@@ -111,7 +111,6 @@ export default {
           layer.vis = layer.visualisations.find(v => v.name == this.falseColor).vis
         }
       })
-      // TODO: implement a more efficient way to reload the satellite layer only
       bus.$emit('change-false-color', name)
     },
     colorRamp(legend) {
