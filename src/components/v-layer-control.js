@@ -77,10 +77,10 @@ export default {
         _.each(layer.data, (sublayer) => {
           if (layer.active && (layer.layertype == "mapbox-layer" ||
               (layer.layertype == "gee-layer" && sublayer.date === this.firstImage))) {
-                this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1]);
                 this.setOpacity(layer, sublayer);
           } else {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis[0]);
+            this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0]);
           }
         })
       });
@@ -98,7 +98,7 @@ export default {
             property = "line-opacity";
           }
           if (property) {
-            this.map.setPaintProperty(sublayer.id, property, opacity);  
+            this.map.setPaintProperty(sublayer.id, property, opacity);
           }
         } catch(err) {
           console.log("error setting opacity: " + opacity + "(" + err.message + ")");
@@ -111,12 +111,11 @@ export default {
           layer.vis = layer.visualisations.find(v => v.name == this.falseColor).vis
         }
       })
-      // TODO: implement a more efficient way to reload the satellite layer only
-      bus.$emit('map-loaded', this.map)
+      bus.$emit('change-false-color', name)
     },
     colorRamp(legend) {
       if (legend && legend.colors) {
-        return "background: linear-gradient(to right, " + legend.colors.join() + ");"  
+        return "background: linear-gradient(to right, " + legend.colors.join() + ");"
       }
     }
   },

@@ -86,6 +86,10 @@ export default {
       this.changeModus()
       this.changeDates()
     })
+
+    bus.$on('change-false-color', (name) => {
+      this.changeModus(['satellite'])
+    })
   },
   watch: {
     beginDate: {
@@ -116,10 +120,10 @@ export default {
     }
   },
   methods: {
-    changeModus() {
+    changeModus(modes = datasets) {
       bus.$emit('firstImage-changed', ('composite'))
       if (this.radioButtons == "radio-composite") {
-        _.each(datasets, (dataset) => {
+        _.each(modes, (dataset) => {
           bus.$emit('remove-data-layer', ({
             'dataset': dataset
           }))
