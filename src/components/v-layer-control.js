@@ -77,10 +77,10 @@ export default {
         _.each(layer.data, (sublayer) => {
           if (layer.active && (layer.layertype == "mapbox-layer" ||
               (layer.layertype == "gee-layer" && sublayer.date === this.firstImage))) {
-                this.map.setLayoutProperty(sublayer.id, "visibility", vis[1]);
+                this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1]);
                 this.setOpacity(layer, sublayer);
           } else {
-            this.map.setLayoutProperty(sublayer.id, "visibility", vis[0]);
+            this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0]);
           }
         })
       });

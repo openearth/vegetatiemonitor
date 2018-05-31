@@ -61,6 +61,10 @@ export default {
       canvas: {},
       chart: {},
       workLoad: 0,
+      leggerLabels: [],
+      leggerData: [],
+      landuseLabels: [],
+      landuseData: [],
       headers: [{
           text: 'Eigenschap',
           align: 'left',
@@ -229,6 +233,14 @@ export default {
               'type': d.type
             }).color)
           })
+          if (datatype === 'legger') {
+            this.leggerLabels = labels
+            this.leggerData = pieData
+          }
+          else if (datatype === 'landuse') {
+            this.landuseLabels = labels
+            this.landuseData = pieData
+          }
           this.canvas[datatype].style.display = 'block'
           this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
           this.workLoad--
@@ -279,14 +291,24 @@ export default {
     // Build pdf with table, two piecharts and snapshot of mapbox
     downloadSelection() {
       var doc = new jsPDF()
-      var W = doc.internal.pageSize.width;
-      var H = doc.internal.pageSize.height;
+      var W = doc.internal.pageSize.getWidth();
+      var H = doc.internal.pageSize.getHeight();
       var res = doc.autoTableHtmlToJson(document.getElementsByClassName("table")[0]);
       doc.autoTable(res.columns, res.data);
       var imgData = document.getElementById("legger-chart").toDataURL()
-      doc.addImage(imgData, 'JPEG', W*0.1, H*0.3, W*0.4, W*0.2)
+      doc.addImage(imgData, 'JPEG', W*0.1, H*0.2, W*0.4, W*0.2)
       var imgData = document.getElementById("landuse-chart").toDataURL()
-      doc.addImage(imgData, 'JPEG', W*0.5, H*0.3, W*0.4, W*0.2)
+      doc.addImage(imgData, 'JPEG', W*0.5, H*0.2, W*0.4, W*0.2)
+      var table = []
+      _.each(this.leggerLabels, (label, i) => {
+        table.push([label, this.leggerData[i]])
+      })
+      doc.autoTable(['Label', 'legger klassen [%]'], table, {startY: 0.35*H, tableWidth: 0.4*W, margin: {left: 0.05*W}})
+      var table = []
+      _.each(this.landuseLabels, (label, i) => {
+        table.push([label, this.landuseData[i]])
+      })
+      doc.autoTable(['Label', 'landuse klassen [%]'], table, {startY: 0.35*H, tableWidth: 0.4*W, margin: {left: W*0.55}})
       this.takeScreenshot(this.map)
         .then((data) => {
           var canvas = this.map.getCanvas()
