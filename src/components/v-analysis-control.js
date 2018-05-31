@@ -102,7 +102,7 @@ export default {
 
           this.map.getCanvas().style.cursor = '';
           var features_list = this.map.queryRenderedFeatures(e.point);
-          this.map.setFilter("Kadasterlijnen", ["==", "ADMINPERCE", ""]);
+          this.map.setFilter('Kadasterlijnen', ['==', 'ADMINPERCE', '']);
 
           var feature = _.find(features_list[0], {
             'id': 'Kadaster'
@@ -111,7 +111,7 @@ export default {
           if (feature !== undefined) {
             // highlight polygon outline
             this.map.getCanvas().style.cursor = 'pointer';
-            this.map.setFilter("Kadasterlijnen", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
+            this.map.setFilter('Kadasterlijnen', ['==', 'ADMINPERCE', features_list[0].properties['ADMINPERCE']]);
             if (this.selectMode === false) {
               this.polygons = []
               var kadasterLayer = _.find(this.layers, {
@@ -152,7 +152,7 @@ export default {
             'id': 'Kadaster'
           })
           // highlight polygon outline
-          this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", features_list[0].properties['ADMINPERCE']]);
+          this.map.setFilter('KadasterSelect', ['==', 'ADMINPERCE', features_list[0].properties['ADMINPERCE']]);
           if (feature !== undefined) {
             this.polygons = []
             this.selectMode = true
@@ -204,7 +204,7 @@ export default {
     loadPieChart(datatype, json_body) {
       this.workLoad++
         fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify(json_body),
           mode: 'cors',
           headers: {
@@ -257,7 +257,7 @@ export default {
         data: {
           labels: labels,
           datasets: [{
-            label: "Vegetatie klassen",
+            label: 'Vegetatie klassen',
             backgroundColor: pieColors,
             data: pieData
           }]
@@ -274,8 +274,8 @@ export default {
     // Remove the piecharts of the selected  figure
     closeSelectMode() {
       this.selectMode = false
-      this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
-      this.canvas['leger'].style.display = 'none'
+      this.map.setFilter('KadasterSelect', ['==', 'ADMINPERCE', ''])
+      this.canvas['legger'].style.display = 'none'
       this.canvas['landuse'].style.display = 'none'
       if (this.chart['legger']) {
         this.chart['legger'].destroy()
@@ -293,7 +293,7 @@ export default {
       var doc = new jsPDF()
       var W = doc.internal.pageSize.getWidth();
       var H = doc.internal.pageSize.getHeight();
-      var res = doc.autoTableHtmlToJson(document.getElementsByClassName("table")[0]);
+      var res = doc.autoTableHtmlToJson(document.getElementsByClassName('table')[0]);
       doc.autoTable(res.columns, res.data);
       var imgData = this.canvas['legger'].toDataURL()
       doc.addImage(imgData, 'JPEG', W*0.1, H*0.2, W*0.4, W*0.2)
@@ -325,7 +325,7 @@ export default {
     // will not reduce the performance of the mapbox components.
     takeScreenshot(map) {
       return new Promise(function(resolve, reject) {
-        map.once("render", function() {
+        map.once('render', function() {
           resolve(map.getCanvas().toDataURL());
         });
         /* trigger render */
