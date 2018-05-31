@@ -91,9 +91,9 @@ export default {
   watch: {},
   mounted() {
     bus.$on('map-loaded', (event) => {
-        this.canvas['legger'] = document.getElementById("legger-chart")
+        this.canvas['legger'] = this.$refs['legger-canvas']
         this.canvas['legger'].style.display = 'none';
-        this.canvas['landuse'] = document.getElementById("landuse-chart")
+        this.canvas['landuse'] = this.$refs['landuse-canvas']
         this.canvas['landuse'].style.display = 'none';
 
         // When hovering over the kadaster polygons, update the data in the table
@@ -275,8 +275,8 @@ export default {
     closeSelectMode() {
       this.selectMode = false
       this.map.setFilter("KadasterSelect", ["==", "ADMINPERCE", ""])
-      document.getElementById("legger-chart").style.display = 'none'
-      document.getElementById("landuse-chart").style.display = 'none'
+      this.canvas['leger'].style.display = 'none'
+      this.canvas['landuse'].style.display = 'none'
       if (this.chart['legger']) {
         this.chart['legger'].destroy()
         this.chart['legger'] = null
@@ -295,9 +295,9 @@ export default {
       var H = doc.internal.pageSize.getHeight();
       var res = doc.autoTableHtmlToJson(document.getElementsByClassName("table")[0]);
       doc.autoTable(res.columns, res.data);
-      var imgData = document.getElementById("legger-chart").toDataURL()
+      var imgData = this.canvas['legger'].toDataURL()
       doc.addImage(imgData, 'JPEG', W*0.1, H*0.2, W*0.4, W*0.2)
-      var imgData = document.getElementById("landuse-chart").toDataURL()
+      var imgData = this.canvas['landuse'].toDataURL()
       doc.addImage(imgData, 'JPEG', W*0.5, H*0.2, W*0.4, W*0.2)
       var table = []
       _.each(this.leggerLabels, (label, i) => {

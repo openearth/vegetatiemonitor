@@ -13,7 +13,7 @@
       <v-btn :disabled="workLoad > 0" v-on:click.native="downloadSelection()" v-if="selectMode" outline color="indigo">Download
         <v-icon right>file_download</v-icon>
       </v-btn>
-      <v-data-table :headers="headers" rows-per-page-text="" :rowsPerPageItems="[10]" :items="polygons" :pagination.sync="pagination">
+      <v-data-table id="data-table" :headers="headers" rows-per-page-text="" :rowsPerPageItems="[10]" :items="polygons" :pagination.sync="pagination">
         <template slot="items" slot-scope="props">
           <td class="text-xs6-left">{{ props.item.name }}</td>
           <td class="text-xs6-left">{{ props.item.data }}</td>
@@ -22,8 +22,8 @@
       <v-flex xs2 offset-xs5>
         <v-progress-circular v-if="workLoad > 0" indeterminate ></v-progress-circular>
       </v-flex>
-      <canvas id="legger-chart"></canvas>
-      <canvas id="landuse-chart"></canvas>
+      <canvas ref="legger-canvas"></canvas>
+      <canvas ref="landuse-canvas"></canvas>
     </v-card>
   </v-expansion-panel-content>
 </v-expansion-panel>
@@ -35,10 +35,5 @@
 #v-analysis-control {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
-}
-
-#legger-chart {
-  width: 100%;
-  height: 100%;
 }
 </style>
