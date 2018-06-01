@@ -1,6 +1,5 @@
 # vegetatiemonitor
-
-<img src="https://travis-ci.org/openearth/vegetatiemonitor.svg?branch=master">
+[![Build Status](https://travis-ci.org/openearth/vegetatiemonitor.svg?branch=master)](https://travis-ci.org/openearth/vegetatiemonitor)
 
 > Rijkswaterstaat Vegetatie Monitor.
 > Live version: http://www.openearth.nl/vegetatiemonitor/
