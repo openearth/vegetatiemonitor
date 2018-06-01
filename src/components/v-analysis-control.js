@@ -104,51 +104,40 @@ export default {
           this.map.setFilter('Kadasterlijnen', ['==', 'ADMINPERCE', '']);
           this.map.setFilter('Vegetatielijnen', ['==', 'OBJECTID', '']);
           
+          // check the topmost feature below mouse pointer
           var features_list = this.map.queryRenderedFeatures(e.point);
-          
-          // kadaster or legger polygon found ?
-          var filterName, filterField
-          var hoverFeature = _.find(features_list, (feature) => {
-            if (feature.layer.id === 'Kadaster') {
-              filterName = 'Kadasterlijnen'
-              filterField = 'ADMINPERCE'
-              return true
-            }
-          })
-          if (!hoverFeature) {
-            hoverFeature = _.find(features_list, (feature) => {
-              if (feature.layer.id === 'Vegetatielegger') {
-                filterName = "Vegetatielijnen"
-                filterField = 'OBJECTID'
-                return true
-              }
+          if (features_list && features_list.length > 0) {
+            
+            // find the group layer
+            var firstFeature = features_list[0]
+            var layer = _.find(this.layers, {
+              name : firstFeature.layer.id
             })
-          }
-
-          if (hoverFeature && filterName) {
-            // highlight polygon outline
-            this.map.getCanvas().style.cursor = 'pointer';
-            var filter = this.map.getFilter(filterName)
-            filter[2] = hoverFeature.properties[filterField]
-            this.map.setFilter(filterName, filter);
-            // list polygon attributes
-            if (this.selectMode === false) {
-              this.polygons = []
-              var hoverLayer = _.find(this.layers, {
-                name : hoverFeature.layer.id
-              })
-              // list polygon attributes
-              _.each(features_list, (feature) => {
-                if (feature.layer.id === hoverFeature.layer.id) {
-                  _.each(hoverLayer.tableproperties, (prop) => {
-                    this.polygons.push({
-                      value: false,
-                      name: prop.name,
-                      data: feature.properties[prop.key]
+            
+            if (layer && layer.hoverFilter && layer.filterProperty) {
+              this.map.getCanvas().style.cursor = 'pointer';
+              
+              // highlighht the feature
+              var filter = this.map.getFilter(layer.hoverFilter)
+              filter[2] = firstFeature.properties[layer.filterProperty]
+              this.map.setFilter(layer.hoverFilter, filter);
+  
+              // list feature attributes
+              if (this.selectMode === false) {
+                this.polygons = []
+                _.each(features_list, (feature) => {
+                  if (feature.layer.id === firstFeature.layer.id) {
+                    _.each(layer.tableproperties, (prop) => {
+                      this.polygons.push({
+                        value: false,
+                        name: prop.name,
+                        data: feature.properties[prop.key]
+                      })
                     })
-                  })
-                }
-              })
+                  }
+                })
+              }
+
             }
           }
         })

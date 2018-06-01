@@ -63,6 +63,9 @@ const mapLayers = [
     icon: 'static/images/legend-kadaster.png',
     opacity: 100,
     active: false,
+    hoverFilter: 'Kadasterlijnen',
+    selectFilter: 'KadasterSelect',
+    filterProperty: 'ADMINPERCE',
     data: [{
       'id': 'Kadaster',
       'type': 'fill',
@@ -192,6 +195,9 @@ const mapLayers = [
       colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36', '#ffec80', '#f2d218', '#d9bb16' ],
       labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel', 'mengklasse 90/10', 'mengklasse 70/30', 'mengklasse 50/50'],
     },
+    hoverFilter: 'Vegetatielijnen',
+    selectFilter: 'VegetatieSelect',
+    filterProperty: 'OBJECTID',
     data: [{
         'id': 'Vegetatielegger',
         'type': 'fill',
