@@ -15,7 +15,11 @@
                 <v-list-tile-action>
                   <v-switch v-model="layer.active"></v-switch>
                 </v-list-tile-action>
-                <v-list-tile-title>{{layer.name}}</v-list-tile-title>
+                <v-list-tile-title>{{layer.name}}
+                </v-list-tile-title>
+                <v-btn small :ripple='false' flat icon v-if='layer.download'  v-on:click.stop='downloadGeotiff(layer.name)'>
+                  <v-icon>get_app</v-icon>
+                </v-btn>
                 <v-list-tile-avatar>
                   <img :src="layer.icon" />
                 </v-list-tile-avatar>
@@ -37,6 +41,7 @@
               </div>
               </template>
             </div>
+            <iframe seamless v-if="layer.legendtable" :src="layer.legendtable" id="legendimg" ></iframe>
           </div>
         </v-expansion-panel-content>
       </draggable>
@@ -76,5 +81,11 @@
   height: 20px;
   border-radius: 5px;
   margin: 4px;
+}
+
+#legendimg {
+  width: 100%;
+  height: 230px;
+  border-width: 0;
 }
 </style>

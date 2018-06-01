@@ -6,7 +6,7 @@ const pseudoColors = [
       bands: ['red', 'green', 'blue'],
       min: 0.05,
       max: [0.35, 0.35, 0.45],
-      gamma: 1.4 
+      gamma: 1.4
     }
   },
   {
@@ -15,7 +15,7 @@ const pseudoColors = [
       bands: ['nir', 'red', 'green'],
       min: 0.05,
       max: 0.35,
-      gamma: 1.4 
+      gamma: 1.4
     }
   },
   {
@@ -24,7 +24,7 @@ const pseudoColors = [
       bands: ['swir2', 'swir', 'red'],
       min: 0.05,
       max: 0.35,
-      gamma: 1.4 
+      gamma: 1.4
     }
   },
   {
@@ -33,7 +33,7 @@ const pseudoColors = [
       bands: ['swir', 'nir', 'blue'],
       min: 0.05,
       max: 0.35,
-      gamma: 1.4 
+      gamma: 1.4
     }
   },
   {
@@ -42,7 +42,7 @@ const pseudoColors = [
       bands: ['nir', 'swir', 'blue'],
       min: 0.05,
       max: 0.35,
-      gamma: 1.4 
+      gamma: 1.4
     }
   },
   {
@@ -51,7 +51,7 @@ const pseudoColors = [
       bands: ['swir', 'nir', 'red'],
       min: 0.05,
       max: 0.35,
-      gamma: 1.4 
+      gamma: 1.4
     }
   }
 ]
@@ -158,10 +158,12 @@ const mapLayers = [
     opacity: 100,
     active: false,
     dataset: 'landuse-vs-legger',
-    legend: {
-      colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
-      range: '-5 5',
-    },
+    legendtable: 'static/images/difference-legend.html',
+    download: true,
+    // legend: {
+    //   colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
+    //   range: '-5 5',
+    // },
     data: [],
     vis: {}
   },
@@ -170,6 +172,7 @@ const mapLayers = [
     layertype: 'gee-layer',
     name: 'Classificatie',
     icon: 'static/images/legend-classified.png',
+    download: true,
     opacity: 100,
     active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
@@ -185,6 +188,7 @@ const mapLayers = [
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'static/images/legend-legger.png',
+    download: true,
     opacity: 100,
     active: true,
     type: 'group',
@@ -281,6 +285,7 @@ const mapLayers = [
     layertype: 'gee-layer',
     name: 'Satelliet beelden',
     icon: 'static/images/legend-rgb.png',
+    download: true,
     opacity: 100,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service

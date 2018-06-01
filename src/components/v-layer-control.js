@@ -3,6 +3,9 @@ import draggable from 'vuedraggable'
 import {
   bus
 } from '@/event-bus.js';
+
+var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
+
 export default {
   name: 'layer-control',
   props: {
@@ -117,8 +120,40 @@ export default {
       if (legend && legend.colors) {
         return "background: linear-gradient(to right, " + legend.colors.join() + ");"
       }
+    },
+    downloadGeotiff(name) {
+      var N = this.map.getBounds().getNorth()
+      var E = this.map.getBounds().getEast()
+      var S = this.map.getBounds().getSouth()
+      var W = this.map.getBounds().getWest()
+      var bbox = {'type': 'Polygon',
+      'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+      var json_body = {
+        'region': bbox
+      }
+      console.log(JSON.stringify(bbox))
+      // fetch(SERVER_URL + '/map/' + dataset + '/', {
+      //     method: "POST",
+      //     body: JSON.stringify(json_body),
+      //     mode: 'cors',
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     }
+      //   })
+      //   .then((res) => {
+      //     return res.json();
+      //   })
+      //   .then((mapUrl) => {
+      //     maplayer_json.source['tiles'] = [mapUrl['url']]
+      //     map.addLayer(maplayer_json)
+      //     bus.$emit('add-data-layer', {
+      //       dataset: dataset,
+      //       layer: maplayer_json
+      //     })
+      //   })
     }
   },
+
   components: {
     draggable
   }
