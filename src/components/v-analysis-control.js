@@ -101,30 +101,50 @@ export default {
         this.map.on('mousemove', (e) => {
 
           this.map.getCanvas().style.cursor = '';
-          var features_list = this.map.queryRenderedFeatures(e.point);
           this.map.setFilter('Kadasterlijnen', ['==', 'ADMINPERCE', '']);
-
-          var feature = _.find(features_list[0], {
-            'id': 'Kadaster'
+          this.map.setFilter('Vegetatielijnen', ['==', 'OBJECTID', '']);
+          
+          var features_list = this.map.queryRenderedFeatures(e.point);
+          
+          // kadaster or legger polygon found ?
+          var filterName, filterField
+          var hoverFeature = _.find(features_list, (feature) => {
+            if (feature.layer.id === 'Kadaster') {
+              filterName = 'Kadasterlijnen'
+              filterField = 'ADMINPERCE'
+              return true
+            }
           })
-          // Check if Kadaster layer is on top
-          if (feature !== undefined) {
+          if (!hoverFeature) {
+            hoverFeature = _.find(features_list, (feature) => {
+              if (feature.layer.id === 'Vegetatielegger') {
+                filterName = "Vegetatielijnen"
+                filterField = 'OBJECTID'
+                return true
+              }
+            })
+          }
+
+          if (hoverFeature && filterName) {
             // highlight polygon outline
             this.map.getCanvas().style.cursor = 'pointer';
-            this.map.setFilter('Kadasterlijnen', ['==', 'ADMINPERCE', features_list[0].properties['ADMINPERCE']]);
+            var filter = this.map.getFilter(filterName)
+            filter[2] = hoverFeature.properties[filterField]
+            this.map.setFilter(filterName, filter);
+            // list polygon attributes
             if (this.selectMode === false) {
               this.polygons = []
-              var kadasterLayer = _.find(this.layers, {
-                'name': 'Kadaster'
+              var hoverLayer = _.find(this.layers, {
+                name : hoverFeature.layer.id
               })
-              // list highlighted polygons
-              _.each(features_list, (hoverfeature) => {
-                if (hoverfeature.layer['id'] === 'Kadaster') {
-                  _.each(kadasterLayer.tableproperties, (prop) => {
+              // list polygon attributes
+              _.each(features_list, (feature) => {
+                if (feature.layer.id === hoverFeature.layer.id) {
+                  _.each(hoverLayer.tableproperties, (prop) => {
                     this.polygons.push({
                       value: false,
                       name: prop.name,
-                      data: hoverfeature.properties[prop.key]
+                      data: feature.properties[prop.key]
                     })
                   })
                 }

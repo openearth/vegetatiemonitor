@@ -248,17 +248,47 @@ const mapLayers = [
         },
       },
       {
-        'id': 'Beheersgrenzen',
+        'id': 'Vegetatielijnen',
         'type': 'line',
         'source': {
           'type': 'vector',
-          'url': 'mapbox://ellispenning.dbeqewih',
+          'url': 'mapbox://ellispenning.87a2u39q',
         },
-        'source-layer': 'beheergrens-8l9whd',
+        'source-layer': 'vegetatie-vlakken-596nr3',
         'paint': {
-          'line-color': 'rgb(80,155,255)'
-        }
-      }
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        'filter': ['==', 'OBJECTID', '']
+      },
+      {
+        'id': 'VegetatieSelect',
+        'type': 'line',
+        'source': {
+          'type': 'vector',
+          'url': 'mapbox://ellispenning.87a2u39q',
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        'paint': {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        'filter': ['==', 'OBJECTID', '']
+      }      
+    ],
+    tableproperties: [
+      {
+        name: 'Vegetatieklasse',
+        key: 'VL_KLASSE'
+      },
+      {
+        name: 'Mengklasse',
+        key: 'MENGKLASSE'
+      },
+      {
+        name: 'Stroombaan',
+        key: 'STROOMBAAN'
+      },
     ]
   },
   {
