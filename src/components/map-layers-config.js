@@ -65,7 +65,7 @@ const mapLayers = [
     active: false,
     hoverFilter: 'Kadasterlijnen',
     selectFilter: 'KadasterSelect',
-    filterProperty: 'ADMINPERCE',
+    selectProperty: 'ADMINPERCE',
     data: [{
       'id': 'Kadaster',
       'type': 'fill',
@@ -197,7 +197,7 @@ const mapLayers = [
     },
     hoverFilter: 'Vegetatielijnen',
     selectFilter: 'VegetatieSelect',
-    filterProperty: 'OBJECTID',
+    selectProperty: 'OBJECTID',
     data: [{
         'id': 'Vegetatielegger',
         'type': 'fill',

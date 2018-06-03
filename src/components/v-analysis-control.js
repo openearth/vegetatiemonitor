@@ -119,12 +119,12 @@ export default {
             })
             
             // hovering effect, highlight the feature the mouse is over
-            if (layer && layer.hoverFilter && layer.filterProperty) {
+            if (layer && layer.hoverFilter && layer.selectProperty) {
               this.map.getCanvas().style.cursor = 'pointer';
               
               // highlight using filter
               var filter = this.map.getFilter(layer.hoverFilter)
-              filter[2] = firstFeature.properties[layer.filterProperty]
+              filter[2] = firstFeature.properties[layer.selectProperty]
               this.map.setFilter(layer.hoverFilter, filter);
   
               // list feature attributes in data-table
@@ -149,64 +149,79 @@ export default {
         // When clicked on a polygon, show this polygons data in the table and
         // make a pie chart. When clicked again go back to the hover mode.
         this.map.on('click', (e) => {
-          this.clearPieChart('legger')
-          this.clearPieChart('landuse')
 
           // query map and take topmost feature
           var features_list = this.map.queryRenderedFeatures(e.point);
-          this.perceelnumber = features_list[0].properties['ADMINPERCE']
+          if (features_list && features_list.length > 0) {
+            
+            // find the group layer
+            var firstFeature = features_list[0]
+            var layer = _.find(this.layers, {
+              name : firstFeature.layer.id
+            })
 
-          var feature = _.find(features_list[0], {
-            'id': 'Kadaster'
-          })
-          // highlight polygon outline
-          this.map.setFilter('KadasterSelect', ['==', 'ADMINPERCE', features_list[0].properties['ADMINPERCE']]);
-          if (feature !== undefined) {
-            this.polygons = []
-            this.selectMode = true
-            var kadasterLayer = _.find(this.layers, {
-              'name': 'Kadaster'
-            })
-            this.selectLayer = kadasterLayer
-            // list highlighted polygons
-            _.each(features_list, (hoverfeature) => {
-              if (hoverfeature.layer['id'] === 'Kadaster') {
-                _.each(kadasterLayer.tableproperties, (prop) => {
-                  this.polygons.push({
-                    value: false,
-                    name: prop.name,
-                    data: hoverfeature.properties[prop.key]
+            // hovering effect, highlight the feature the mouse is over
+            if (layer && layer.selectFilter && layer.selectProperty) {
+              
+              this.selectMode = true
+              this.selectLayer = layer
+              
+              // highlight using filter
+              var filter = this.map.getFilter(layer.selectFilter)
+              filter[2] = firstFeature.properties[layer.selectProperty]
+              this.map.setFilter(layer.selectFilter, filter);
+              
+              // list feature attributes in data-table
+              this.polygons = []
+              _.each(features_list, (feature) => {
+                if (feature.layer.id === firstFeature.layer.id) {
+                  _.each(layer.tableproperties, (prop) => {
+                    this.polygons.push({
+                      value: false,
+                      name: prop.name,
+                      data: feature.properties[prop.key]
+                    })
                   })
-                })
+                }
+              })
+
+              this.perceelnumber = firstFeature.properties[layer.selectProperty]
+
+              // query polygon feature
+              var json_body = {
+                "dateBegin": this.selection.beginDate,
+                "dateEnd": this.selection.endDate,
+                "region": {
+                  "type": "FeatureCollection",
+                  "features": [{
+                    "type": "Feature",
+                    "geometry": firstFeature.geometry,
+                    "properties": {
+                      "id": 1
+                    }
+                  }]
+                },
+                "scale": 10
               }
-            })
-            // query polygon feature
-            var json_body = {
-              "dateBegin": this.selection.beginDate,
-              "dateEnd": this.selection.endDate,
-              "region": {
-                "type": "FeatureCollection",
-                "features": [{
-                  "type": "Feature",
-                  "geometry": features_list["0"].geometry,
-                  "properties": {
-                    "id": 1
-                  }
-                }]
-              },
-              "scale": 10
-            }
-            this.workLoad = 0
-            this.loadPieChart('legger', json_body)
-            this.loadPieChart('landuse', json_body)
+              this.workLoad = 0
+              if (layer.name == "Kadaster") {
+                this.loadPieChart('landuse', 'kadaster', json_body)
+                this.loadPieChart('legger', 'kadaster', json_body)
+              } else {
+                this.loadPieChart('landuse', 'legger', json_body)
+              }
+            }              
+       
           }
         })
       }),
+
       // Event to update date selection
       bus.$on('selection-changed', (selection) => {
         if (selection.beginDate) this.selection.beginDate = selection.beginDate
         if (selection.endDate) this.selection.endDate = selection.endDate
       }),
+
       // clear analysis panel if selected layer is turned off
       bus.$on('select-layers', (layers) => {
         if (this.selectLayer && !this.selectLayer.active) {
@@ -216,7 +231,7 @@ export default {
   },
   methods: {
     // load the data required for plotting a pie chart of landuse per polygon
-    loadPieChart(datatype, json_body) {
+    loadPieChart(datatype, feature, json_body) {
       this.workLoad++
         fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
           method: 'POST',
@@ -257,7 +272,8 @@ export default {
             this.landuseData = pieData
           }
           this.canvas[datatype].style.display = 'block'
-          this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 'Verdeling van ' + datatype + ' klassen binnen kadaster polygoon [%]')
+          this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 
+            `Verdeling van ${datatype} klassen binnen ${feature} polygoon [%]`)
           this.workLoad--
         })
         .catch(function(error) {
@@ -297,6 +313,7 @@ export default {
     closeSelectMode() {
       this.selectMode = false
       this.map.setFilter('KadasterSelect', ['==', 'ADMINPERCE', ''])
+      this.map.setFilter('VegetatieSelect', ['==', 'OBJECTID', ''])
       this.clearPieChart('legger')
       this.clearPieChart('landuse')
       this.polygons = []

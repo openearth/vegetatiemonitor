@@ -22,8 +22,8 @@
       <v-flex xs2 offset-xs5>
         <v-progress-circular v-if="workLoad > 0" indeterminate ></v-progress-circular>
       </v-flex>
-      <canvas ref="legger-canvas"></canvas>
       <canvas ref="landuse-canvas"></canvas>
+      <canvas ref="legger-canvas"></canvas>
     </v-card>
   </v-expansion-panel-content>
 </v-expansion-panel>
