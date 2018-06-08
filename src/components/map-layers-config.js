@@ -191,7 +191,6 @@ const mapLayers = [
     layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: 'static/images/legend-legger.png',
-    download: true,
     opacity: 100,
     active: true,
     type: 'group',
@@ -284,7 +283,7 @@ const mapLayers = [
           'line-width': 2
         },
         'filter': ['==', 'OBJECTID', '']
-      }      
+      }
     ],
     tableproperties: [
       {
@@ -307,6 +306,7 @@ const mapLayers = [
     icon: 'static/images/legend-ndvi.png',
     opacity: 100,
     active: false,
+    download: true,
     dataset: 'ndvi', // important! this argument is needed to call the service
     legend: {
       colors: ['#000000', '#252525', '#525252', '#737373', '#969696', '#bdbdbd',

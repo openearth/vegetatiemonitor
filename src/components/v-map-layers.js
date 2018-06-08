@@ -4,18 +4,12 @@ import {
 import {
   mapLayers
 } from './map-layers-config.js'
-import {
-  getGeeImage
-} from './get-gee-layers.js'
+
 export default {
   name: 'v-map-layers',
   data() {
     return {
-      map: null,
-      dateBegin: "2017-07-20",
-      dateEnd: "2017-07-21",
-      beginDate: "",
-      endDate: "",
+      map: null
     }
   },
   methods: {

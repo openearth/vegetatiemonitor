@@ -17,7 +17,7 @@
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}
                 </v-list-tile-title>
-                <v-btn small :ripple='false' flat icon v-if='layer.download'  v-on:click.stop='downloadGeotiff(layer.name)'>
+                <v-btn small :ripple='false' flat icon v-if='layer.download'  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
                   <v-icon>get_app</v-icon>
                 </v-btn>
                 <v-list-tile-avatar>

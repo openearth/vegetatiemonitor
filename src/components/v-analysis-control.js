@@ -36,7 +36,7 @@ var colors = [{
   },
   {
     type: '0',
-    name: '',
+    name: 'Mengklasse',
     color: '#00000',
   }
 ]
@@ -107,26 +107,26 @@ export default {
           if (!this.selectMode) {
             this.polygons = []
           }
-          
+
           // check the topmost feature below mouse pointer
           var features_list = this.map.queryRenderedFeatures(e.point);
           if (features_list && features_list.length > 0) {
-            
+
             // find the group layer
             var firstFeature = features_list[0]
             var layer = _.find(this.layers, {
               name : firstFeature.layer.id
             })
-            
+
             // hovering effect, highlight the feature the mouse is over
             if (layer && layer.hoverFilter && layer.selectProperty) {
               this.map.getCanvas().style.cursor = 'pointer';
-              
+
               // highlight using filter
               var filter = this.map.getFilter(layer.hoverFilter)
               filter[2] = firstFeature.properties[layer.selectProperty]
               this.map.setFilter(layer.hoverFilter, filter);
-  
+
               // list feature attributes in data-table
               if (!this.selectMode) {
                 this.selectLayer = layer
@@ -142,7 +142,7 @@ export default {
                   }
                 })
               }
-            } 
+            }
           }
         })
 
@@ -153,7 +153,7 @@ export default {
           // query map and take topmost feature
           var features_list = this.map.queryRenderedFeatures(e.point);
           if (features_list && features_list.length > 0) {
-            
+
             // find the group layer
             var firstFeature = features_list[0]
             var layer = _.find(this.layers, {
@@ -162,15 +162,15 @@ export default {
 
             // hovering effect, highlight the feature the mouse is over
             if (layer && layer.selectFilter && layer.selectProperty) {
-              
+
               this.selectMode = true
               this.selectLayer = layer
-              
+
               // highlight using filter
               var filter = this.map.getFilter(layer.selectFilter)
               filter[2] = firstFeature.properties[layer.selectProperty]
               this.map.setFilter(layer.selectFilter, filter);
-              
+
               // list feature attributes in data-table
               this.polygons = []
               _.each(features_list, (feature) => {
@@ -210,8 +210,8 @@ export default {
               } else {
                 this.loadPieChart('landuse', 'legger', json_body)
               }
-            }              
-       
+            }
+
           }
         })
       }),
@@ -272,7 +272,7 @@ export default {
             this.landuseData = pieData
           }
           this.canvas[datatype].style.display = 'block'
-          this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea, 
+          this.chart[datatype] = this.makePieChart(this.canvas[datatype], labels, pieData, pieColors, totalArea,
             `Verdeling van ${datatype} klassen binnen ${feature} polygoon [%]`)
           this.workLoad--
         })
