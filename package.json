@@ -11,7 +11,8 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "build": "node build/build.js",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "lint": "eslint --fix --ext .js,.vue --ignore-path .gitignore --ignore-pattern external ."
   },
   "dependencies": {
     "@mapbox/mapbox-gl-geocoder": "^2.2.0",
