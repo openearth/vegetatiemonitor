@@ -63,6 +63,9 @@ const mapLayers = [
     icon: 'static/images/legend-kadaster.png',
     opacity: 100,
     active: false,
+    hoverFilter: 'Kadasterlijnen',
+    selectFilter: 'KadasterSelect',
+    selectProperty: 'ADMINPERCE',
     data: [{
       'id': 'Kadaster',
       'type': 'fill',
@@ -196,6 +199,9 @@ const mapLayers = [
       colors: ['#a3e0ff', '#ff827e', '#eefad4', '#debdde', '#73bf73', '#d97a36', '#ffec80', '#f2d218', '#d9bb16' ],
       labels: ['water', 'bebouwd of verhard', 'gras en akker', 'riet en ruigte', 'bos', 'struweel', 'mengklasse 90/10', 'mengklasse 70/30', 'mengklasse 50/50'],
     },
+    hoverFilter: 'Vegetatielijnen',
+    selectFilter: 'VegetatieSelect',
+    selectProperty: 'OBJECTID',
     data: [{
         'id': 'Vegetatielegger',
         'type': 'fill',
@@ -252,17 +258,47 @@ const mapLayers = [
         },
       },
       {
-        'id': 'Beheersgrenzen',
+        'id': 'Vegetatielijnen',
         'type': 'line',
         'source': {
           'type': 'vector',
-          'url': 'mapbox://ellispenning.dbeqewih',
+          'url': 'mapbox://ellispenning.87a2u39q',
         },
-        'source-layer': 'beheergrens-8l9whd',
+        'source-layer': 'vegetatie-vlakken-596nr3',
         'paint': {
-          'line-color': 'rgb(80,155,255)'
-        }
-      }
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        'filter': ['==', 'OBJECTID', '']
+      },
+      {
+        'id': 'VegetatieSelect',
+        'type': 'line',
+        'source': {
+          'type': 'vector',
+          'url': 'mapbox://ellispenning.87a2u39q',
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        'paint': {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        'filter': ['==', 'OBJECTID', '']
+      }      
+    ],
+    tableproperties: [
+      {
+        name: 'Vegetatieklasse',
+        key: 'VL_KLASSE'
+      },
+      {
+        name: 'Mengklasse',
+        key: 'MENGKLASSE'
+      },
+      {
+        name: 'Stroombaan',
+        key: 'STROOMBAAN'
+      },
     ]
   },
   {

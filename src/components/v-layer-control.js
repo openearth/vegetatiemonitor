@@ -40,6 +40,7 @@ export default {
       handler: function(layers) {
         this.toggleLayers();
         this.sortLayers()
+        bus.$emit('select-layers', layers)
       },
       deep: true
     },
