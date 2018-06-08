@@ -122,7 +122,6 @@ export default {
         if (layer.visualisations) {
           layer.vis = layer.visualisations.find(v => v.name == this.falseColor).vis
           this.vis = layer.vis
-          console.log(this.vis)
         }
       })
       bus.$emit('change-false-color', name)
@@ -143,11 +142,12 @@ export default {
       'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
 
       var json_body = {
-        'region': JSON.stringify(bbox),
+        'region': bbox,
         'dateBegin': this.beginDate,
         'dateEnd': this.endDate,
         'vis': vis
       }
+      console.log(SERVER_URL + '/map/' + dataset + '/export/')
       console.log(JSON.stringify(json_body))
       fetch(SERVER_URL + '/map/' + dataset + '/export/', {
           method: "POST",
@@ -162,6 +162,7 @@ export default {
         })
         .then((mapUrl) => {
           console.log(mapUrl)
+          window.open(mapUrl['url']);
         })
     }
   },

@@ -1,5 +1,5 @@
 <template>
-<v-expansion-panel class="v-selection-panel">
+<v-expansion-panel class="v-layer-panel">
   <v-expansion-panel-content value=true>
     <v-toolbar class="toolbar " flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
@@ -17,7 +17,7 @@
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}
                 </v-list-tile-title>
-                <v-btn small :ripple='false' flat icon v-if='layer.download'  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
+                <v-btn small :ripple='false' flat icon v-if='layer.download' :disabled="map.getZoom() < 10"  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
                   <v-icon>get_app</v-icon>
                 </v-btn>
                 <v-list-tile-avatar>
