@@ -46,12 +46,15 @@
 </template>
 
 <script src="./v-layer-control.js"></script>
-
 <style scoped>
 /* .layer-control {
   max-height: 50vh;
   overflow-y: auto;
 } */
+
+.v-selection-panel >>> .v-expansion-panel__header {
+  padding: 0;
+}
 
 .draggable {
   width: 100%;
