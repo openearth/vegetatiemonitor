@@ -31,6 +31,10 @@
 @import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 @import 'material-design-icons/iconfont/material-icons.css';
 
+.v-expansion-panel__header {
+  padding: 0;
+}
+
 html, doc {
   overflow: hidden;
 }
