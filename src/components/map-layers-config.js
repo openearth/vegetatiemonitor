@@ -161,12 +161,7 @@ const mapLayers = [
     opacity: 100,
     active: false,
     dataset: 'landuse-vs-legger',
-    legendtable: 'static/images/difference-legend.html',
-    // download: true,
-    // legend: {
-    //   colors: ['#1a9850', '#91cf60', '#d9ef8b', '#ffffbf', '#fee08b', '#fc8d59', '#d73027'],
-    //   range: '-5 5',
-    // },
+    legendtable: 'difference',
     data: [],
     vis: {}
   },

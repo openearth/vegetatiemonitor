@@ -1,6 +1,6 @@
 <template>
-<v-expansion-panel class="v-selection-panel">
-  <v-expansion-panel-content value=true>
+<v-expansion-panel class="v-selection-panel" :value=0>
+  <v-expansion-panel-content>
     <v-toolbar class="toolbar" dense flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
         Kaartlagen
@@ -38,6 +38,8 @@
               </div>
               </template>
             </div>
+            <v-difference-legend v-if="layer.legendtable=='difference'">
+            </v-difference-legend>
           </div>
         </v-expansion-panel-content>
       </draggable>

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import draggable from 'vuedraggable'
+import VDifferenceLegend from './VDifferenceLegend'
 import {
   bus
 } from '@/event-bus.js';
@@ -168,6 +169,7 @@ export default {
   },
 
   components: {
-    draggable
+    draggable,
+    'v-difference-legend': VDifferenceLegend
   }
 };
