@@ -7,7 +7,7 @@
       </v-toolbar-title>
     </v-toolbar>
     <v-expansion-panel class="panel">
-      <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.v-icon'}">
+      <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.draghandle'}">
         <v-expansion-panel-content v-for="layer in layers" :key="layer.id" focusable>
           <div class="header" slot="header">
             <v-list dense class="ma-0 pa-0">
