@@ -12,8 +12,8 @@
           <div class="header" slot="header">
             <v-list dense class="ma-0 pa-0">
               <v-list-tile class="ma-0 pa-0">
-                <v-icon class="draghandle mr-2" @click.stop=";" title="Drag to change map layer drawing order">drag_handle</v-icon>
-                <v-list-tile-action>
+                <v-icon class="draghandle mr-2" title="Drag to change map layer drawing order">drag_handle</v-icon>
+                <v-list-tile-action @click.stop=";">
                   <v-switch v-model="layer.active"></v-switch>
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}</v-list-tile-title>
