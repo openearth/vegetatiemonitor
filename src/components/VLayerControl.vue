@@ -1,21 +1,25 @@
 <template>
-<v-expansion-panel class="v-selection-panel">
-  <v-expansion-panel-content value=true>
-    <v-toolbar class="toolbar " flat slot="header" color="grey lighten-4">
+<v-expansion-panel class="v-selection-panel" :value=0>
+  <v-expansion-panel-content>
+    <v-toolbar class="toolbar" dense flat slot="header" color="grey lighten-4">
       <v-toolbar-title>
         Kaartlagen
       </v-toolbar-title>
     </v-toolbar>
     <v-expansion-panel class="panel">
-      <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.header__icon'}">
-        <v-expansion-panel-content v-for="layer in layers" :key="layer.id" focusable expand-icon="more_vert">
+      <draggable class="draggable" v-model="computedList" @start="drag=true" @end="drag=false" :options="{handle:'.draghandle'}">
+        <v-expansion-panel-content v-for="layer in layers" :key="layer.id" focusable>
           <div class="header" slot="header">
-            <v-list dense class="ma-1 pa-0">
-              <v-list-tile class="ma-0 pa-0" v-on:click.stop=";">
-                <v-list-tile-action>
+            <v-list dense class="ma-0 pa-0">
+              <v-list-tile class="ma-0 pa-0">
+                <v-icon class="draghandle mr-2" title="Drag to change map layer drawing order">drag_handle</v-icon>
+                <v-list-tile-action @click.stop=";">
                   <v-switch v-model="layer.active"></v-switch>
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}</v-list-tile-title>
+                <v-btn small :ripple='false' flat icon v-if='layer.download' :disabled="map.getZoom() < 10"  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
+                  <v-icon>get_app</v-icon>
+                </v-btn>
                 <v-list-tile-avatar>
                   <img :src="layer.icon" />
                 </v-list-tile-avatar>
@@ -37,6 +41,8 @@
               </div>
               </template>
             </div>
+            <v-difference-legend v-if="layer.legendtable=='difference'">
+            </v-difference-legend>
           </div>
         </v-expansion-panel-content>
       </draggable>
@@ -48,11 +54,6 @@
 <script src="./v-layer-control.js"></script>
 
 <style scoped>
-/* .layer-control {
-  max-height: 50vh;
-  overflow-y: auto;
-} */
-
 .draggable {
   width: 100%;
 }
@@ -69,6 +70,10 @@
 
 .color-label {
   display: flex;
+}
+
+.draghandle {
+  cursor: grab !important;
 }
 
 .colored-span {

@@ -1,8 +1,12 @@
 import _ from 'lodash';
 import draggable from 'vuedraggable'
+import VDifferenceLegend from './VDifferenceLegend'
 import {
   bus
 } from '@/event-bus.js';
+
+var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
+
 export default {
   name: 'layer-control',
   props: {
@@ -17,7 +21,10 @@ export default {
   data: function() {
     return {
       firstImage: null,
-      falseColor: 'Natural colors'
+      falseColor: 'Natural colors',
+      beginDate: '2016-07-20',
+      endDate: '2016-07-21',
+      vis: ''
     };
   },
   computed: {
@@ -57,6 +64,11 @@ export default {
   mounted() {
     bus.$on('firstImage-changed', (firstImage) => {
       this.firstImage = firstImage;
+    })
+
+    bus.$on('selection-changed', (selection) => {
+      if (selection.beginDate) this.beginDate = selection.beginDate
+      if (selection.endDate) this.endDate = selection.endDate
     })
   },
   methods: {
@@ -110,17 +122,54 @@ export default {
       _.each(this.layers, (layer) => {
         if (layer.visualisations) {
           layer.vis = layer.visualisations.find(v => v.name == this.falseColor).vis
+          this.vis = layer.vis
         }
       })
       bus.$emit('change-false-color', name)
     },
+
     colorRamp(legend) {
       if (legend && legend.colors) {
         return "background: linear-gradient(to right, " + legend.colors.join() + ");"
       }
+    },
+
+    downloadGeotiff(vis, dataset) {
+      var N = this.map.getBounds().getNorth()
+      var E = this.map.getBounds().getEast()
+      var S = this.map.getBounds().getSouth()
+      var W = this.map.getBounds().getWest()
+      var bbox = {'type': 'Polygon',
+      'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+
+      var json_body = {
+        'region': bbox,
+        'dateBegin': this.beginDate,
+        'dateEnd': this.endDate,
+        'vis': vis
+      }
+      console.log(SERVER_URL + '/map/' + dataset + '/export/')
+      console.log(JSON.stringify(json_body))
+      fetch(SERVER_URL + '/map/' + dataset + '/export/', {
+          method: "POST",
+          body: JSON.stringify(json_body),
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((res) => {
+          return res.json();
+        })
+        .then((mapUrl) => {
+          console.log(mapUrl)
+          window.open(mapUrl['url']);
+        })
     }
   },
+
   components: {
-    draggable
+    draggable,
+    'v-difference-legend': VDifferenceLegend
   }
 };
