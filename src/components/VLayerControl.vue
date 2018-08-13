@@ -17,6 +17,9 @@
                   <v-switch v-model="layer.active"></v-switch>
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}</v-list-tile-title>
+                <v-btn small :ripple='false' flat icon v-if='layer.download' :disabled="map.getZoom() < 10"  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
+                  <v-icon>get_app</v-icon>
+                </v-btn>
                 <v-list-tile-avatar>
                   <img :src="layer.icon" />
                 </v-list-tile-avatar>
