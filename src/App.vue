@@ -9,8 +9,8 @@
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
-    <div class="logo1 mr-2"><img class="logos" src="static/images/deltares.svg"></div>
-    <div class="logo2 mr-2"><img class="logos" src="static/images/Rijkswaterstaat.svg"></div>
+    <div class="logos"><img class="logos" src="static/images/deltares.svg"></div>
+    <div class="logos"><img class="logos" src="static/images/Rijkswaterstaat.svg"></div>
   </v-toolbar>
   <v-content>
     <div id="map">
@@ -52,35 +52,20 @@ html, doc {
   overflow-y: auto !important;
 }
 
-.list--dense .list__tile label {
-  font-size: small !important;
-}
-
 label {
   font-size: small !important;
 }
 
-.expansion-panel__header {
-  padding: 0px !important;
-}
-
-list__tile {
+.v-expansion-panel__header {
   padding: 0px !important;
 }
 
 .logos {
-  max-height: 100% !important;
-  max-width: 100% !important;
-}
-
-.logo1 {
-  height: 64px !important;
-  width: 138px !important;
-}
-
-.logo2 {
-  height: 64px !important;
-  width: 192px !important;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 100% !important;
+  max-height: 100%;
 }
 
 .input-group__selections__comma {
@@ -89,12 +74,5 @@ list__tile {
 
 input{
   font-size: small !important;
-}
-
-.list__tile__title {
-  font-size: small !important;
-}
-.list__tile__avatar {
-  min-width: 40px !important;
 }
 </style>
