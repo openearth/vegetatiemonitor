@@ -14,12 +14,22 @@
               <v-list-tile class="ma-0 pa-0">
                 <v-icon class="draghandle mr-2" title="Drag to change map layer drawing order">drag_handle</v-icon>
                 <v-list-tile-action @click.stop=";">
-                  <v-switch v-model="layer.active"></v-switch>
+                  <v-tooltip bottom>
+                    <v-switch slot="activator" :disabled="((map.getZoom() < 10) & ((layer.name === 'Classificatie vs Legger') ^ (layer.name === 'Classificatie'))) > 0" v-model="layer.active"></v-switch>
+                    <span>
+                      Wanneer ingezoomd tot een klein genoeg gebied kan de classificatie uitgevoerd worden.
+                    </span>
+                  </v-tooltip>
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}</v-list-tile-title>
-                <v-btn small :ripple='false' flat icon v-if='layer.download' :disabled="map.getZoom() < 10"  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
-                  <v-icon>get_app</v-icon>
-                </v-btn>
+                <v-tooltip bottom>
+                  <v-btn slot="activator" small :ripple='false' flat icon v-if='layer.download' :disabled="map.getZoom() < 10"  v-on:click.stop='downloadGeotiff(layer.vis, layer.dataset)'>
+                    <v-icon>get_app</v-icon>
+                  </v-btn>
+                  <span>
+                    Wanneer ingezoomd tot een klein genoeg gebied kan een geotiff gedownload worden.
+                  </span>
+                </v-tooltip>
                 <v-list-tile-avatar>
                   <img :src="layer.icon" />
                 </v-list-tile-avatar>

@@ -1,5 +1,6 @@
 <template>
 <v-app id="inspire">
+  <v-disclaimer></v-disclaimer>
   <v-navigation-drawer width=400 id="navdrawer" app v-model="drawer">
     <v-layer-control :layers="layers" :map="map"></v-layer-control>
     <v-selection-panel :layers="layers" :map="map" :selection="selection"></v-selection-panel>
@@ -69,38 +70,20 @@ label {
   max-height: 100%;
 }
 
-.input-group__selections__comma {
+.input-group__selections__comma,
+.v-select__selection--comma,
+.list--dense, .list__tile,
+label, v-list__tile,
+list__tile, input,
+.list__tile__title {
   font-size: small !important;
-}
-
-input{
-  font-size: small !important;
-}
-
-
-.list--dense .list__tile label {
-  font-size: small !important;
-}
-
-label {
-  font-size: small !important;
+  padding-top: 5px;
 }
 
 .expansion-panel__header {
   padding: 0px !important;
 }
 
-list__tile {
-  padding: 0px !important;
-}
-
-input{
-  font-size: small !important;
-}
-
-.list__tile__title {
-  font-size: small !important;
-}
 .list__tile__avatar {
   min-width: 40px !important;
 }

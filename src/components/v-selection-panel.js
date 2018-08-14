@@ -12,6 +12,35 @@ var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
 
 // TODO: Fix this by looping over datasets in this.layers. This is an ugly fix
 var datasets = ["satellite", "ndvi", "landuse", "landuse-vs-legger"]
+var region = {
+  "coordinates": [
+    [
+      [
+        4.54,
+        52.71
+      ],
+      [
+        4.17,
+        50.75
+      ],
+      [
+        6.2,
+        50.7
+      ],
+      [
+        6.44,
+        52.68
+      ],
+      [
+        4.54,
+        52.71
+      ]
+    ]
+    ],
+  "geodesic": true,
+  "type": "Polygon"
+}
+
 
 export default {
   name: 'v-selection-panel',
@@ -39,34 +68,7 @@ export default {
       Image1: [],
       Image2: [],
       firstImages: {},
-      region: {
-        "coordinates": [
-          [
-            [
-              4.54,
-              52.71
-            ],
-            [
-              4.17,
-              50.75
-            ],
-            [
-              6.2,
-              50.7
-            ],
-            [
-              6.44,
-              52.68
-            ],
-            [
-              4.54,
-              52.71
-            ]
-          ]
-          ],
-        "geodesic": true,
-        "type": "Polygon"
-      },
+      region: {},
       radioButtons: "radio-composite"
     }
   },
@@ -128,6 +130,15 @@ export default {
             'dataset': dataset
           })
           var vis = menulayer.vis
+          this.region = region
+          if (dataset === 'landuse' | dataset === 'landuse-vs-legger'){
+            var N = this.map.getBounds().getNorth()
+            var E = this.map.getBounds().getEast()
+            var S = this.map.getBounds().getSouth()
+            var W = this.map.getBounds().getWest()
+            this.region = {'type': 'Polygon',
+            'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+          }
           getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
         })
       } else {
@@ -146,6 +157,15 @@ export default {
             'dataset': dataset
           })
           var vis = menulayer.vis
+          this.region = region
+          if (dataset === 'landuse' | dataset === 'landuse-vs-legger'){
+            var N = this.map.getBounds().getNorth()
+            var E = this.map.getBounds().getEast()
+            var S = this.map.getBounds().getSouth()
+            var W = this.map.getBounds().getWest()
+            this.region = {'type': 'Polygon',
+            'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+          }
           getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
         }
       })
@@ -183,6 +203,16 @@ export default {
       this.selection.beginDate = this.beginDate
       this.selection.endDate = this.endDate
       bus.$emit('selection-changed', (this.selection))
+    },
+
+    checkClassificationButton(){
+      console.log(this.map)
+      if(this.map === null) {
+        return true
+      } else {
+        console.log(this.map.getZoom() < 10)
+        return this.map.getZoom() < 10
+      }
     }
   },
   components: {}
