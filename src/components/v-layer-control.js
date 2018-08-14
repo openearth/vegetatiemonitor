@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import draggable from 'vuedraggable'
 import VDifferenceLegend from './VDifferenceLegend'
+
 import {
   bus
 } from '@/event-bus.js';
@@ -22,8 +23,8 @@ export default {
     return {
       firstImage: null,
       falseColor: 'Natural colors',
-      beginDate: '2016-07-20',
-      endDate: '2016-07-21',
+      beginDate: '',
+      endDate: '',
       vis: ''
     };
   },

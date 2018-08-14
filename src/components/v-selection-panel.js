@@ -29,8 +29,8 @@ export default {
   },
   data() {
     return {
-      beginDate: "2016-07-20",
-      endDate: "2016-07-21",
+      beginDate: "2018-07-25",
+      endDate: "2018-07-28",
       beginMenu: false,
       endMenu: false,
       firstImage: null,
@@ -71,6 +71,7 @@ export default {
     }
   },
   mounted() {
+    this.emitSelection()
     if (this.selection) {
       // input properties
       this.beginDate = this.selection.beginDate

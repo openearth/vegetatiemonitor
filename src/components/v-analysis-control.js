@@ -36,7 +36,7 @@ var colors = [{
   },
   {
     type: '0',
-    name: 'Mengklasse',
+    name: 'Geen Data',
     color: '#00000',
   }
 ]
@@ -204,6 +204,8 @@ export default {
                 "scale": 10
               }
               this.workLoad = 0
+              this.clearPieChart('legger')
+              this.clearPieChart('landuse')
               if (layer.name == "Kadaster") {
                 this.loadPieChart('landuse', 'kadaster', json_body)
                 this.loadPieChart('legger', 'kadaster', json_body)
@@ -311,11 +313,11 @@ export default {
 
     // Remove the piecharts of the selected  figure
     closeSelectMode() {
+      this.clearPieChart('legger')
+      this.clearPieChart('landuse')
       this.selectMode = false
       this.map.setFilter('KadasterSelect', ['==', 'ADMINPERCE', ''])
       this.map.setFilter('VegetatieSelect', ['==', 'OBJECTID', ''])
-      this.clearPieChart('legger')
-      this.clearPieChart('landuse')
       this.polygons = []
     },
 
