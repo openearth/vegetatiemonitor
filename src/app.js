@@ -8,6 +8,7 @@ import LayerControl from './components/VLayerControl';
 import AnalysisControl from './components/VAnalysisControl';
 import SelectionPanel from './components/VSelectionPanel';
 import MapLayers from './components/VMapLayers';
+import VColofon from './components/VColofon'
 
 export default {
   name: 'app',
@@ -16,8 +17,8 @@ export default {
       map: null,
       layers: [],
       selection: {
-        beginDate: "2016-07-20",
-        endDate: "2016-07-21",
+        beginDate: "",
+        endDate: "",
         firstImage: null,
         secondImage: null,
       },
@@ -72,6 +73,7 @@ export default {
     'v-layer-control': LayerControl,
     'v-selection-panel': SelectionPanel,
     'v-map-layers': MapLayers,
-    'v-analysis-control': AnalysisControl
+    'v-analysis-control': AnalysisControl,
+    'v-colofon': VColofon
   },
 };

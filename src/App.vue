@@ -4,6 +4,7 @@
     <v-layer-control :layers="layers" :map="map"></v-layer-control>
     <v-selection-panel :layers="layers" :map="map" :selection="selection"></v-selection-panel>
     <v-analysis-control :layers="layers" :map="map" :selection="selection"></v-analysis-control>
+    <v-colofon></v-colofon>
   </v-navigation-drawer>
   <v-toolbar xs6 color="grey lighten-4" fixed app>
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -75,4 +76,33 @@ label {
 input{
   font-size: small !important;
 }
+
+
+.list--dense .list__tile label {
+  font-size: small !important;
+}
+
+label {
+  font-size: small !important;
+}
+
+.expansion-panel__header {
+  padding: 0px !important;
+}
+
+list__tile {
+  padding: 0px !important;
+}
+
+input{
+  font-size: small !important;
+}
+
+.list__tile__title {
+  font-size: small !important;
+}
+.list__tile__avatar {
+  min-width: 40px !important;
+}
+
 </style>
