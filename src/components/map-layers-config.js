@@ -123,10 +123,6 @@ const mapLayers = [
         key: 'GEMEENTE'
       },
       {
-        name: 'Gerechtigde',
-        key: 'GERECHTIGD'
-      },
-      {
         name: 'Grootte',
         key: 'GROOTTE'
       },
