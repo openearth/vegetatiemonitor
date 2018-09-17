@@ -8,7 +8,8 @@ import LayerControl from './components/VLayerControl';
 import AnalysisControl from './components/VAnalysisControl';
 import SelectionPanel from './components/VSelectionPanel';
 import MapLayers from './components/VMapLayers';
-import VColofon from './components/VColofon'
+import VColofon from './components/VColofon';
+import VDisclaimer from './components/VDisclaimer';
 
 export default {
   name: 'app',
@@ -17,8 +18,8 @@ export default {
       map: null,
       layers: [],
       selection: {
-        beginDate: "",
-        endDate: "",
+        beginDate: "2018-07-25",
+        endDate: "2018-07-28",
         firstImage: null,
         secondImage: null,
       },
@@ -67,6 +68,18 @@ export default {
     this.map.on('load', (event) => {
       bus.$emit('map-loaded', this.map)
     });
+
+    this.map.on('error', (event) => {
+      if (event.error.status === 429) {
+        console.log(event)
+        console.log(this.map.getSource(event.sourceId))
+        var source = this.map.getSource(event.sourceId)
+        source.tiles = event.source.tiles
+        console.log(source)
+        // source._pyramid.reload()
+      }
+      console.log('error', event)
+    })
   },
   methods: {},
   components: {
@@ -74,6 +87,7 @@ export default {
     'v-selection-panel': SelectionPanel,
     'v-map-layers': MapLayers,
     'v-analysis-control': AnalysisControl,
-    'v-colofon': VColofon
+    'v-colofon': VColofon,
+    'v-disclaimer': VDisclaimer
   },
 };

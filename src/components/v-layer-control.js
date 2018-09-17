@@ -147,7 +147,8 @@ export default {
         'region': bbox,
         'dateBegin': this.beginDate,
         'dateEnd': this.endDate,
-        'vis': vis
+        'vis': vis,
+        "scale": 10
       }
       console.log(SERVER_URL + '/map/' + dataset + '/export/')
       console.log(JSON.stringify(json_body))
