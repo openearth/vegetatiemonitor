@@ -234,6 +234,7 @@ export default {
   methods: {
     // load the data required for plotting a pie chart of landuse per polygon
     loadPieChart(datatype, feature, json_body) {
+      console.log(JSON.stringify(json_body))
       this.workLoad++
         fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
           method: 'POST',

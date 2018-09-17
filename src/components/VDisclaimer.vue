@@ -8,11 +8,10 @@
           </span>
         </v-card-title>
         <v-card-text>
-          <h1>Disclaimer</h1>
-          TEXT
+          Welkom bij de Vegetatiemonitor versie 0.1. Deze quickscan-tool wordt ontwikkeld door Rijkswaterstaat en Deltares en is alleen te gebruiken als een eerste screening van de staat van de vegetatie in de uiterwaarden van het Nederlandse rivierengebied voor het geselecteerde satellietbeeld. Rijkswaterstaat en Deltares doen hun uiterste best om correcte resultaten te geven maar kunnen dit momenteel niet volledig garanderen. Aan de resultaten van de classificatie-beelden kunnen dus geen rechten worden ontleend.
         </v-card-text>
         <v-card-actions class="text-xs-center">
-          <v-btn @click.stop="disclaimer=false" round color="primary" dark>Agree and proceed to website</v-btn>
+          <v-btn @click.stop="disclaimer=false" round color="primary" dark>Accepteer en verder naar de website</v-btn>
           <!-- <v-btn tutorialDialog=true" round color="primary" dark>Decline</v-btn> -->
         </v-card-actions>
       </v-card>
