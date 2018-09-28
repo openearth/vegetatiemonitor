@@ -11,8 +11,8 @@
     <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     <v-toolbar-title>Vegetatie Monitor</v-toolbar-title>
     <v-spacer></v-spacer>
-    <div class="logos"><img class="logos" src="static/images/deltares.svg"></div>
-    <div class="logos"><img class="logos" src="static/images/Rijkswaterstaat.svg"></div>
+    <div class="logos v-toolbar__items hidden-sm-and-down"><img class="logos" src="static/images/deltares.svg"></div>
+    <div class="logos v-toolbar__items hidden-sm-and-down""><img class="logos" src="static/images/Rijkswaterstaat.svg"></div>
   </v-toolbar>
   <v-content>
     <div id="map">

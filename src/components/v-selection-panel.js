@@ -93,15 +93,31 @@ export default {
   watch: {
     beginDate: {
       handler: function(beginDate) {
-        this.changeDates()
-        this.changeModus()
+        this.beginDate = beginDate
       },
       deep: true
     },
     endDate: {
       handler: function(endDate) {
-        this.changeDates()
-        this.changeModus()
+        this.endDate = endDate
+      },
+      deep: true
+    },
+    beginMenu: {
+      handler: function(beginMenu) {
+        if(beginMenu === false){
+          this.changeDates()
+          this.changeModus()
+        }
+      },
+      deep: true
+    },
+    endMenu: {
+      handler: function(endMenu) {
+        if(endMenu === false){
+          this.changeDates()
+          this.changeModus()
+        }
       },
       deep: true
     },
@@ -131,15 +147,17 @@ export default {
           })
           var vis = menulayer.vis
           this.region = region
-          if (dataset === 'landuse' | dataset === 'landuse-vs-legger'){
+          if ((dataset === 'landuse' || dataset === 'landuse-vs-legger') && (this.map.getZoom() > 10)) {
             var N = this.map.getBounds().getNorth()
             var E = this.map.getBounds().getEast()
             var S = this.map.getBounds().getSouth()
             var W = this.map.getBounds().getWest()
             this.region = {'type': 'Polygon',
             'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+            getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
+          } else if (dataset != 'landuse' && dataset != 'landuse-vs-legger') {
+            getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
           }
-          getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
         })
       } else {
         // TODO: implement single/double image mode ?
@@ -158,15 +176,17 @@ export default {
           })
           var vis = menulayer.vis
           this.region = region
-          if (dataset === 'landuse' | dataset === 'landuse-vs-legger'){
+          if ((dataset === 'landuse' || dataset === 'landuse-vs-legger') && (this.map.getZoom() > 10)) {
             var N = this.map.getBounds().getNorth()
             var E = this.map.getBounds().getEast()
             var S = this.map.getBounds().getSouth()
             var W = this.map.getBounds().getWest()
             this.region = {'type': 'Polygon',
             'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+            getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
+          } else if (dataset != 'landuse' && dataset != 'landuse-vs-legger') {
+            getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
           }
-          getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
         }
       })
     },
@@ -177,6 +197,7 @@ export default {
         "dateEnd": this.endDate,
         "region": this.region,
       }
+      console.log('change Dates', SERVER_URL + '/map/satellite/times/', JSON.stringify(json_data))
       var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
         method: "POST",
         body: JSON.stringify(json_data),
@@ -206,11 +227,9 @@ export default {
     },
 
     checkClassificationButton(){
-      console.log(this.map)
       if(this.map === null) {
         return true
       } else {
-        console.log(this.map.getZoom() < 10)
         return this.map.getZoom() < 10
       }
     }

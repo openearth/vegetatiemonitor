@@ -150,8 +150,7 @@ export default {
         'vis': vis,
         "scale": 10
       }
-      console.log(SERVER_URL + '/map/' + dataset + '/export/')
-      console.log(JSON.stringify(json_body))
+      // console.log('download Geotiff', SERVER_URL + '/map/' + dataset + '/export/', JSON.stringify(json_body))
       fetch(SERVER_URL + '/map/' + dataset + '/export/', {
           method: "POST",
           body: JSON.stringify(json_body),
@@ -164,7 +163,6 @@ export default {
           return res.json();
         })
         .then((mapUrl) => {
-          console.log(mapUrl)
           window.open(mapUrl['url']);
         })
     }

@@ -14,12 +14,14 @@
               <v-list-tile class="ma-0 pa-0">
                 <v-icon class="draghandle mr-2" title="Drag to change map layer drawing order">drag_handle</v-icon>
                 <v-list-tile-action @click.stop=";">
-                  <v-tooltip bottom>
+                  <v-tooltip bottom v-if="((map.getZoom() < 10) & ((layer.name === 'Classificatie vs Legger') ^ (layer.name === 'Classificatie'))) > 0">
                     <v-switch slot="activator" :disabled="((map.getZoom() < 10) & ((layer.name === 'Classificatie vs Legger') ^ (layer.name === 'Classificatie'))) > 0" v-model="layer.active"></v-switch>
                     <span>
                       Wanneer ingezoomd tot een klein genoeg gebied kan de classificatie uitgevoerd worden.
                     </span>
                   </v-tooltip>
+                  <v-switch slot="activator" v-if="(((map.getZoom() < 10) & ((layer.name === 'Classificatie vs Legger') ^ (layer.name === 'Classificatie'))) > 0) === false " v-model="layer.active"></v-switch>
+
                 </v-list-tile-action>
                 <v-list-tile-title>{{layer.name}}</v-list-tile-title>
                 <v-tooltip bottom>

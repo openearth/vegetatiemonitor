@@ -234,7 +234,7 @@ export default {
   methods: {
     // load the data required for plotting a pie chart of landuse per polygon
     loadPieChart(datatype, feature, json_body) {
-      console.log(JSON.stringify(json_body))
+      // console.log('load Pie Chart', SERVER_URL + '/map/' + datatype + '/zonal-info/', JSON.stringify(json_body))
       this.workLoad++
         fetch(SERVER_URL + '/map/' + datatype + '/zonal-info/', {
           method: 'POST',
@@ -327,7 +327,7 @@ export default {
       var doc = new jsPDF()
       var W = doc.internal.pageSize.getWidth();
       var H = doc.internal.pageSize.getHeight();
-      var res = doc.autoTableHtmlToJson(document.getElementsByClassName('table')[0]);
+      var res = doc.autoTableHtmlToJson(document.getElementsByClassName('v-table')[0]);
       doc.autoTable(res.columns, res.data);
       var imgData = this.canvas['legger'].toDataURL()
       doc.addImage(imgData, 'JPEG', W*0.1, H*0.2, W*0.4, W*0.2)

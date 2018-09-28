@@ -41,6 +41,7 @@ export default {
       _.each(menulayer['data'], (datalayer, i) => {
         if (datalayer != undefined && datalayer['id'] === data['dataset'] + '_composite') {
           menulayer['data'].splice(i, 1)
+          console.log('removing stuff', datalayer['id'])
           this.map.removeLayer(datalayer['id'])
           this.map.removeSource(datalayer['id'])
         }
@@ -71,12 +72,8 @@ export default {
 
     this.map.on('error', (event) => {
       if (event.error.status === 429) {
-        console.log(event)
-        console.log(this.map.getSource(event.sourceId))
         var source = this.map.getSource(event.sourceId)
         source.tiles = event.source.tiles
-        console.log(source)
-        // source._pyramid.reload()
       }
       console.log('error', event)
     })
