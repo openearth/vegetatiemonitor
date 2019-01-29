@@ -82,12 +82,14 @@ export default {
       this.secondImage = this.selection.secondImage
     }
     bus.$on('map-loaded', (event) => {
-      this.changeModus()
+      console.log('map loaded')
       this.changeDates()
+      this.changeModus(this.beginDate, this.endDate)
     })
 
     bus.$on('change-false-color', (name) => {
-      this.changeModus(['satellite'])
+      bus.$emit('firstImage-changed', ('composite'))
+      this.changeModus(this.beginDate, this.endDate, ['satellite'])
     })
   },
   watch: {
@@ -107,7 +109,8 @@ export default {
       handler: function(beginMenu) {
         if(beginMenu === false){
           this.changeDates()
-          this.changeModus()
+          bus.$emit('firstImage-changed', ('composite'))
+          this.changeModus(this.beginDate, this.endDate, ["satellite", "ndvi"])
         }
       },
       deep: true
@@ -116,32 +119,40 @@ export default {
       handler: function(endMenu) {
         if(endMenu === false){
           this.changeDates()
-          this.changeModus()
+          bus.$emit('firstImage-changed', ('composite'))
+          this.changeModus(this.beginDate, this.endDate, ["satellite", "ndvi"])
         }
       },
       deep: true
     },
     radioButtons: {
       handler: function(radioButtons) {
-        this.changeModus()
+        if(this.radioButtons === 'radio-composite') {
+          bus.$emit('firstImage-changed', ('composite'))
+          this.changeModus(this.beginDate, this.endDate, ["satellite", "ndvi"])
+        } else {
+          bus.$emit('firstImage-changed', (this.firstImage))
+          this.changeModus(this.firstImage, null, ["satellite", "ndvi"])
+        }
+
       },
       deep: true
     },
     firstImage: {
       handler: function(firstImage) {
-        this.changeFirstImageDate()
+        bus.$emit('firstImage-changed', (this.firstImage))
+        this.changeModus(this.firstImage, null, ["satellite", "ndvi"])
       },
       deep: true
     }
   },
   methods: {
-    changeModus(modes = datasets) {
-      bus.$emit('firstImage-changed', ('composite'))
-      if (this.radioButtons == "radio-composite") {
+    changeModus(begindate, enddate, modes = datasets) {
         _.each(modes, (dataset) => {
           bus.$emit('remove-data-layer', ({
             'dataset': dataset
           }))
+
           var menulayer = _.find(this.layers, {
             'dataset': dataset
           })
@@ -154,28 +165,31 @@ export default {
             var W = this.map.getBounds().getWest()
             this.region = {'type': 'Polygon',
             'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
-            getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
+            console.log('changemodus landuse or dataset',  dataset, begindate, this.region, vis, enddate)
+            getGeeComposite(this.map, dataset, begindate, this.region, vis, enddate)
           } else if (dataset != 'landuse' && dataset != 'landuse-vs-legger') {
-            getGeeComposite(this.map, dataset, this.beginDate, this.region, vis, this.endDate)
+            console.log('changemodus satellite or ndvi',  dataset, begindate, this.region, vis, enddate)
+            getGeeComposite(this.map, dataset, begindate, this.region, vis, enddate)
           }
         })
-      } else {
-        // TODO: implement single/double image mode ?
-      }
+
     },
-    changeFirstImageDate() {
+    changeFirstImageDate(modes = datasets) {
+      console.log('change firsr image date', modes, this.firstImage)
       bus.$emit('firstImage-changed', (this.firstImage))
-      _.each(datasets, (dataset) => {
+      _.each(modes, (dataset) => {
         var menulayer = _.find(this.layers, 'dataset', dataset)
         var checkDate = _.find(menulayer.data, {
           'date': this.firstImage
         })
+        console.log(checkDate)
         if (checkDate == undefined) {
           var menulayer = _.find(this.layers, {
             'dataset': dataset
           })
           var vis = menulayer.vis
           this.region = region
+          console.log('checking')
           if ((dataset === 'landuse' || dataset === 'landuse-vs-legger') && (this.map.getZoom() > 10)) {
             var N = this.map.getBounds().getNorth()
             var E = this.map.getBounds().getEast()
@@ -183,6 +197,7 @@ export default {
             var W = this.map.getBounds().getWest()
             this.region = {'type': 'Polygon',
             'coordinates': [[[W, N], [W, S], [E, S], [E, N], [W, N]]]}
+            console.log('landuse thingie')
             getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
           } else if (dataset != 'landuse' && dataset != 'landuse-vs-legger') {
             getGeeComposite(this.map, dataset, this.firstImage, this.region, vis)
@@ -195,8 +210,9 @@ export default {
       var json_data = {
         "dateBegin": this.beginDate,
         "dateEnd": this.endDate,
-        "region": this.region,
+        "region": region,
       }
+
       console.log('change Dates', SERVER_URL + '/map/satellite/times/', JSON.stringify(json_data))
       var mapUrl = fetch(SERVER_URL + '/map/satellite/times/', {
         method: "POST",
@@ -231,6 +247,15 @@ export default {
         return true
       } else {
         return this.map.getZoom() < 10
+      }
+    },
+    classify(modes) {
+      if(this.radioButtons === 'radio-composite') {
+        bus.$emit('firstImage-changed', ('composite'))
+        this.changeModus(this.beginDate, this.endDate, modes)
+      } else {
+        bus.$emit('firstImage-changed', (this.firstImage))
+        this.changeModus(this.firstImage, null, modes)
       }
     }
   },

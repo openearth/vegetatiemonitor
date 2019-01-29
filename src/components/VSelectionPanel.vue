@@ -62,7 +62,7 @@
         </v-toolbar-title>
       </v-toolbar>
         <v-list-tile>
-          <v-btn :disabled="checkClassificationButton()" v-on:click.native="changeModus(['landuse', 'landuse-vs-legger'])" outline color="indigo">Classificeer huidig gebied
+          <v-btn :disabled="checkClassificationButton()" v-on:click.native="classify(['landuse', 'landuse-vs-legger'])" outline color="indigo">Classificeer huidig gebied
             <v-icon right>refresh</v-icon>
           </v-btn>
         </v-list-tile>
