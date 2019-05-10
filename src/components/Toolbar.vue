@@ -1,6 +1,6 @@
 <template>
   <v-toolbar dense color="primary" absolute prominent app>
-    <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
     >
@@ -26,7 +26,12 @@ export default {
       modes: ['Veld', 'Verken', 'Voorspel']
     }
   },
-  components: {}
+  methods: {
+    changeDrawer() {
+      const newVal = this.$store.state.drawer ? false : true
+      this.$store.commit('setDrawer', newVal)
+    }
+  }
 }
 </script>
 
