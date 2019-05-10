@@ -1,5 +1,5 @@
 {
-  "name": "vegetatiemonitor2.0",
+  "name": "vegetatiemonitor",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "mapbox-gl": "^0.54.0",
+    "mapbox-gl-geocoder": "^2.0.1",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
+    "vue2mapbox-gl": "^0.5.50",
     "vuetify": "^1.5.14",
     "vuex": "^3.0.1"
   },
@@ -26,14 +29,17 @@
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
+    "babel-jest": "^24.8.0",
+    "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "lint-staged": "^8.1.5",
+    "postcss-loader": "^3.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-vuetify": "^0.5.0",
-    "vue-template-compiler": "^2.5.21",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.0.5"
   },
   "gitHooks": {
