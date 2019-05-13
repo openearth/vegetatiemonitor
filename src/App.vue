@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <toolbar />
-    <drawer />
     <v-content>
+      <drawer />
       <map-component />
     </v-content>
   </v-app>

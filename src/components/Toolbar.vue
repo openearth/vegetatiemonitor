@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar dense color="primary" absolute prominent app>
+  <v-toolbar dense color="primary" prominent fixed app>
     <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
