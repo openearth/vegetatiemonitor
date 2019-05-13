@@ -13,8 +13,23 @@
       </v-tabs>
     </v-flex>
     <v-spacer />
-    <v-img class="hidden-sm-and-down" src="images/deltares.svg" />
-    <v-img class="hidden-sm-and-down" src="images/Rijkswaterstaat.svg" />
+
+    <v-img
+      contain
+      aspect-ratio="1"
+      min-height="100%"
+      max-height="100%"
+      class="hidden-sm-and-down logo"
+      src="images/deltares.svg"
+    />
+    <v-img
+      contain
+      aspect-ratio="1"
+      min-height="100%"
+      max-height="100%"
+      class="hidden-sm-and-down logo"
+      src="images/Rijkswaterstaat.svg"
+    />
   </v-toolbar>
 </template>
 
