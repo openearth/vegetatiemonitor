@@ -3,7 +3,7 @@
     <v-card small flat>
       <v-card-title>
         <h1>
-          Colofon
+          Kaartlagen
         </h1>
       </v-card-title>
     </v-card>
