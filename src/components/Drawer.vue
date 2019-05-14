@@ -28,10 +28,10 @@
           </v-list-tile>
         </v-list>
       </v-navigation-drawer>
-      <map-layers v-if="menu === 'Kaartlagen' && menuOpen" />
-      <analyse v-if="menu === 'Analyse' && menuOpen" />
-      <download v-if="menu === 'Download' && menuOpen" />
-      <colofon v-if="menu === 'Colofon' && menuOpen" />
+      <map-layers id="menuOpen" v-if="menu === 'Kaartlagen' && menuOpen" />
+      <analyse id="menuOpen" v-if="menu === 'Analyse' && menuOpen" />
+      <download id="menuOpen" v-if="menu === 'Download' && menuOpen" />
+      <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -81,15 +81,14 @@ export default {
       if (this.menu === title) {
         this.menu = ''
         this.mini = true
+        this.menuOpen = false
       } else {
         this.menu = title
         this.mini = false
       }
-      console.log('clicking', this.menu, title, this.mini)
     },
     transitionend() {
-      console.log('transitioning')
-      this.menuOpen = !this.menuOpen
+      this.menuOpen = true
     }
   }
 }
@@ -102,6 +101,6 @@ export default {
 }
 
 #menuOpen {
-  width: 100%;
+  width: 80%;
 }
 </style>

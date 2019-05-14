@@ -1,5 +1,5 @@
 <template>
-  <div id="colofon">
+  <div>
     <v-card small flat>
       <v-card-title>
         <h1>
@@ -27,8 +27,4 @@
   </div>
 </template>
 
-<style>
-#colofon {
-  width: 80%;
-}
-</style>
+<style></style>
