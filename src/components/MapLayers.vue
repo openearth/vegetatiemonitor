@@ -1,57 +1,67 @@
 <template>
-  <v-expansion-panel focusable dense>
-    <draggable
-      id="draggable"
-      class="draggable"
-      v-model="layers"
-      @start="drag = true"
-      @end="drag = false"
-    >
-      <v-expansion-panel-content
-        class="ma-0 pa-0"
-        v-for="layer in layers"
-        :key="layer.id"
-        extra-small
-        expand-icon="fa-caret-down"
-        hide-actions
+  <div>
+    <v-card small flat>
+      <v-card-title>
+        <h1>
+          Colofon
+        </h1>
+      </v-card-title>
+    </v-card>
+
+    <v-expansion-panel focusable dense>
+      <draggable
+        id="draggable"
+        class="draggable"
+        v-model="layers"
+        @start="drag = true"
+        @end="drag = false"
       >
-        <div slot="header" class="carddiv pa-1">
-          <v-card class="carddiv">
-            <v-layout align-center justify-space-end fill-height>
-              <v-flex>
-                <v-icon
-                  class="ma-2"
-                  id="dragicon"
-                  title="Drag to change map layer drawing order"
-                  small
-                  >fa-grip-vertical</v-icon
-                >
-              </v-flex>
-              <v-flex xs2>
-                <v-img
-                  contain
-                  max-height="100%"
-                  class="ma-1"
-                  :src="layer.image"
-                />
-              </v-flex>
-              <v-flex xs7>
-                {{ layer.title }}
-              </v-flex>
-              <v-flex xs2>
-                <v-switch />
-              </v-flex>
-              <v-flex>
-                <v-icon class="ma-2" id="dragicon" title="Open details" small
-                  >fa-caret-down</v-icon
-                >
-              </v-flex>
-            </v-layout>
-          </v-card>
-        </div>
-      </v-expansion-panel-content>
-    </draggable>
-  </v-expansion-panel>
+        <v-expansion-panel-content
+          class="ma-0 pa-0"
+          v-for="layer in layers"
+          :key="layer.id"
+          extra-small
+          expand-icon="fa-caret-down"
+          hide-actions
+        >
+          <div slot="header" class="carddiv pa-1">
+            <v-card class="carddiv">
+              <v-layout align-center justify-space-end fill-height>
+                <v-flex>
+                  <v-icon
+                    class="ma-2"
+                    id="dragicon"
+                    title="Drag to change map layer drawing order"
+                    small
+                    >fa-grip-vertical</v-icon
+                  >
+                </v-flex>
+                <v-flex xs2>
+                  <v-img
+                    contain
+                    max-height="100%"
+                    class="ma-1"
+                    :src="layer.image"
+                  />
+                </v-flex>
+                <v-flex xs7>
+                  {{ layer.title }}
+                </v-flex>
+                <v-flex xs2>
+                  <v-switch />
+                </v-flex>
+                <v-flex>
+                  <v-icon class="ma-2" id="dragicon" title="Open details" small
+                    >fa-caret-down</v-icon
+                  >
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </div>
+        </v-expansion-panel-content>
+      </draggable>
+    </v-expansion-panel>
+  </div>
 </template>
 
 <script>
