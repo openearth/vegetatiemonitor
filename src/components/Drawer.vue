@@ -7,7 +7,7 @@
     hide-overlay
     fixed
     width="400px"
-    @transitionend="transitionend()"
+    @transitionend="transitionEnd()"
   >
     <v-layout fill-height>
       <v-navigation-drawer
@@ -20,7 +20,7 @@
           <v-list-tile
             v-for="item in items"
             :key="item.title"
-            v-on:click="clicking(item.title)"
+            v-on:click="menuButton(item.title)"
           >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -77,7 +77,7 @@ export default {
     Colofon
   },
   methods: {
-    clicking(title) {
+    menuButton(title) {
       if (this.menu === title) {
         this.menu = ''
         this.mini = true
@@ -87,7 +87,7 @@ export default {
         this.mini = false
       }
     },
-    transitionend() {
+    transitionEnd() {
       this.menuOpen = true
     }
   }
