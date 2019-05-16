@@ -7,7 +7,7 @@
     <v-spacer />
     <v-flex xs-6>
       <v-tabs color="secondary" fixed-tabs>
-        <v-tab v-for="mode in modes" :key="mode" :to="mode">
+        <v-tab v-for="mode in modes" :key="mode" :to="{ name: mode }">
           {{ mode }}
         </v-tab>
       </v-tabs>

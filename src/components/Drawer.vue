@@ -18,7 +18,7 @@
       >
         <v-list class="pt-0" dense>
           <v-list-tile
-            v-for="item in items"
+            v-for="item in filteredItems"
             :key="item.title"
             v-on:click="menuButton(item.title)"
           >
@@ -53,21 +53,31 @@ export default {
       items: [
         {
           icon: 'fa-layer-group',
-          title: 'Kaartlagen'
+          title: 'Kaartlagen',
+          routes: ['Veld', 'Verken', 'Voorspel']
         },
         {
           icon: 'fa-chart-pie',
-          title: 'Analyse'
+          title: 'Analyse',
+          routes: ['Veld', 'Verken', 'Voorspel']
         },
         {
           icon: 'fa-download',
-          title: 'Download'
+          title: 'Download',
+          routes: ['Verken', 'Voorspel']
         },
         {
           icon: 'fa-info',
-          title: 'Colofon'
+          title: 'Colofon',
+          routes: ['Veld', 'Verken', 'Voorspel']
         }
       ]
+    }
+  },
+  computed: {
+    filteredItems() {
+      console.log(this.items, this.$route, this.$route.name)
+      return this.items.filter(item => item.routes.includes(this.$route.name))
     }
   },
   components: {

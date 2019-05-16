@@ -7,23 +7,23 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '',
+      path: '/',
       redirect: 'Verken',
       name: 'Verken',
       component: App
     },
     {
-      path: 'Verken',
+      path: '/Verken',
       name: 'Verken',
       component: App
     },
     {
-      path: 'Veld',
+      path: '/Veld',
       name: 'Veld',
       component: App
     },
     {
-      path: 'Voorspel',
+      path: '/Voorspel',
       name: 'Voorspel',
       component: App
     }
