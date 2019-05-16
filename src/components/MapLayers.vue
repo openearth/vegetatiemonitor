@@ -8,7 +8,7 @@
       </v-card-title>
     </v-card>
 
-    <v-expansion-panel focusable dense>
+    <v-expansion-panel focusable dense flat>
       <draggable
         id="draggable"
         class="draggable"
@@ -41,11 +41,11 @@
                     contain
                     max-height="100%"
                     class="ma-1"
-                    :src="layer.image"
+                    :src="layer.icon"
                   />
                 </v-flex>
                 <v-flex xs7>
-                  {{ layer.title }}
+                  {{ layer.name }}
                 </v-flex>
                 <v-flex xs2>
                   <v-switch />
@@ -68,31 +68,13 @@
 import draggable from 'vuedraggable'
 
 export default {
-  data() {
-    return {
-      layers: [
-        {
-          title: 'Kadaster',
-          image: './images/legend-kadaster.png'
-        },
-        {
-          title: 'Stroombanen',
-          image: './images/legend-stroombaan.png'
-        },
-        {
-          title: 'Classificatie vs Legger',
-          image: './images/legend-classified.png'
-        },
-        {
-          title: 'Classificatie',
-          image: './images/legend-classified.png'
-        },
-        {
-          title: 'Vegetatielegger',
-          image: './images/legend-legger.png'
-        }
-      ]
+  computed: {
+    layers() {
+      return this.$store.state.layers
     }
+  },
+  data() {
+    return {}
   },
   components: {
     draggable
@@ -111,6 +93,11 @@ export default {
 .carddiv {
   width: 100%;
   height: 100%;
+}
+
+.v-expansion-panel {
+  box-shadow: none;
+  webkit-box-shadow: none;
 }
 .v-expansion-panel__header {
   padding: 0;
