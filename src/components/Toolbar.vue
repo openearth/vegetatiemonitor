@@ -1,6 +1,6 @@
 <template>
   <v-toolbar dense color="primary" absolute prominent app>
-    <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
     >
@@ -13,8 +13,23 @@
       </v-tabs>
     </v-flex>
     <v-spacer />
-    <v-img class="hidden-sm-and-down" src="images/deltares.svg" />
-    <v-img class="hidden-sm-and-down" src="images/Rijkswaterstaat.svg" />
+
+    <v-img
+      contain
+      aspect-ratio="1"
+      min-height="100%"
+      max-height="100%"
+      class="hidden-sm-and-down logo"
+      src="images/deltares.svg"
+    />
+    <v-img
+      contain
+      aspect-ratio="1"
+      min-height="100%"
+      max-height="100%"
+      class="hidden-sm-and-down logo"
+      src="images/Rijkswaterstaat.svg"
+    />
   </v-toolbar>
 </template>
 
@@ -26,7 +41,12 @@ export default {
       modes: ['Veld', 'Verken', 'Voorspel']
     }
   },
-  components: {}
+  methods: {
+    changeDrawer() {
+      const newVal = this.$store.state.drawer ? false : true
+      this.$store.commit('setDrawer', newVal)
+    }
+  }
 }
 </script>
 
