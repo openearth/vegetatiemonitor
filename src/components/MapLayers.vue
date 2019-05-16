@@ -48,7 +48,7 @@
                   {{ layer.name }}
                 </v-flex>
                 <v-flex xs2>
-                  <v-switch />
+                  <v-switch v-model="layer.active" />
                 </v-flex>
                 <v-flex>
                   <v-icon class="ma-2" id="dragicon" title="Open details" small
@@ -69,8 +69,13 @@ import draggable from 'vuedraggable'
 
 export default {
   computed: {
-    layers() {
-      return this.$store.state.layers
+    layers: {
+      get() {
+        return this.$store.state.layers
+      },
+      set(layers) {
+        this.$store.commit('setMapLayers', layers)
+      }
     }
   },
   data() {

@@ -5,6 +5,8 @@
         <h1>
           Colofon
         </h1>
+      </v-card-title>
+      <v-card-text class="py-0">
         <p>
           Voor algemene vragen over de vegetatiemonitor en de achtergronden bij
           deze ontwikkeling:
@@ -22,7 +24,7 @@
           >
           voor het instructiefilmpje.
         </p>
-      </v-card-title>
+      </v-card-text>
     </v-card>
   </div>
 </template>

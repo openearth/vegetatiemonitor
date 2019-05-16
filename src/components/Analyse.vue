@@ -68,8 +68,13 @@ export default {
     }
   },
   computed: {
-    layers() {
-      return this.$store.state.layers
+    layers: {
+      get() {
+        return this.$store.state.layers
+      },
+      set(layers) {
+        this.$store.commit('setMapLayers', layers)
+      }
     }
   },
   data() {

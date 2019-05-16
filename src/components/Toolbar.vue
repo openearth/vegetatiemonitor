@@ -1,12 +1,12 @@
 <template>
-  <v-toolbar dense color="primary" prominent fixed app>
+  <v-toolbar dense color="secondary" prominent fixed app>
     <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
     >
     <v-spacer />
     <v-flex xs-6>
-      <v-tabs color="primary" fixed-tabs>
+      <v-tabs color="secondary" fixed-tabs>
         <v-tab v-for="mode in modes" :key="mode">
           {{ mode }}
         </v-tab>
