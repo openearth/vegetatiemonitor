@@ -11,7 +11,6 @@
       id="map"
       ref="map"
     >
-      <!-- <v-map-layers></v-map-layers> -->
       <v-mapbox-geocoder></v-mapbox-geocoder>
       <v-mapbox-navigation-control></v-mapbox-navigation-control>
     </v-mapbox>

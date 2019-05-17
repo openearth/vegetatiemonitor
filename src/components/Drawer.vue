@@ -1,54 +1,106 @@
-<!-- <template>
+<template>
   <v-navigation-drawer
-    v-model="drawer"
-    class="pb-0"
+    v-model="$store.state.drawer"
+    class="navdrawer"
     floating
+    :mini-variant="mini"
     hide-overlay
-    stateless
-    width="380"
+    fixed
+    width="400px"
+    @transitionend="transitionEnd()"
   >
     <v-layout fill-height>
-      <v-navigation-drawer dark mini-variant stateless value="true">
-        <v-toolbar flat class="transparent">
-          <v-list class="pa-0">
-            <v-list-tile avatar>
-              <v-list-tile-avatar>
-                <img src="https://randomuser.me/api/portraits/men/85.jpg" />
-              </v-list-tile-avatar>
-
-              <v-list-tile-content>
-                <v-list-tile-title>John Leider</v-list-tile-title>
-              </v-list-tile-content>
-
-              <v-list-tile-action>
-                <v-btn icon @click.native.stop="mini = !mini">
-                  <v-icon>chevron_left</v-icon>
-                </v-btn>
-              </v-list-tile-action>
-            </v-list-tile>
-          </v-list>
-        </v-toolbar>
-
+      <v-navigation-drawer
+        hide-overlay
+        v-model="$store.state.drawer"
+        mini-variant
+        stateless
+      >
         <v-list class="pt-0" dense>
-          <v-divider></v-divider>
-
-          <v-list-tile v-for="item in items" :key="item.title">
+          <v-list-tile
+            v-for="item in items"
+            :key="item.title"
+            v-on:click="menuButton(item.title)"
+          >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
-
-            <v-list-tile-content>
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            </v-list-tile-content>
           </v-list-tile>
         </v-list>
       </v-navigation-drawer>
-
-      <v-list class="grow">
-        <v-list-tile v-for="link in links" :key="link">
-          <v-list-tile-title v-text="link"></v-list-tile-title>
-        </v-list-tile>
-      </v-list>
+      <map-layers id="menuOpen" v-if="menu === 'Kaartlagen' && menuOpen" />
+      <analyse id="menuOpen" v-if="menu === 'Analyse' && menuOpen" />
+      <download id="menuOpen" v-if="menu === 'Download' && menuOpen" />
+      <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
   </v-navigation-drawer>
-</template> -->
+</template>
+
+<script>
+import MapLayers from './MapLayers.vue'
+import Analyse from './Analyse.vue'
+import Download from './Download.vue'
+import Colofon from './Colofon.vue'
+
+export default {
+  data() {
+    return {
+      drawer: true,
+      menu: '',
+      mini: true,
+      right: null,
+      menuOpen: false,
+      items: [
+        {
+          icon: 'fa-layer-group',
+          title: 'Kaartlagen'
+        },
+        {
+          icon: 'fa-chart-pie',
+          title: 'Analyse'
+        },
+        {
+          icon: 'fa-download',
+          title: 'Download'
+        },
+        {
+          icon: 'fa-info',
+          title: 'Colofon'
+        }
+      ]
+    }
+  },
+  components: {
+    MapLayers,
+    Analyse,
+    Download,
+    Colofon
+  },
+  methods: {
+    menuButton(title) {
+      if (this.menu === title) {
+        this.menu = ''
+        this.mini = true
+        this.menuOpen = false
+      } else {
+        this.menu = title
+        this.mini = false
+      }
+    },
+    transitionEnd() {
+      this.menuOpen = true
+    }
+  }
+}
+</script>
+
+<style>
+.navdrawer {
+  top: 48px;
+  margin: 0;
+}
+
+#menuOpen {
+  width: 80%;
+}
+</style>

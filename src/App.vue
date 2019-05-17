@@ -2,6 +2,7 @@
   <v-app>
     <toolbar />
     <drawer />
+
     <v-content>
       <map-component />
     </v-content>
@@ -13,6 +14,8 @@ import Toolbar from './components/Toolbar'
 import MapComponent from './components/MapComponent'
 import Drawer from './components/Drawer'
 
+import { mapLayers } from './config/map-layers-config.js'
+
 export default {
   name: 'app',
   data: function() {
@@ -22,7 +25,11 @@ export default {
     Toolbar,
     MapComponent,
     Drawer
-  }
+  },
+  mounted() {
+    this.$store.commit('setMapLayers', mapLayers)
+  },
+  methods: {}
 }
 </script>
 
