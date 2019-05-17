@@ -11,14 +11,15 @@
       id="map"
       ref="map"
     >
-      <v-mapbox-geocoder></v-mapbox-geocoder>
-      <v-mapbox-navigation-control></v-mapbox-navigation-control>
+      <v-mapbox-geocoder />
+      <v-mapbox-navigation-control />
+      <mapbox-geolocate />
     </v-mapbox>
   </div>
 </template>
 
 <script>
-import mapboxgl from 'mapbox-gl'
+import MapboxGeolocate from '../scripts/MapboxGeolocate'
 
 export default {
   name: 'map-component',
@@ -29,12 +30,9 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map
-    this.map.addControl(
-      new mapboxgl.ScaleControl({
-        maxWidth: 80,
-        unit: 'metric'
-      })
-    )
+  },
+  components: {
+    MapboxGeolocate
   }
 }
 </script>

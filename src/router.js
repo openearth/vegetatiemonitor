@@ -8,22 +8,22 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: 'Verken',
+      redirect: '/verken',
       name: 'Verken',
       component: App
     },
     {
-      path: '/Verken',
+      path: '/verken',
       name: 'Verken',
       component: App
     },
     {
-      path: '/Veld',
+      path: '/veld',
       name: 'Veld',
       component: App
     },
     {
-      path: '/Voorspel',
+      path: '/voorspel',
       name: 'Voorspel',
       component: App
     }

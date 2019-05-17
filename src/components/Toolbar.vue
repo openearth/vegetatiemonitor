@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar dense color="secondary" prominent fixed app>
+  <v-toolbar dense color="secondary" prominent fixed app class="pa-0">
     <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
@@ -50,4 +50,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.v-toolbar__content,
+.v-toolbar__extension {
+  padding: 0 12px;
+}
+</style>

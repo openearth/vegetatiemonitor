@@ -6,8 +6,9 @@
     :mini-variant="mini"
     hide-overlay
     fixed
-    width="400px"
+    width="480px"
     @transitionend="transitionEnd()"
+    mini-variant-width="48px"
   >
     <v-layout fill-height>
       <v-navigation-drawer
@@ -15,6 +16,7 @@
         v-model="$store.state.drawer"
         mini-variant
         stateless
+        mini-variant-width="48px"
       >
         <v-list class="pt-0" dense>
           <v-list-tile
@@ -76,7 +78,6 @@ export default {
   },
   computed: {
     filteredItems() {
-      console.log(this.items, this.$route, this.$route.name)
       return this.items.filter(item => item.routes.includes(this.$route.name))
     }
   },
@@ -111,6 +112,10 @@ export default {
 }
 
 #menuOpen {
-  width: 80%;
+  width: 90%;
+}
+
+a.v-list__tile {
+  padding: 0;
 }
 </style>

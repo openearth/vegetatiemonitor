@@ -36,13 +36,8 @@
                     >fa-grip-vertical</v-icon
                   >
                 </v-flex>
-                <v-flex xs2>
-                  <v-img
-                    contain
-                    max-height="100%"
-                    class="ma-1"
-                    :src="layer.icon"
-                  />
+                <v-flex xs2 fill-height>
+                  <v-img contain max-height="100%" :src="layer.icon" />
                 </v-flex>
                 <v-flex xs7>
                   {{ layer.name }}
