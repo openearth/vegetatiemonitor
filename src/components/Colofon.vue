@@ -10,13 +10,9 @@
         <p>
           Voor algemene vragen over de vegetatiemonitor en de achtergronden bij
           deze ontwikkeling:
-          <a href="mailto:stanford.wilson@rws.nl?subject=Vegetatiemonitor"
-            >Stanford Wilson</a
-          >
+          <a href="mailto:?subject=Vegetatiemonitor">Rijkswaterstaat</a>
           Voor technische vragen:
-          <a href="mailto:ellis.penning@deltares.nl?subject=Vegetatiemonitor"
-            >Ellis Penning</a
-          >
+          <a href="mailto:?subject=Vegetatiemonitor">Deltares</a>
           Download <a href="static/docs/TRM.pdf" download>hier</a> de Technische
           referentie handleiding. Klik
           <a href="https://www.youtube.com/watch?v=mOjCRgauxyM&feature=youtu.be"
