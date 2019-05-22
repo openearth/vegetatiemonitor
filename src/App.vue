@@ -44,5 +44,15 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  font-size: 14px;
+  -moz-osx-font-size: 14px;
+  -webkit-font-size: 14px;
+}
+
+.v-list__tile__title,
+.v-select__selection {
+  font-size: 14px;
+  -moz-osx-font-size: 14px;
+  -webkit-font-size: 14px;
 }
 </style>
