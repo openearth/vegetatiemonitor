@@ -66,6 +66,8 @@ const mapLayers = [
     hoverFilter: 'Kadasterlijnen',
     selectFilter: 'KadasterSelect',
     selectProperty: 'ADMINPERCE',
+    info:
+      'Dit is een superduper awesome laag. Ik heb even opvulling nodig voor het informatie stukje bladiebladieblad',
     data: [
       {
         id: 'Kadaster',
@@ -347,7 +349,13 @@ const mapLayers = [
     dataset: 'satellite', // important! this argument is needed to call the service
     data: [],
     vis: pseudoColors[0].vis,
-    visualisations: pseudoColors
+    settings: [
+      {
+        type: 'select',
+        items: pseudoColors,
+        selected: 'Natural colors'
+      }
+    ]
   }
 ]
 
