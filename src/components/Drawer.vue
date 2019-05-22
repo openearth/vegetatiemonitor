@@ -6,7 +6,7 @@
     :mini-variant="mini"
     hide-overlay
     fixed
-    width="480px"
+    width="360px"
     @transitionend="transitionEnd()"
     mini-variant-width="48px"
   >
@@ -113,6 +113,7 @@ export default {
 
 #menuOpen {
   width: 90%;
+  height: calc(100vh - 48px);
 }
 
 a.v-list__tile {
