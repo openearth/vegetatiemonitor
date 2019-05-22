@@ -61,27 +61,36 @@
               <v-divider />
             </div>
             <div class="legend" v-if="layer.legend">
+              <h4>Legenda</h4>
               <template v-if="layer.legend.range">
                 <div
                   v-if="layer.legend.colors"
                   class="color-ramp"
-                  :style="colorRamp(layer.legend)"
+                  :style="
+                    `background: linear-gradient(to right, ${layer.legend.colors.join()});`
+                  "
                 ></div>
                 <div class="range-ramp">{{ layer.legend.range }}</div>
               </template>
-              <template v-if="layer.legend.colors && layer.legend.labels">
-                <div
-                  v-for="i in layer.legend.colors.length"
-                  :key="i"
-                  class="color-label"
-                >
-                  <span
-                    class="colored-span"
-                    :style="'background-color: ' + layer.legend.colors[i - 1]"
-                  ></span>
-                  <label class="ma-1">{{ layer.legend.labels[i - 1] }}</label>
-                </div>
-              </template>
+              <div
+                v-if="layer.legend.colors && layer.legend.labels"
+                class="legend-colors"
+              >
+                <v-layout wrap class="color-label">
+                  <v-layout
+                    align-center
+                    v-for="(color, index) in layer.legend.colors"
+                    :key="index"
+                  >
+                    <span
+                      class="colored-span"
+                      :style="`background-color: ${color}`"
+                    ></span>
+                    <label class="ma-1">{{ layer.legend.labels[index] }}</label>
+                  </v-layout>
+                </v-layout>
+              </div>
+              <v-divider />
             </div>
             <div class="opacity" v-if="layer.opacity">
               <h4>Transparantie: {{ 100 - layer.opacity }}%</h4>
@@ -110,8 +119,8 @@
               </div>
               <v-divider />
             </div>
-            <v-difference-legend v-if="layer.legendtable === 'difference'">
-            </v-difference-legend>
+            <difference-legend v-if="layer.legendtable === 'difference'">
+            </difference-legend>
           </div>
         </v-expansion-panel-content>
       </draggable>
@@ -121,6 +130,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import DifferenceLegend from './DifferenceLegend'
 
 export default {
   computed: {
@@ -136,14 +146,9 @@ export default {
   data() {
     return {}
   },
-  methods: {
-    colorRamp(legend) {
-      if (legend && legend.colors) {
-        return `background: linear-gradient(to right, ${legend.colors.join()});`
-      }
-    }
-  },
+  methods: {},
   components: {
+    DifferenceLegend,
     draggable
   }
 }
@@ -160,6 +165,25 @@ export default {
 .carddiv {
   width: 100%;
   height: 100%;
+}
+
+.color-ramp {
+  height: 10px;
+}
+.range-ramp {
+  text-align: justify;
+  text-align-last: justify;
+  width: 100%;
+}
+
+.legend-colors {
+  display: inline-block;
+}
+
+.colored-span {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
 }
 
 .v-expansion-panel {
@@ -181,13 +205,14 @@ export default {
 }
 
 .info {
+  background-color: none !important;
+
   .wordwrap {
     white-space: pre-wrap; /* CSS3 */
     white-space: -moz-pre-wrap; /* Firefox */
     white-space: -pre-wrap; /* Opera <7 */
     white-space: -o-pre-wrap; /* Opera 7 */
     word-wrap: break-word; /* IE */
-    background-color: none;
   }
 }
 
