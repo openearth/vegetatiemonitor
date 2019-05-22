@@ -8,8 +8,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/verken',
-      name: 'Verken',
+      redirect: '/veld',
+      name: 'home',
       component: App
     },
     {

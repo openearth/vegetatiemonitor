@@ -40,7 +40,7 @@
         </v-card-text>
       </v-card>
       <v-flex shrink>
-        <v-card small flat>
+        <v-card small flat class="py">
           <v-card-title>
             <h2>
               Settings
