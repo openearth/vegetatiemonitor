@@ -1,6 +1,6 @@
 <template>
-  <v-toolbar dense color="secondary" prominent fixed app class="pa-0">
-    <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
+  <v-toolbar dense app fixed color="secondary" prominent class="pa-0">
+    <v-toolbar-side-icon @click="drawer = true"> </v-toolbar-side-icon>
     <v-toolbar-title class="hidden-sm-and-down"
       >Vegetatie Monitor</v-toolbar-title
     >
@@ -36,15 +36,24 @@
 <script>
 export default {
   name: 'toolbar',
+  props: {
+    drawerstate: {
+      type: Boolean
+    }
+  },
+  computed: {
+    drawer: {
+      get() {
+        return this.drawerstate
+      },
+      set(drawerstate) {
+        this.$emit('setDrawerstate', drawerstate)
+      }
+    }
+  },
   data: function() {
     return {
       modes: ['Veld', 'Verken', 'Voorspel']
-    }
-  },
-  methods: {
-    changeDrawer() {
-      const newVal = this.$store.state.drawer ? false : true
-      this.$store.commit('setDrawer', newVal)
     }
   }
 }

@@ -7,6 +7,7 @@ import mapboxgl from 'mapbox-gl'
 
 export default {
   name: 'mapbox-geolocate',
+  inject: ['getMap'],
   data() {
     return {
       geolocate: null,
@@ -21,19 +22,28 @@ export default {
       type: Object
     }
   },
-  watch: {
-    $route(to, from) {
-      console.log('rourting', to.name, from.name)
-      if (to.name === 'Veld') {
-        this.map.addControl(this.geolocate)
-      } else {
-        this.map.removeControl(this.geolocate)
-      }
+  beforeDestroy() {
+    let map = this.getMap()
+    console.log(map)
+    if (map) {
+      map.removeControl(this.geolocate)
     }
   },
-  mounted() {},
+  // watch: {
+  //   $route(to, from) {
+  //     if (to.name === 'Veld') {
+  //       this.map.addControl(this.geolocate)
+  //     } else {
+  //       this.map.removeControl(this.geolocate)
+  //     }
+  //   }
+  // },
+  mounted() {
+    console.log('mounted')
+  },
   methods: {
     deferredMountedTo(map) {
+      console.log('deferredMountedTo')
       this.map = map
       this.geolocate = new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -41,9 +51,9 @@ export default {
         },
         trackUserLocation: true
       })
-      if (this.$route.name === 'Veld') {
-        map.addControl(this.geolocate)
-      }
+      // if (this.$route.name === 'Veld') {
+      map.addControl(this.geolocate)
+      // }
     }
   }
 }

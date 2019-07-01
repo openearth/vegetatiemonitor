@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import App from './App.vue'
+import Viewer from '@/views/Viewer.vue'
 
 Vue.use(Router)
 
@@ -10,22 +10,22 @@ export default new Router({
       path: '/',
       redirect: '/veld',
       name: 'home',
-      component: App
+      component: Viewer
     },
     {
       path: '/verken',
       name: 'Verken',
-      component: App
+      component: Viewer
     },
     {
       path: '/veld',
       name: 'Veld',
-      component: App
+      component: Viewer
     },
     {
       path: '/voorspel',
       name: 'Voorspel',
-      component: App
+      component: Viewer
     }
   ]
 })

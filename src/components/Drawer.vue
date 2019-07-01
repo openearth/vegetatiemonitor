@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="$store.state.drawer"
+    v-model="drawer"
     class="navdrawer"
     floating
     :mini-variant="mini"
@@ -13,7 +13,7 @@
     <v-layout fill-height>
       <v-navigation-drawer
         hide-overlay
-        v-model="$store.state.drawer"
+        v-model="drawer"
         mini-variant
         stateless
         mini-variant-width="48px"
@@ -30,7 +30,12 @@
           </v-list-tile>
         </v-list>
       </v-navigation-drawer>
-      <map-layers id="menuOpen" v-if="menu === 'Kaartlagen' && menuOpen" />
+      <map-layers
+        id="menuOpen"
+        v-if="menu === 'Kaartlagen' && menuOpen"
+        :layers="layers"
+        v-on:setLayers="mapLayers = $event"
+      />
       <analyse id="menuOpen" v-if="menu === 'Analyse' && menuOpen" />
       <download id="menuOpen" v-if="menu === 'Download' && menuOpen" />
       <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
@@ -45,9 +50,17 @@ import Download from './Download.vue'
 import Colofon from './Colofon.vue'
 
 export default {
+  props: {
+    layers: {
+      type: Array,
+      required: true
+    },
+    drawerstate: {
+      type: Boolean
+    }
+  },
   data() {
     return {
-      drawer: true,
       menu: '',
       mini: true,
       right: null,
@@ -77,8 +90,25 @@ export default {
     }
   },
   computed: {
+    mapLayers: {
+      get() {
+        return this.layers
+      },
+      set(mapLayers) {
+        console.log('changing maplayers')
+        this.$emit('setLayers', mapLayers)
+      }
+    },
     filteredItems() {
       return this.items.filter(item => item.routes.includes(this.$route.name))
+    },
+    drawer: {
+      get() {
+        return this.drawerstate
+      },
+      set(drawerstate) {
+        this.$emit('setDrawerstate', drawerstate)
+      }
     }
   },
   components: {

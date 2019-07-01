@@ -12,10 +12,10 @@
       <draggable
         id="draggable"
         class="draggable"
-        v-model="layers"
+        v-model="mapLayers"
         @start="drag = true"
         @end="drag = false"
-        :options="{ handle: '.draghandle' }"
+        v-bind="{ handle: '.draghandle' }"
       >
         <v-expansion-panel-content
           class="ma-0 pa-0"
@@ -44,7 +44,10 @@
                   {{ layer.name }}
                 </v-flex>
                 <v-flex xs2 @click.stop="">
-                  <v-switch v-model="layer.active" />
+                  <v-switch
+                    v-model="layer.active"
+                    @change="$store.commit('setMapLayers', layers)"
+                  />
                 </v-flex>
                 <v-flex>
                   <v-icon class="ma-2" id="dragicon" title="Open details" small
@@ -55,7 +58,7 @@
             </v-card>
           </div>
           <div class="pa-2">
-            <div class="info" v-if="layer.info" color="none">
+            <div class="info" v-if="layer.info" color="white">
               <h4>Informatie</h4>
               {{ layer.info }}
               <v-divider />
@@ -133,18 +136,24 @@ import draggable from 'vuedraggable'
 import DifferenceLegend from './DifferenceLegend'
 
 export default {
-  computed: {
+  props: {
     layers: {
-      get() {
-        return this.$store.state.layers
-      },
-      set(layers) {
-        this.$store.commit('setMapLayers', layers)
-      }
+      type: Array,
+      required: true
     }
   },
   data() {
     return {}
+  },
+  computed: {
+    mapLayers: {
+      get() {
+        return this.layers
+      },
+      set(mapLayers) {
+        this.$emit('setLayers', mapLayers)
+      }
+    }
   },
   methods: {},
   components: {
