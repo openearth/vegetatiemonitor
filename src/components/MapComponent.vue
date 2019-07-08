@@ -14,12 +14,17 @@
       <v-mapbox-geocoder />
       <v-mapbox-navigation-control />
       <mapbox-geolocate />
+      <div id="t-slider">
+        <time-slider ref="timeslider" :layers="timesliderLayers"> </time-slider>
+      </div>
     </v-mapbox>
   </div>
 </template>
 
 <script>
 import MapboxGeolocate from '../scripts/MapboxGeolocate'
+import TimeSlider from './TimeSlider'
+import moment from 'moment'
 // import { map/tate } from 'vuex'
 
 export default {
@@ -32,15 +37,16 @@ export default {
   },
   data: function() {
     return {
-      map: null
+      map: null,
+      dateBegin: '01-01-2019',
+      dateEnd: '01-03-2019'
     }
   },
-  // computed: mapState(['layers']),
-  // watch: {
-  //   layers(newValue, oldValue) {
-  //     // this.updateLayers()
-  //   }
-  // },
+  computed: {
+    timesliderLayers() {
+      return this.layers.filter(layer => layer.timeslider && layer.active)
+    }
+  },
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
@@ -50,12 +56,14 @@ export default {
   provide() {
     return {
       getMap: () => {
-        console.log('getting the map')
         return this.map
       }
     }
   },
   methods: {
+    deferredMountedTo(map) {
+      console.log(map)
+    },
     addMapboxLayers() {
       this.layers.forEach(layer => {
         if (layer.layertype === 'mapbox-layer') {
@@ -67,11 +75,56 @@ export default {
         }
       })
     },
-    addGEELayers() {
-      console.log('adding GEE layers')
+    updateGEELayers(dataset, dateBegin, region, vis, dateEnd = null) {
+      var map_id = `${dataset}_${dateBegin}`
+      if (this.map.getSource(map_id)) {
+        this.map.removeLayer(map_id)
+        this.map.removeSource(map_id)
+      } else {
+        var maplayer_json = {
+          id: map_id,
+          type: 'raster',
+          date: dateBegin,
+          source: {
+            type: 'raster',
+            tiles: [],
+            tileSize: 256
+          }
+        }
+
+        var json_body = {
+          dateBegin: moment(dateBegin).format('YYYY-MM-DD'),
+          dateEnd: moment(dateBegin)
+            .add(1, 'd')
+            .format('YYYY-MM-DD'),
+          region: region,
+          vis: vis
+        }
+        if (dateEnd) {
+          json_body['dateEnd'] = dateEnd
+          maplayer_json['id'] = dataset + '_composite'
+          maplayer_json['date'] = 'composite'
+        }
+        fetch(`${this.$store.state.SERVER_URL}/map/${dataset}/`, {
+          method: 'POST',
+          body: JSON.stringify(json_body),
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(res => {
+            return res.json()
+          })
+          .then(mapUrl => {
+            maplayer_json.source['tiles'] = [mapUrl['url']]
+            this.map.addLayer(maplayer_json)
+            var menulayer = this.layers.find(l => l.dataset === dataset)
+            menulayer.data.push(maplayer_json)
+          })
+      }
     },
     updateLayers() {
-      console.log('this.map', this.map)
       if (this.map) {
         this.sortLayers()
         this.toggleLayers()
@@ -96,6 +149,15 @@ export default {
       this.layers.forEach(layer => {
         layer.data.each(sublayer => {
           if (layer.active) {
+            if (layer.layertype === 'gee-layer') {
+              this.updateGEELayers(
+                layer.dataset,
+                this.dateBegin,
+                this.region,
+                layer.vis,
+                this.dateEnd
+              )
+            }
             this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
             this.setOpacity(layer, sublayer)
           } else {
@@ -106,7 +168,8 @@ export default {
     }
   },
   components: {
-    MapboxGeolocate
+    MapboxGeolocate,
+    TimeSlider
   }
 }
 </script>
@@ -118,5 +181,15 @@ export default {
 .map {
   width: 100%;
   height: 100%;
+}
+
+#t-slider {
+  position: absolute;
+  left: 20vw;
+  bottom: 5vh;
+  width: 70vw;
+  right: 90vw;
+  z-index: 2;
+  background-color: #f0f0f0;
 }
 </style>

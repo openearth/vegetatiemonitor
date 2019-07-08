@@ -58,7 +58,7 @@
             </v-card>
           </div>
           <div class="pa-2">
-            <div class="info" v-if="layer.info" color="white">
+            <div class="infodiv" v-if="layer.info">
               <h4>Informatie</h4>
               {{ layer.info }}
               <v-divider />
@@ -213,9 +213,7 @@ export default {
   cursor: grab;
 }
 
-.info {
-  background-color: none !important;
-
+.infodiv {
   .wordwrap {
     white-space: pre-wrap; /* CSS3 */
     white-space: -moz-pre-wrap; /* Firefox */

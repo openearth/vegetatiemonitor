@@ -165,7 +165,47 @@ const mapLayers = [
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
     data: [],
-    vis: {}
+    vis: {},
+    timeslider: true,
+    dates: [
+      {
+        id: 'image-1',
+        type: 'interval',
+        start: '01-01-2010',
+        end: '01-01-2011'
+      },
+      {
+        id: 'image-1',
+        type: 'interval',
+        start: '01-01-2011',
+        end: '01-01-2012'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2006'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2007'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2008'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2018'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-05-2019'
+      }
+    ]
   },
 
   {
@@ -174,7 +214,7 @@ const mapLayers = [
     icon: './images/legend-classified.png',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'landuse', // important! this argument is needed to call the service
     legend: {
       colors: [
@@ -195,7 +235,9 @@ const mapLayers = [
       ]
     },
     data: [],
-    vis: {}
+    vis: {},
+    timeslider: true,
+    dates: []
   },
 
   {
@@ -354,6 +396,40 @@ const mapLayers = [
         type: 'select',
         items: pseudoColors,
         selected: 'Natural colors'
+      }
+    ],
+    timeslider: true,
+    dates: [
+      {
+        id: 'image-1',
+        type: 'interval',
+        start: '01-01-2010',
+        end: '01-01-2015'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2006'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2007'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2008'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-01-2018'
+      },
+      {
+        id: 'image-1',
+        type: 'instance',
+        time: '01-05-2019'
       }
     ]
   }
