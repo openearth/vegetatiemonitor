@@ -1,18 +1,31 @@
 <template>
   <div class="viewer">
-    <v-content id="content">
-      <map-component :layers="layers" />
-    </v-content>
     <toolbar
       :drawerstate="drawerstate"
       @setDrawerstate="drawerstate = $event"
+      id="toolbar-comp"
     />
-    <drawer
-      :drawerstate="drawerstate"
-      :layers="layers"
-      @setDrawerstate="drawerstate = $event"
-      v-on:setLayers="layers = $event"
-    />
+
+    <v-content id="content">
+      <drawer
+        :drawerstate="drawerstate"
+        :layers="layers"
+        @setDrawerstate="drawerstate = $event"
+        v-on:setLayers="layers = $event"
+        :map="map"
+        :dateBegin="dateBegin"
+        :dateEnd="dateEnd"
+        class="navdrawer"
+      />
+
+      <map-component
+        :layers="layers"
+        :map="map"
+        :dateBegin="dateBegin"
+        :dateEnd="dateEnd"
+        @setMap="map = $event"
+      />
+    </v-content>
   </div>
 </template>
 
@@ -28,7 +41,15 @@ export default {
   data: function() {
     return {
       drawerstate: true,
-      layers: mapLayers
+      layers: mapLayers,
+      map: {},
+      dateBegin: '2018-07-25',
+      dateEnd: '2018-07-28'
+    }
+  },
+  watch: {
+    map(val) {
+      this.map = val
     }
   },
   components: {
@@ -59,6 +80,11 @@ export default {
 #content {
   height: 100%;
 }
+
+.navdrawer {
+  height: 100%;
+}
+
 .v-list__tile__title,
 .v-select__selection {
   font-size: 14px;

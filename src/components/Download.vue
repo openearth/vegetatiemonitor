@@ -1,12 +1,10 @@
 <template>
   <div id="download">
+    <h1 class="pa-4">
+      Download
+    </h1>
     <v-layout column fill-height justify-start>
       <v-card small flat>
-        <v-card-title>
-          <h1>
-            Download
-          </h1>
-        </v-card-title>
         <v-card-text class="py-0 carddiv">
           <v-card flat>
             <v-layout
@@ -14,7 +12,7 @@
               align-center
               justify-space-end
               fill-height
-              v-for="layer in layers"
+              v-for="layer in dataLayers"
               :key="layer.name"
             >
               <v-flex xs1>
@@ -40,12 +38,10 @@
         </v-card-text>
       </v-card>
       <v-flex shrink>
+        <h1 class="pa-4">
+          Settings
+        </h1>
         <v-card small flat class="py">
-          <v-card-title>
-            <h2>
-              Settings
-            </h2>
-          </v-card-title>
           <v-card-text>
             <v-layout row wrap>
               <v-flex xs12>
@@ -71,7 +67,7 @@
       </v-flex>
       <v-flex shrink>
         <v-layout justify-center align-start>
-          <v-btn outline color="btncolor">
+          <v-btn outlined color="btncolor" @click="downloadGeotiff()">
             download
           </v-btn>
         </v-layout>
@@ -82,13 +78,26 @@
 
 <script>
 export default {
-  computed: {
+  props: {
+    map: {
+      type: Object,
+      required: true
+    },
     layers: {
+      type: Array,
+      required: true
+    },
+    dateBegin: {
+      type: String
+    },
+    dateEnd: {
+      type: String
+    }
+  },
+  computed: {
+    dataLayers: {
       get() {
-        return this.$store.state.layers
-      },
-      set(layers) {
-        this.$store.commit('setMapLayers', layers)
+        return this.layers
       }
     }
   },
@@ -98,7 +107,49 @@ export default {
       bbox: ''
     }
   },
-  components: {}
+  components: {},
+
+  methods: {
+    downloadGeotiff() {
+      var selectedLayers = this.dataLayers.filter(x => x.active)
+      selectedLayers.forEach(layer => {
+        if (this.bbox === '') {
+          var N = this.map.getBounds().getNorth()
+          var E = this.map.getBounds().getEast()
+          var S = this.map.getBounds().getSouth()
+          var W = this.map.getBounds().getWest()
+          var bbox = {
+            type: 'Polygon',
+            coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
+          }
+        } else {
+          bbox = this.bbox
+        }
+
+        var json_body = {
+          region: bbox,
+          dateBegin: this.dateBegin,
+          dateEnd: this.dateEnd,
+          vis: layer.vis,
+          scale: this.resolution
+        }
+        fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/export/`, {
+          method: 'POST',
+          body: JSON.stringify(json_body),
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(res => {
+            return res.json()
+          })
+          .then(mapUrl => {
+            window.open(mapUrl['url'])
+          })
+      })
+    }
+  }
 }
 </script>
 

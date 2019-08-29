@@ -1,33 +1,37 @@
 <template>
   <v-navigation-drawer
+    id="navdrawer"
     v-model="drawer"
-    class="navdrawer"
-    floating
-    :mini-variant="mini"
-    hide-overlay
-    fixed
-    width="360px"
     @transitionend="transitionEnd()"
+    :mini-variant="mini"
     mini-variant-width="48px"
+    width="360px"
+    absolute
+    floating
+    fixed
+    temporary
+    hide-overlay
+    stateless
+    clipped
   >
     <v-layout fill-height>
       <v-navigation-drawer
-        hide-overlay
         v-model="drawer"
         mini-variant
         stateless
         mini-variant-width="48px"
       >
         <v-list class="pt-0" dense>
-          <v-list-tile
+          <v-list-item
             v-for="item in filteredItems"
             :key="item.title"
             v-on:click="menuButton(item.title)"
+            :ripple="false"
           >
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-action>
-          </v-list-tile>
+            <v-list-item-action>
+              <v-icon class="ma-auto">{{ item.icon }}</v-icon>
+            </v-list-item-action>
+          </v-list-item>
         </v-list>
       </v-navigation-drawer>
       <map-layers
@@ -35,9 +39,25 @@
         v-if="menu === 'Kaartlagen' && menuOpen"
         :layers="layers"
         v-on:setLayers="mapLayers = $event"
+        :dateBegin="dateBegin"
+        :dateEnd="dateEnd"
       />
-      <analyse id="menuOpen" v-if="menu === 'Analyse' && menuOpen" />
-      <download id="menuOpen" v-if="menu === 'Download' && menuOpen" />
+      <analyse
+        id="menuOpen"
+        v-show="menu === 'Analyse' && menuOpen"
+        :layers="layers"
+        :map="map"
+        :dateBegin="dateBegin"
+        :dateEnd="dateEnd"
+      />
+      <download
+        id="menuOpen"
+        v-if="menu === 'Download' && menuOpen"
+        :map="map"
+        :layers="GEELayers"
+        :dateBegin="dateBegin"
+        :dateEnd="dateEnd"
+      />
       <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
   </v-navigation-drawer>
@@ -57,6 +77,15 @@ export default {
     },
     drawerstate: {
       type: Boolean
+    },
+    map: {
+      type: Object
+    },
+    dateBegin: {
+      type: String
+    },
+    dateEnd: {
+      type: String
     }
   },
   data() {
@@ -95,7 +124,6 @@ export default {
         return this.layers
       },
       set(mapLayers) {
-        console.log('changing maplayers')
         this.$emit('setLayers', mapLayers)
       }
     },
@@ -109,6 +137,9 @@ export default {
       set(drawerstate) {
         this.$emit('setDrawerstate', drawerstate)
       }
+    },
+    GEELayers() {
+      return this.layers.filter(layer => layer.layertype === 'gee-layer')
     }
   },
   components: {
@@ -136,11 +167,6 @@ export default {
 </script>
 
 <style>
-.navdrawer {
-  top: 48px;
-  margin: 0;
-}
-
 #menuOpen {
   width: 90%;
   height: calc(100vh - 48px);
@@ -148,5 +174,9 @@ export default {
 
 a.v-list__tile {
   padding: 0;
+}
+
+.v-riple__container {
+  display: none;
 }
 </style>

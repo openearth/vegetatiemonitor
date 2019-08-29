@@ -1,12 +1,18 @@
 <template>
-  <v-toolbar dense app fixed color="secondary" prominent class="pa-0">
-    <v-toolbar-side-icon @click="drawer = true"> </v-toolbar-side-icon>
+  <v-app-bar floating :clipped-left="true" app dense color="secondary">
+    <!-- <v-toolbar dense fixed color="secondary" prominent class="pa-0"> -->
+
+    <v-app-bar-nav-icon @click="drawer = true">
+      <v-icon>
+        fa-bar
+      </v-icon>
+    </v-app-bar-nav-icon>
     <v-toolbar-title class="hidden-sm-and-down"
-      >Vegetatie Monitor</v-toolbar-title
+      ><h3>Vegetatie Monitor</h3></v-toolbar-title
     >
     <v-spacer />
     <v-flex xs-6>
-      <v-tabs color="secondary" fixed-tabs>
+      <v-tabs background-color="transparent" fixed-tabs>
         <v-tab v-for="mode in modes" :key="mode" :to="{ name: mode }">
           {{ mode }}
         </v-tab>
@@ -30,7 +36,7 @@
       class="hidden-sm-and-down logo"
       src="images/Rijkswaterstaat.svg"
     />
-  </v-toolbar>
+  </v-app-bar>
 </template>
 
 <script>

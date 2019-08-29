@@ -7,7 +7,7 @@
       <div class="text-xs-center">
         <v-btn-toggle multiple>
           <v-btn
-            flat
+            text
             v-model="state"
             @click="
               state = !state
@@ -17,7 +17,7 @@
             <v-icon v-if="state" small>fa-pause</v-icon>
             <v-icon v-if="!state" small>fa-play</v-icon>
           </v-btn>
-          <v-btn flat v-model="loop" @click="loop = !loop">
+          <v-btn text v-model="loop" @click="loop = !loop">
             <v-icon>fa-redo-alt</v-icon>
           </v-btn>
         </v-btn-toggle>
@@ -111,10 +111,15 @@ export default {
     },
     layers() {
       this.redraw()
+    },
+    step() {
+      this.$emit('update-timeslider', [
+        moment(this.step),
+        moment(this.step).add(1, this.mode.interval)
+      ])
     }
   },
   mounted() {
-    console.log(this.layers)
     this.mode = this.modes[0]
     this.svg = d3
       .select('#slider')
@@ -428,7 +433,6 @@ export default {
     },
 
     redraw() {
-      console.log('redraw')
       this.changeMargin()
       this.updateScale()
 

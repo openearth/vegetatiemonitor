@@ -63,9 +63,11 @@ const mapLayers = [
     icon: './images/legend-kadaster.png',
     opacity: 100,
     active: false,
+    baseLayer: 'Kadaster',
     hoverFilter: 'Kadasterlijnen',
     selectFilter: 'KadasterSelect',
     selectProperty: 'ADMINPERCE',
+    datatypes: ['landuse', 'legger'],
     info:
       'Dit is een superduper awesome laag. Ik heb even opvulling nodig voor het informatie stukje bladiebladieblad',
     data: [
@@ -117,7 +119,7 @@ const mapLayers = [
         filter: ['==', 'ADMINPERCE', '']
       }
     ],
-    tableproperties: [
+    tableProperties: [
       {
         name: 'Perceel nummer',
         key: 'ADMINPERCE'
@@ -214,7 +216,7 @@ const mapLayers = [
     icon: './images/legend-classified.png',
     download: true,
     opacity: 100,
-    active: true,
+    active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
     legend: {
       colors: [
@@ -246,6 +248,7 @@ const mapLayers = [
     icon: './images/legend-legger.png',
     opacity: 100,
     active: true,
+    datatypes: ['landuse'],
     type: 'group',
     legend: {
       colors: [
@@ -271,6 +274,7 @@ const mapLayers = [
         'mengklasse 50/50'
       ]
     },
+    baseLayer: 'Vegetatielegger',
     hoverFilter: 'Vegetatielijnen',
     selectFilter: 'VegetatieSelect',
     selectProperty: 'OBJECTID',
@@ -332,7 +336,7 @@ const mapLayers = [
         filter: ['==', 'OBJECTID', '']
       }
     ],
-    tableproperties: [
+    tableProperties: [
       {
         name: 'Vegetatieklasse',
         key: 'VL_KLASSE'
@@ -387,7 +391,7 @@ const mapLayers = [
     icon: './images/legend-rgb.png',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
     data: [],
     vis: pseudoColors[0].vis,

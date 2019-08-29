@@ -24,8 +24,6 @@
 <script>
 import MapboxGeolocate from '../scripts/MapboxGeolocate'
 import TimeSlider from './TimeSlider'
-import moment from 'moment'
-// import { map/tate } from 'vuex'
 
 export default {
   name: 'map-component',
@@ -33,13 +31,45 @@ export default {
     layers: {
       type: Array,
       required: true
+    },
+    dateBegin: {
+      type: String,
+      required: true
+    },
+    dateEnd: {
+      type: String,
+      required: true
     }
   },
   data: function() {
     return {
       map: null,
-      dateBegin: '01-01-2019',
-      dateEnd: '01-03-2019'
+      region: {
+        coordinates: [
+          [
+            [4.54, 52.71],
+            [4.17, 50.75],
+            [6.2, 50.7],
+            [6.44, 52.68],
+            [4.54, 52.71]
+          ]
+        ],
+        geodesic: true,
+        type: 'Polygon'
+      },
+      polygons: [],
+      scale: 10
+    }
+  },
+  watch: {
+    // Watch "layers". This is a switch, which can toggle a layer on or off
+    // When toggled, this watcher will activate the toggleLayers function.
+    layers: {
+      deep: true,
+      handler() {
+        this.toggleLayers()
+        this.sortLayers()
+      }
     }
   },
   computed: {
@@ -48,9 +78,16 @@ export default {
     }
   },
   mounted() {
+    this.$on('update-timeslider', timeExtent => {
+      this.beginDate = timeExtent[0]
+      this.endDate = timeExtent[1]
+    })
     this.map = this.$refs.map.map
     this.map.on('load', () => {
+      window.map = this.map
+      this.$emit('setMap', this.map)
       this.addMapboxLayers()
+      this.updateLayers()
     })
   },
   provide() {
@@ -75,8 +112,8 @@ export default {
         }
       })
     },
-    updateGEELayers(dataset, dateBegin, region, vis, dateEnd = null) {
-      var map_id = `${dataset}_${dateBegin}`
+    updateGEELayers(dataset, region, vis) {
+      var map_id = `${dataset}_${this.dateBegin}`
       if (this.map.getSource(map_id)) {
         this.map.removeLayer(map_id)
         this.map.removeSource(map_id)
@@ -84,7 +121,7 @@ export default {
         var maplayer_json = {
           id: map_id,
           type: 'raster',
-          date: dateBegin,
+          date: this.dateBegin,
           source: {
             type: 'raster',
             tiles: [],
@@ -93,17 +130,10 @@ export default {
         }
 
         var json_body = {
-          dateBegin: moment(dateBegin).format('YYYY-MM-DD'),
-          dateEnd: moment(dateBegin)
-            .add(1, 'd')
-            .format('YYYY-MM-DD'),
+          dateBegin: this.dateBegin,
+          dateEnd: this.dateEnd,
           region: region,
           vis: vis
-        }
-        if (dateEnd) {
-          json_body['dateEnd'] = dateEnd
-          maplayer_json['id'] = dataset + '_composite'
-          maplayer_json['date'] = 'composite'
         }
         fetch(`${this.$store.state.SERVER_URL}/map/${dataset}/`, {
           method: 'POST',
@@ -142,28 +172,46 @@ export default {
         }
       }
     },
+
+    setOpacity(layer, sublayer) {
+      if (layer.opacity) {
+        try {
+          var opacity = Math.max(layer.opacity * 0.01, 0.01)
+          var property
+          if (layer.layertype == 'gee-layer') {
+            property = 'raster-opacity'
+          } else if (sublayer.type == 'fill') {
+            property = 'fill-opacity'
+          } else if (sublayer.type == 'line') {
+            property = 'line-opacity'
+          }
+          if (property) {
+            this.map.setPaintProperty(sublayer.id, property, opacity)
+          }
+        } catch (err) {
+          console.log(
+            'error setting opacity: ' + opacity + '(' + err.message + ')'
+          )
+        }
+      }
+    },
+
     toggleLayers() {
       // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
-
       this.layers.forEach(layer => {
-        layer.data.each(sublayer => {
-          if (layer.active) {
-            if (layer.layertype === 'gee-layer') {
-              this.updateGEELayers(
-                layer.dataset,
-                this.dateBegin,
-                this.region,
-                layer.vis,
-                this.dateEnd
-              )
+        if (layer.layertype === 'gee-layer' && layer.active) {
+          this.updateGEELayers(layer.dataset, this.region, layer.vis)
+        } else if (layer.layertype === 'mapbox-layer') {
+          layer.data.forEach(sublayer => {
+            if (layer.active) {
+              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
+              this.setOpacity(layer, sublayer)
+            } else {
+              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
             }
-            this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
-            this.setOpacity(layer, sublayer)
-          } else {
-            this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
-          }
-        })
+          })
+        }
       })
     }
   },

@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
-
 import Drawer from '../../../src/components/Drawer.vue'
 
 const localVue = createLocalVue()
@@ -12,14 +11,13 @@ const router = new VueRouter({
 })
 
 describe('Drawer', () => {
-  let store = new Vuex.Store({
-    modules: {
-      mutations: {
-        setDrawer: jest.fn()
-      }
+  const wrapper = shallowMount(Drawer, {
+    localVue,
+    router,
+    propsData: {
+      layers: []
     }
   })
-  const wrapper = shallowMount(Drawer, { store, localVue, router })
 
   it('Has a navigation drawer', () => {
     expect(wrapper.contains('v-navigation-drawer')).toBe(true)

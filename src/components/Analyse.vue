@@ -1,34 +1,18 @@
 <template>
   <div id="analyse">
-    <v-card small flat>
-      <v-card-title>
-        <h1>
-          Analyse
-        </h1>
-      </v-card-title>
-    </v-card>
-    <v-card id="analysistable" flat>
-      <v-data-table
-        id="data-table"
-        :headers="headers"
-        rows-per-page-text=""
-        :rowsPerPageItems="[10]"
-        :items="polygons"
-        :pagination.sync="pagination"
-      >
-        <template slot="items" slot-scope="props">
-          <td class="text-xs6-left">{{ props.item.name }}</td>
-          <td class="text-xs6-left">{{ props.item.data }}</td>
-        </template>
-      </v-data-table>
-      <v-flex xs2 offset-xs5>
-        <v-progress-circular
-          v-if="workLoad > 0"
-          indeterminate
-        ></v-progress-circular>
-      </v-flex>
-      <canvas ref="landuse-canvas"></canvas>
-      <canvas ref="legger-canvas"></canvas>
+    <h1 class="pa-4">
+      Analyse
+    </h1>
+    <div id="analysistable">
+      <information-table :properties="properties"> </information-table>
+      <div id="pie-div" v-for="datatype in datatypes" :key="datatype">
+        <v-piechart
+          :datatype="datatype"
+          :polygon="polygon"
+          :dateBegin="dateBegin"
+          :dateEnd="dateEnd"
+        ></v-piechart>
+      </div>
       <v-btn
         v-on:click.native="closeSelectMode()"
         v-if="selectMode"
@@ -46,74 +30,121 @@
         >Download
         <v-icon right>file_download</v-icon>
       </v-btn>
-    </v-card>
+    </div>
   </div>
 </template>
 
 <script>
-// import _ from 'lodash'
-// import mapboxgl from 'mapbox-gl'
-// import Chart from 'chart.js'
-// import jsPDF from 'jspdf'
-// import autoTable from 'jspdf-autotable'
+import VPiechart from './VPiechart'
+import InformationTable from './InformationTable'
 
 export default {
   name: 'v-analysis-control',
   props: {
-    map: {
-      type: Object
+    layers: {
+      type: Array
     },
-    selection: {
-      type: Object
+    map: {
+      type: Object,
+      required: true
+    },
+    dateBegin: {
+      type: String
+    },
+    dateEnd: {
+      type: String
     }
   },
-  computed: {
-    layers: {
-      get() {
-        return this.$store.state.layers
-      },
-      set(layers) {
-        this.$store.commit('setMapLayers', layers)
-      }
+  watch: {
+    map() {
+      this.watchMapForAnalysis()
     }
   },
   data() {
     return {
-      perceelnumber: null,
-      canvas: {},
-      chart: {},
-      workLoad: 0,
-      leggerLabels: [],
-      leggerData: [],
-      landuseLabels: [],
-      landuseData: [],
-      headers: [
-        {
-          text: 'Eigenschap',
-          align: 'left',
-          sortable: false,
-          value: 'name',
-          width: '40%'
-        },
-        {
-          text: 'Kwantiteit',
-          value: 'data',
-          align: 'left',
-          sortable: false,
-          width: '60%'
-        }
-      ],
-      polygons: [],
-      polygonSelected: false,
-      pagination: {
-        rowsPerPage: 4
-      },
       selectMode: false,
-      selectLayer: ''
+      datatypes: [],
+      workLoad: 0,
+      polygon: [],
+      properties: [],
+      selectedProperty: ''
     }
   },
-  watch: {}
+
+  mounted() {},
+  methods: {
+    watchMapForAnalysis() {
+      this.layers.forEach(layer => {
+        // Creaet a hover effect and fill in the data in the datatable when
+        // hovering over a layer which has a hoverFilter
+        if (layer.hoverFilter) {
+          this.map.on('mousemove', layer.baseLayer, e => {
+            this.map.getCanvas().style.cursor = 'pointer'
+            const filter = e.features[0].properties[layer.selectProperty]
+            this.map.setFilter(layer.hoverFilter, [
+              '==',
+              layer.selectProperty,
+              filter
+            ])
+            if (this.selectedProperty === '') {
+              this.properties = []
+              layer.tableProperties.forEach(prop => {
+                this.properties.push({
+                  value: false,
+                  name: prop.name,
+                  data: e.features[0].properties[prop.key]
+                })
+              })
+            }
+          })
+          this.map.on('mouseleave', layer.baseLayer, () => {
+            this.map.getCanvas().style.cursor = ''
+            this.map.setFilter(layer.hoverFilter, [
+              '==',
+              layer.selectProperty,
+              ''
+            ])
+          })
+        }
+        // When clicking on a layer which has a selctFilter create Piecharts
+        if (layer.selectFilter) {
+          this.map.on('click', layer.baseLayer, e => {
+            this.datatypes = []
+            let filter = ''
+            if (this.selectedProperty === layer.selectProperty) {
+              this.selectedProperty = ''
+            } else {
+              this.selectedProperty = layer.selectProperty
+              const feature = this.map.queryRenderedFeatures(e.point, {
+                layers: [layer.baseLayer]
+              })[0]
+              this.datatypes = layer.datatypes
+              console.log(layer.baseLayer, this.datatypes)
+              this.polygon = feature.geometry
+              filter = e.features[0].properties[layer.selectProperty]
+            }
+            this.map.setFilter(layer.selectFilter, [
+              '==',
+              layer.selectProperty,
+              filter
+            ])
+          })
+        }
+      })
+    }
+  },
+  components: {
+    VPiechart,
+    InformationTable
+  }
 }
 </script>
 
-<style></style>
+<style>
+#analyse,
+#pie-div,
+#analyse-card {
+  height: 100%;
+  width: 100%;
+}
+</style>

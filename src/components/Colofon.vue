@@ -1,11 +1,9 @@
 <template>
   <div>
+    <h1 class="pa-4">
+      Colofon
+    </h1>
     <v-card small flat>
-      <v-card-title>
-        <h1>
-          Colofon
-        </h1>
-      </v-card-title>
       <v-card-text class="py-0">
         <p>
           Voor algemene vragen over de vegetatiemonitor en de achtergronden bij
