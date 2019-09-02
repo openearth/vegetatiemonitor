@@ -1,36 +1,62 @@
 <template>
   <div id="analyse">
-    <h1 class="pa-4">
-      Analyse
-    </h1>
-    <div id="analysistable">
-      <information-table :properties="properties"> </information-table>
-      <div id="pie-div" v-for="datatype in datatypes" :key="datatype">
-        <v-piechart
-          :datatype="datatype"
-          :polygon="polygon"
-          :dateBegin="dateBegin"
-          :dateEnd="dateEnd"
-        ></v-piechart>
-      </div>
-      <v-btn
-        v-on:click.native="closeSelectMode()"
-        v-if="selectMode"
-        outline
-        color="indigo"
-        >Verwijder
-        <v-icon right>close</v-icon>
-      </v-btn>
-      <v-btn
-        :disabled="workLoad > 0"
-        v-on:click.native="downloadSelection()"
-        v-if="selectMode"
-        outline
-        color="indigo"
-        >Download
-        <v-icon right>file_download</v-icon>
-      </v-btn>
-    </div>
+    <v-layout column fill-height justify-end>
+      <h1 class="pa-4">
+        Analyse
+      </h1>
+      <v-flex xs11 align-stretch>
+        <div id="analysistable">
+          <information-table :properties="properties"> </information-table>
+          <div id="pie-div" v-for="datatype in datatypes" :key="datatype">
+            <v-piechart
+              :datatype="datatype"
+              :polygon="polygon"
+              :dateBegin="dateBegin"
+              :dateEnd="dateEnd"
+              @loaded="loading = $event"
+            ></v-piechart>
+          </div>
+          <v-btn
+            v-on:click.native="closeSelectMode()"
+            v-if="selectMode"
+            outline
+            color="indigo"
+            >Verwijder
+            <v-icon right>close</v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="workLoad > 0"
+            v-on:click.native="downloadSelection()"
+            v-if="selectMode"
+            outline
+            color="indigo"
+            >Download
+            <v-icon right>file_download</v-icon>
+          </v-btn>
+        </div>
+      </v-flex>
+      <v-flex xs1>
+        <v-layout justify-space-around align-space-around>
+          <v-btn
+            v-on:click.native="closeSelectMode()"
+            v-if="selectedProperty !== ''"
+            outlined
+            color="indigo"
+            >Verwijder
+            <v-icon right>close</v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="loading"
+            v-on:click.native="downloadSelection()"
+            v-if="selectedProperty !== ''"
+            outlined
+            color="indigo"
+            >Download
+            <v-icon right>file_download</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
@@ -57,6 +83,7 @@ export default {
   },
   watch: {
     map() {
+      if (!this.layers) return
       this.watchMapForAnalysis()
     }
   },
@@ -64,7 +91,6 @@ export default {
     return {
       selectMode: false,
       datatypes: [],
-      workLoad: 0,
       polygon: [],
       properties: [],
       selectedProperty: ''
@@ -119,9 +145,9 @@ export default {
                 layers: [layer.baseLayer]
               })[0]
               this.datatypes = layer.datatypes
-              console.log(layer.baseLayer, this.datatypes)
               this.polygon = feature.geometry
               filter = e.features[0].properties[layer.selectProperty]
+              this.loading = true
             }
             this.map.setFilter(layer.selectFilter, [
               '==',

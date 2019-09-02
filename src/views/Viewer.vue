@@ -3,6 +3,7 @@
     <toolbar
       :drawerstate="drawerstate"
       @setDrawerstate="drawerstate = $event"
+      :modes="modes"
       id="toolbar-comp"
     />
 
@@ -11,11 +12,12 @@
         :drawerstate="drawerstate"
         :layers="layers"
         @setDrawerstate="drawerstate = $event"
-        v-on:setLayers="layers = $event"
+        @setLayers="layers = $event"
         :map="map"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
         class="navdrawer"
+        :modes="modes"
       />
 
       <map-component
@@ -23,6 +25,7 @@
         :map="map"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
+        :modes="modes"
         @setMap="map = $event"
       />
     </v-content>
@@ -35,6 +38,7 @@ import MapComponent from '@/components/MapComponent'
 import Drawer from '@/components/Drawer'
 
 import { mapLayers } from '../config/map-layers-config.js'
+import { modes } from '../config/mode-options.js'
 
 export default {
   name: 'viewer',
@@ -42,11 +46,16 @@ export default {
     return {
       drawerstate: true,
       layers: mapLayers,
+      modes: modes,
       map: {},
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28'
     }
   },
+  // created() {
+  //   this.layers = mapLayers
+  //   this.modes = modes
+  // },
   watch: {
     map(val) {
       this.map = val
@@ -56,16 +65,6 @@ export default {
     Toolbar,
     MapComponent,
     Drawer
-  },
-  computed: {
-    mapLayers: {
-      get() {
-        return this.layers
-      },
-      set(layers) {
-        this.layers = layers
-      }
-    }
   },
   methods: {}
 }

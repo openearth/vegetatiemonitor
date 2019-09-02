@@ -12,7 +12,7 @@
         @end="drag = false"
         v-bind="{ handle: '.draghandle' }"
       >
-        <v-expansion-panel v-for="layer in layers" :key="layer.id">
+        <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
           <v-expansion-panel-header class="pa-0">
             <!-- <div slot="header" > -->
             <v-layout align-center justify-space-end>
@@ -103,14 +103,23 @@ import VLegend from './VLegend'
 export default {
   props: {
     layers: {
-      type: Array,
-      required: true
+      type: Array
+    },
+    modes: {
+      type: Array
     }
   },
-  data() {
-    return {}
-  },
   computed: {
+    filteredLayers: function() {
+      if (!this.layers) return []
+      const layerNames = this.modes.find(mode => mode.name === this.$route.name)
+        .mapLayersNames
+
+      const layers = this.layers.filter(layer =>
+        layerNames.includes(layer.name)
+      )
+      return layers
+    },
     mapLayers: {
       get() {
         return this.layers
@@ -120,7 +129,23 @@ export default {
       }
     }
   },
-  methods: {},
+  methods: {
+    updateFilteredLayers() {
+      if (!this.layers) return []
+      const layerNames = this.modes.find(mode => mode.name === this.$route.name)
+        .mapLayersNames
+      const mapLayers = this.layers.forEach(layer => {
+        if (!layerNames.includes(layer.name)) {
+          layer.visible = false
+        }
+      })
+      this.$emit('setLayers', mapLayers)
+      const layers = this.layers.filter(layer =>
+        layerNames.includes(layer.name)
+      )
+      return layers
+    }
+  },
   components: {
     DifferenceLegend,
     draggable,

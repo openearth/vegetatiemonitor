@@ -41,6 +41,7 @@
         v-on:setLayers="mapLayers = $event"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
+        :modes="modes"
       />
       <analyse
         id="menuOpen"
@@ -72,8 +73,7 @@ import Colofon from './Colofon.vue'
 export default {
   props: {
     layers: {
-      type: Array,
-      required: true
+      type: Array
     },
     drawerstate: {
       type: Boolean
@@ -86,6 +86,9 @@ export default {
     },
     dateEnd: {
       type: String
+    },
+    modes: {
+      type: Array
     }
   },
   data() {
@@ -97,23 +100,19 @@ export default {
       items: [
         {
           icon: 'fa-layer-group',
-          title: 'Kaartlagen',
-          routes: ['Veld', 'Verken', 'Voorspel']
+          title: 'Kaartlagen'
         },
         {
           icon: 'fa-chart-pie',
-          title: 'Analyse',
-          routes: ['Veld', 'Verken', 'Voorspel']
+          title: 'Analyse'
         },
         {
           icon: 'fa-download',
-          title: 'Download',
-          routes: ['Verken', 'Voorspel']
+          title: 'Download'
         },
         {
           icon: 'fa-info',
-          title: 'Colofon',
-          routes: ['Veld', 'Verken', 'Voorspel']
+          title: 'Colofon'
         }
       ]
     }
@@ -128,7 +127,10 @@ export default {
       }
     },
     filteredItems() {
-      return this.items.filter(item => item.routes.includes(this.$route.name))
+      const mapLayersItems = this.modes.find(
+        mode => mode.name === this.$route.name
+      ).mapLayersItems
+      return this.items.filter(item => mapLayersItems.includes(item.title))
     },
     drawer: {
       get() {

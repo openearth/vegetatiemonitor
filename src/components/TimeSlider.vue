@@ -22,30 +22,25 @@
           </v-btn>
         </v-btn-toggle>
       </div>
-      <!-- <div class="text-xs-center">
+      <div class="text-xs-center">
         <v-menu open-on-hover top>
           <template v-slot:activator="{ on }">
-            <v-btn
-              color="primary"
-              dark
-              small
-              v-on="on"
-            >
-              {{mode.name}}
+            <v-btn color="primary" dark small v-on="on">
+              {{ mode.name }}
             </v-btn>
           </template>
 
           <v-list dense>
-            <v-list-tile
-              v-for="(m, index) in modes"
+            <v-list-item
+              v-for="(m, index) in timeModes"
               :key="index"
               @click="mode = m"
             >
-              <v-list-tile-title>{{ m.name }}</v-list-tile-title>
-            </v-list-tile>
+              <v-list-item-title>{{ m.name }}</v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
-      </div> -->
+      </div>
     </v-flex>
     <v-flex xs-10>
       <div id="slider"></div>
@@ -61,8 +56,10 @@ export default {
   name: 'time-slider',
   props: {
     layers: {
-      type: Array,
-      required: true
+      type: Array
+    },
+    modes: {
+      type: Array
     }
   },
   data() {
@@ -75,7 +72,7 @@ export default {
       laneHeight: 20,
       laneSpacing: 0,
       margin: {},
-      modes: [
+      timeModes: [
         {
           name: 'JAAR',
           format: '%Y',
@@ -110,6 +107,7 @@ export default {
       this.updateSlider()
     },
     layers() {
+      if (!this.layers) return
       this.redraw()
     },
     step() {
@@ -120,7 +118,7 @@ export default {
     }
   },
   mounted() {
-    this.mode = this.modes[0]
+    this.mode = this.timeModes[0]
     this.svg = d3
       .select('#slider')
       .append('svg')
@@ -288,7 +286,6 @@ export default {
           'height',
           this.layers.length * (this.laneHeight + this.laneSpacing)
         )
-      console.log('datalanes', this.dataLanes)
       this.dataLanes.selectAll('*').remove()
 
       this.dataLanes = this.svg

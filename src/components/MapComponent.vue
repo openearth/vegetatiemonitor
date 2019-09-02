@@ -15,7 +15,8 @@
       <v-mapbox-navigation-control />
       <mapbox-geolocate />
       <div id="t-slider">
-        <time-slider ref="timeslider" :layers="timesliderLayers"> </time-slider>
+        <time-slider ref="timeslider" :layers="timesliderLayers" :modes="modes">
+        </time-slider>
       </div>
     </v-mapbox>
   </div>
@@ -29,8 +30,7 @@ export default {
   name: 'map-component',
   props: {
     layers: {
-      type: Array,
-      required: true
+      type: Array
     },
     dateBegin: {
       type: String,
@@ -39,6 +39,9 @@ export default {
     dateEnd: {
       type: String,
       required: true
+    },
+    modes: {
+      type: Array
     }
   },
   data: function() {
@@ -67,6 +70,7 @@ export default {
     layers: {
       deep: true,
       handler() {
+        if (!this.layers) return
         this.toggleLayers()
         this.sortLayers()
       }
@@ -74,6 +78,7 @@ export default {
   },
   computed: {
     timesliderLayers() {
+      if (!this.layers) return
       return this.layers.filter(layer => layer.timeslider && layer.active)
     }
   },
@@ -87,6 +92,7 @@ export default {
       window.map = this.map
       this.$emit('setMap', this.map)
       this.addMapboxLayers()
+      // this.updateGEELayers()
       this.updateLayers()
     })
   },
@@ -112,48 +118,72 @@ export default {
         }
       })
     },
-    updateGEELayers(dataset, region, vis) {
-      var map_id = `${dataset}_${this.dateBegin}`
-      if (this.map.getSource(map_id)) {
-        this.map.removeLayer(map_id)
-        this.map.removeSource(map_id)
-      } else {
-        var maplayer_json = {
-          id: map_id,
-          type: 'raster',
-          date: this.dateBegin,
-          source: {
-            type: 'raster',
-            tiles: [],
-            tileSize: 256
-          }
-        }
-
-        var json_body = {
-          dateBegin: this.dateBegin,
-          dateEnd: this.dateEnd,
-          region: region,
-          vis: vis
-        }
-        fetch(`${this.$store.state.SERVER_URL}/map/${dataset}/`, {
-          method: 'POST',
-          body: JSON.stringify(json_body),
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(res => {
-            return res.json()
-          })
-          .then(mapUrl => {
-            maplayer_json.source['tiles'] = [mapUrl['url']]
-            this.map.addLayer(maplayer_json)
-            var menulayer = this.layers.find(l => l.dataset === dataset)
-            menulayer.data.push(maplayer_json)
-          })
-      }
-    },
+    // updateGEELayers(dataset, region, vis) {
+    //   this.layers.forEach(layer => {
+    //     if (layer.layertype === 'gee-layer') {
+    //       const data = layer.data[0]
+    //       // If layer is not active, return
+    //       if (!layer.active) return
+    //
+    //       // If existing gee layer on already has the correct dates and dataset, return
+    //       if (layer.data.length > 0 && data.dateBegin === this.dateBegin && data.dateEnd === this.dateEnd) {
+    //         return
+    //         //
+    //       } else {
+    //         var mapId = `${layer.dataset}_${this.dateBegin}_${this.dateEnd}`
+    //         var mapJson = {
+    //           id: mapId,
+    //           type: 'raster',
+    //           dateBegin: this.dateBegin,
+    //           dateEnd: this.dateEnd,
+    //           source: {
+    //             type: 'raster',
+    //             tiles: [],
+    //             tileSize: 256
+    //           }
+    //         }
+    //
+    //         const oldMapId = `${layer.dataset}_${data.dateBegin}_${data.dateEnd}`
+    //         if (this.map.getSource(oldMapId)) {
+    //           this.map.removeLayer(oldMapId)
+    //           this.map.removeSource(oldMapId)
+    //         }
+    //
+    //         var json_body = {
+    //           dateBegin: this.dateBegin,
+    //           dateEnd: this.dateEnd,
+    //           region: region,
+    //           vis: vis
+    //         }
+    //       }
+    //
+    //
+    //   if (this.map.getSource(map_id)) {
+    //     this.map.removeLayer(map_id)
+    //     this.map.removeSource(map_id)
+    //   } else {
+    //
+    //
+    //
+    //     fetch(`${this.$store.state.SERVER_URL}/map/${dataset}/`, {
+    //       method: 'POST',
+    //       body: JSON.stringify(json_body),
+    //       mode: 'cors',
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       }
+    //     })
+    //       .then(res => {
+    //         return res.json()
+    //       })
+    //       .then(mapUrl => {
+    //         maplayer_json.source['tiles'] = [mapUrl['url']]
+    //         this.map.addLayer(maplayer_json)
+    //         var menulayer = this.layers.find(l => l.dataset === dataset)
+    //         menulayer.data.push(maplayer_json)
+    //       })
+    //   }
+    // },
     updateLayers() {
       if (this.map) {
         this.sortLayers()
@@ -197,12 +227,14 @@ export default {
     },
 
     toggleLayers() {
+      if (!this.layers) return
       // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
       this.layers.forEach(layer => {
-        if (layer.layertype === 'gee-layer' && layer.active) {
-          this.updateGEELayers(layer.dataset, this.region, layer.vis)
-        } else if (layer.layertype === 'mapbox-layer') {
+        // if (layer.layertype === 'gee-layer' && layer.active) {
+        //   this.updateGEELayers(layer.dataset, this.region, layer.vis)
+        // } else
+        if (layer.layertype === 'mapbox-layer') {
           layer.data.forEach(sublayer => {
             if (layer.active) {
               this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])

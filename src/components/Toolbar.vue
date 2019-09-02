@@ -13,8 +13,8 @@
     <v-spacer />
     <v-flex xs-6>
       <v-tabs background-color="transparent" fixed-tabs>
-        <v-tab v-for="mode in modes" :key="mode" :to="{ name: mode }">
-          {{ mode }}
+        <v-tab v-for="mode in modes" :key="mode.name" :to="{ name: mode.name }">
+          {{ mode.name }}
         </v-tab>
       </v-tabs>
     </v-flex>
@@ -45,6 +45,9 @@ export default {
   props: {
     drawerstate: {
       type: Boolean
+    },
+    modes: {
+      type: Array
     }
   },
   computed: {
@@ -55,11 +58,6 @@ export default {
       set(drawerstate) {
         this.$emit('setDrawerstate', drawerstate)
       }
-    }
-  },
-  data: function() {
-    return {
-      modes: ['Veld', 'Verken', 'Voorspel']
     }
   }
 }
