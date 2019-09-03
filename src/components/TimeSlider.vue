@@ -1,51 +1,31 @@
 <template>
-  <v-layout fill-height>
-    <v-flex xs-2 align-end justify-end>
-      <!-- call play function so timer gets updated -->
-      <!-- TODO: use buttons that stay pressed (lookup material design guideline) -->
-
-      <div class="text-xs-center">
-        <v-btn-toggle multiple>
-          <v-btn
-            text
-            v-model="state"
-            @click="
-              state = !state
-              play()
-            "
-          >
-            <v-icon v-if="state" small>fa-pause</v-icon>
-            <v-icon v-if="!state" small>fa-play</v-icon>
-          </v-btn>
-          <v-btn text v-model="loop" @click="loop = !loop">
-            <v-icon>fa-redo-alt</v-icon>
-          </v-btn>
-        </v-btn-toggle>
-      </div>
-      <div class="text-xs-center">
-        <v-menu open-on-hover top>
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark small v-on="on">
-              {{ mode.name }}
-            </v-btn>
-          </template>
-
-          <v-list dense>
-            <v-list-item
-              v-for="(m, index) in timeModes"
-              :key="index"
-              @click="mode = m"
-            >
-              <v-list-item-title>{{ m.name }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
-    </v-flex>
-    <v-flex xs-10>
+  <v-container fill-height row>
+    <!-- call play function so timer gets updated -->
+    <v-col md="1">
+      <v-flex>
+        <v-btn
+          text
+          v-model="state"
+          @click="
+            state = !state
+            play()
+          "
+        >
+          <v-icon v-if="state" small>fa-pause</v-icon>
+          <v-icon v-if="!state" small>fa-play</v-icon>
+        </v-btn>
+        <v-btn text v-model="loop" @click="loop = !loop">
+          <v-icon>fa-redo-alt</v-icon>
+        </v-btn>
+        <v-btn text @click="changeMode">
+          {{ currentSliderMode }}
+        </v-btn>
+      </v-flex>
+    </v-col>
+    <v-col md="11">
       <div id="slider"></div>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-container>
 </template>
 
 <script>
@@ -81,14 +61,13 @@ export default {
         },
         {
           name: 'DAG',
-          format: '%-d-%-m-%Y',
+          format: '%-m-%Y',
           interval: 'day',
-          extent: [moment('2018'), moment()]
+          extent: [moment().subtract(1, 'year'), moment()]
         }
       ],
       periodHeight: 20,
       svg: null,
-
       mode: {},
       nTicks: 0,
       showPlay: true,
@@ -98,32 +77,43 @@ export default {
       sliderHeight: 0,
       svgWidth: 0,
       trackHeight: 70,
-
-      currentTime: '01-01-2009'
+      currentTime: '01-01-2009',
+      GEELayerType: 'image',
+      currentSliderMode: 'JAAR',
+      handleLocationRounded: '',
+      dragging: false
     }
   },
   watch: {
-    mode() {
-      this.updateSlider()
+    $route(val) {
+      const mode = this.modes.find(mode => mode.name === val.name)
+      this.sliderModes = mode.timeModes.map(mode => mode.mode)
+      this.GEELayerType = mode.type
+      this.changeMode()
     },
     layers() {
       if (!this.layers) return
       this.redraw()
     },
-    step() {
-      this.$emit('update-timeslider', [
-        moment(this.step),
-        moment(this.step).add(1, this.mode.interval)
-      ])
+    handleLocationRounded() {
+      this.$emit('update-timeslider', {
+        dragging: this.dragging,
+        beginDate: moment(this.step),
+        endDate: moment(this.step).add(1, this.mode.interval),
+        GEELayerType: this.GEELayerType
+      })
     }
   },
   mounted() {
+    // Set the current mode (yearly or daily according to the selected route)
+    const mode = this.modes.find(mode => mode.name === this.$route.name)
+    this.sliderModes = mode.timeModes.map(mode => mode.mode)
     this.mode = this.timeModes[0]
-    this.svg = d3
-      .select('#slider')
-      .append('svg')
-      .style('background-color', '#F0F0F0')
 
+    // Create the svg OBJECTID
+    this.svg = d3.select('#slider').append('svg')
+
+    // Update the margins and scale
     this.changeMargin()
     this.updateScale()
 
@@ -133,6 +123,7 @@ export default {
 
     this.createSlider()
     this.createDataLanes()
+
     this.createCurrentPeriod()
     this.redraw()
     window.addEventListener('resize', () => {
@@ -140,9 +131,24 @@ export default {
     })
   },
   methods: {
+    changeMode() {
+      const ind = this.sliderModes.indexOf(this.currentSliderMode)
+      if (ind === this.sliderModes.length - 1 || ind === -1) {
+        this.currentSliderMode = this.sliderModes[0]
+      } else if (this.sliderModes.length !== 1) {
+        this.currentSliderMode = this.sliderModes[ind + 1]
+        this.mode = this.timeModes.find(
+          mode => mode.name === this.currentSliderMode
+        )
+        this.updateScale()
+        this.updateSlider()
+      }
+    },
     changeMargin() {
       var nLanes = this.layers.length
-      this.sliderWidth = this.$el.clientWidth - this.labelWidth
+      this.sliderWidth =
+        document.querySelector('#t-slider > div > div.col-md-11.col')
+          .clientWidth - this.labelWidth
       this.sliderHeight =
         this.trackHeight + this.laneHeight * nLanes + this.periodHeight
       this.nTicks = parseInt(this.sliderWidth / 40)
@@ -198,6 +204,7 @@ export default {
               this.slider.interrupt()
             })
             .on('start drag', () => {
+              this.dragging = true
               this.step = this.xScale.invert(d3.event.x)
               if (
                 this.step <= this.mode.extent[0] ||
@@ -211,6 +218,13 @@ export default {
               this.updateHandle()
             })
             .on('end', () => {
+              this.dragging = false
+              this.$emit('update-timeslider', {
+                dragging: this.dragging,
+                beginDate: moment(this.step),
+                endDate: moment(this.step).add(1, this.mode.interval),
+                GEELayerType: this.GEELayerType
+              })
               this.handle.attr('r', 6)
             })
         )
@@ -410,9 +424,13 @@ export default {
     },
 
     updateHandle() {
-      var roundedH = this.xScale(moment(this.step).startOf(this.mode.interval))
-      this.handle.attr('cx', roundedH)
-      this.lanePeriod.attr('x', roundedH)
+      const handleLocationRounded = this.xScale(
+        moment(this.step).startOf(this.mode.interval)
+      )
+      if (this.handleLocationRounded === handleLocationRounded) return
+      this.handleLocationRounded = handleLocationRounded
+      this.handle.attr('cx', handleLocationRounded)
+      this.lanePeriod.attr('x', handleLocationRounded)
       this.currentPeriod.attr(
         'text',
         `${moment(this.step).format('DD/MM/YYYY')} - ${moment(this.step)
@@ -488,5 +506,9 @@ export default {
 
 .rect-instance:hover {
   fill: red;
+}
+
+.lane-rect {
+  cursor: grab;
 }
 </style>

@@ -27,6 +27,8 @@
         :dateEnd="dateEnd"
         :modes="modes"
         @setMap="map = $event"
+        @setDateBegin="dateBegin = $event"
+        @setDateEnd="dateEnd = $event"
       />
     </v-content>
   </div>

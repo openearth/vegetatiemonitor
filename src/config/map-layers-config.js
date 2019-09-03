@@ -166,7 +166,7 @@ const mapLayers = [
     active: false,
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
-    data: [],
+    data: [{}],
     vis: {},
     timeslider: true,
     dates: [
@@ -236,7 +236,7 @@ const mapLayers = [
         'struweel'
       ]
     },
-    data: [],
+    data: [{}],
     vis: {},
     timeslider: true,
     dates: []
@@ -382,7 +382,7 @@ const mapLayers = [
       ],
       range: '-1 1'
     },
-    data: [],
+    data: [{}],
     vis: {}
   },
   {
@@ -393,7 +393,7 @@ const mapLayers = [
     opacity: 100,
     active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
-    data: [],
+    data: [{}],
     vis: pseudoColors[0].vis,
     settings: [
       {
