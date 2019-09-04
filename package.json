@@ -15,7 +15,7 @@
     "d3": "^5.9.7",
     "echarts": "^4.2.1",
     "ion-rangeslider": "<2.3.0",
-    "mapbox-gl": "^0.54.0",
+    "mapbox-gl": "https://github.com/gena/mapbox-gl-js/releases/download/v1.2.0-tiled-video-0.1/mapbox-gl-v1.2.1.tgz",
     "mapbox-gl-geocoder": "^2.0.1",
     "moment": "^2.24.0",
     "register-service-worker": "^1.6.2",
