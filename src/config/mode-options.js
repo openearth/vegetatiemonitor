@@ -13,7 +13,7 @@ const modes = [
     timeModes: [
       {
         mode: 'JAAR',
-        type: 'image'
+        type: 'video'
       }
     ]
   },

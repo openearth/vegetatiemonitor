@@ -1,9 +1,10 @@
 <template>
-  <v-container fill-height row>
+  <v-container fluid fill-height row class="ma-0 pa-0">
     <!-- call play function so timer gets updated -->
-    <v-col md="1">
-      <v-flex>
+    <v-col md="1" no-gutters aling-end>
+      <v-row md="4" no-gutters>
         <v-btn
+          v-if="GEELayerType !== 'video'"
           text
           v-model="state"
           @click="
@@ -14,15 +15,24 @@
           <v-icon v-if="state" small>fa-pause</v-icon>
           <v-icon v-if="!state" small>fa-play</v-icon>
         </v-btn>
-        <v-btn text v-model="loop" @click="loop = !loop">
+      </v-row>
+      <v-row md="4" no-gutters>
+        <v-btn
+          v-if="GEELayerType !== 'video'"
+          text
+          v-model="loop"
+          @click="loop = !loop"
+        >
           <v-icon>fa-redo-alt</v-icon>
         </v-btn>
+      </v-row>
+      <v-row md="4" no-gutters>
         <v-btn text @click="changeMode">
           {{ currentSliderMode }}
         </v-btn>
-      </v-flex>
+      </v-row>
     </v-col>
-    <v-col md="11">
+    <v-col md="11" no-gutters>
       <div id="slider"></div>
     </v-col>
   </v-container>
@@ -45,7 +55,7 @@ export default {
   data() {
     return {
       state: false,
-      step: moment('1990'),
+      step: '',
       dataLanes: null,
       loop: false,
       labelWidth: 150,
@@ -57,13 +67,27 @@ export default {
           name: 'JAAR',
           format: '%Y',
           interval: 'year',
-          extent: [moment('1984'), moment()]
+          extent: [
+            moment()
+              .startOf('year')
+              .subtract(20, 'year'),
+            moment()
+              .add(1, 'year')
+              .startOf('year')
+          ],
+          ticks: 19
         },
         {
           name: 'DAG',
           format: '%-m-%Y',
           interval: 'day',
-          extent: [moment().subtract(1, 'year'), moment()]
+          extent: [
+            moment()
+              .startOf('day')
+              .subtract(1, 'year'),
+            moment().startOf('day')
+          ],
+          ticks: 12
         }
       ],
       periodHeight: 20,
@@ -76,38 +100,40 @@ export default {
       sliderWidth: 0,
       sliderHeight: 0,
       svgWidth: 0,
-      trackHeight: 70,
+      trackHeight: 90,
       currentTime: '01-01-2009',
       GEELayerType: 'image',
       currentSliderMode: 'JAAR',
-      handleLocationRounded: '',
       dragging: false
     }
   },
   watch: {
     $route(val) {
-      const mode = this.modes.find(mode => mode.name === val.name)
-      this.sliderModes = mode.timeModes.map(mode => mode.mode)
-      this.GEELayerType = mode.type
+      const mode = this.modes.find(mode => mode.name === val)
+      this.sliderModes = mode.timeModes
       this.changeMode()
     },
     layers() {
       if (!this.layers) return
       this.redraw()
     },
-    handleLocationRounded() {
-      this.$emit('update-timeslider', {
-        dragging: this.dragging,
-        beginDate: moment(this.step),
-        endDate: moment(this.step).add(1, this.mode.interval),
-        GEELayerType: this.GEELayerType
-      })
+    step(val, oldVal) {
+      console.log(moment(val).format('DD-MM-YYYY'), d3)
+      d3.select('rect#08-04-2019.rect-instance')
+        .node()
+        .attr('fill', 'green')
+      d3.select(moment(val).format('DD-MM-YYYY'))
+        .node()
+        .attr('fill', 'red')
+      d3.select(moment(oldVal).format('DD-MM-YYYY'))
+        .node()
+        .attr('fill', 'blue')
     }
   },
   mounted() {
     // Set the current mode (yearly or daily according to the selected route)
     const mode = this.modes.find(mode => mode.name === this.$route.name)
-    this.sliderModes = mode.timeModes.map(mode => mode.mode)
+    this.sliderModes = mode.timeModes
     this.mode = this.timeModes[0]
 
     // Create the svg OBJECTID
@@ -121,10 +147,11 @@ export default {
       .attr('width', this.sliderWidth + this.labelWidth)
       .attr('height', this.sliderHeight)
 
+    this.createLaneGroup()
+    this.updateLaneGroup()
     this.createSlider()
-    this.createDataLanes()
 
-    this.createCurrentPeriod()
+    // this.createCurrentPeriod()
     this.redraw()
     window.addEventListener('resize', () => {
       this.redraw()
@@ -132,26 +159,32 @@ export default {
   },
   methods: {
     changeMode() {
-      const ind = this.sliderModes.indexOf(this.currentSliderMode)
-      if (ind === this.sliderModes.length - 1 || ind === -1) {
-        this.currentSliderMode = this.sliderModes[0]
-      } else if (this.sliderModes.length !== 1) {
-        this.currentSliderMode = this.sliderModes[ind + 1]
-        this.mode = this.timeModes.find(
-          mode => mode.name === this.currentSliderMode
-        )
-        this.updateScale()
-        this.updateSlider()
+      this.GEELayerType = this.sliderModes.find(
+        mode => mode.mode === this.currentSliderMode
+      ).type
+      const sliderModes = this.sliderModes.map(mode => mode.mode)
+      const ind = sliderModes.indexOf(this.currentSliderMode)
+      if (ind === sliderModes.length - 1 || ind === -1) {
+        this.currentSliderMode = sliderModes[0]
+      } else if (sliderModes.length !== 1) {
+        this.currentSliderMode = sliderModes[ind + 1]
       }
+      this.mode = this.timeModes.find(
+        mode => mode.name === this.currentSliderMode
+      )
+      this.redraw()
     },
     changeMargin() {
       var nLanes = this.layers.length
-      this.sliderWidth =
-        document.querySelector('#t-slider > div > div.col-md-11.col')
-          .clientWidth - this.labelWidth
+      this.svgWidth = document.querySelector(
+        '#t-slider > div > div.col-md-11.col'
+      ).clientWidth
+      this.margin = 10
+      this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin
       this.sliderHeight =
         this.trackHeight + this.laneHeight * nLanes + this.periodHeight
-      this.nTicks = parseInt(this.sliderWidth / 40)
+      const nt = parseInt(this.sliderWidth / 40)
+      this.nTicks = nt > this.mode.ticks ? this.mode.ticks : nt
     },
 
     updateScale() {
@@ -163,19 +196,6 @@ export default {
 
     createSlider() {
       this.slider = this.svg.append('g').attr('class', 'slider')
-    },
-    createCurrentPeriod() {
-      this.currentPeriod = this.svg
-        .append('text')
-        .attr('class', 'current-period')
-        .attr(
-          'text',
-          `${moment(this.step).format('DD/MM/YYYY')} - ${moment(this.step)
-            .add(1, this.mode.interval)
-            .format('DD/MM/YYYY')} `
-        )
-        .attr('x', this.sliderWidth / 2 + this.labelWidth)
-        .attr('text-anchor', 'middle')
     },
     updateSlider() {
       this.slider.attr(
@@ -189,6 +209,8 @@ export default {
         .attr('class', 'track')
         .attr('x1', this.xScale.range()[0])
         .attr('x2', this.xScale.range()[1])
+        .attr('y1', 0)
+        .attr('y2', 0)
         .select(function() {
           return this.parentNode.appendChild(this.cloneNode(true))
         })
@@ -219,12 +241,7 @@ export default {
             })
             .on('end', () => {
               this.dragging = false
-              this.$emit('update-timeslider', {
-                dragging: this.dragging,
-                beginDate: moment(this.step),
-                endDate: moment(this.step).add(1, this.mode.interval),
-                GEELayerType: this.GEELayerType
-              })
+              this.updateImages()
               this.handle.attr('r', 6)
             })
         )
@@ -254,143 +271,158 @@ export default {
         .attr('text-anchor', 'middle')
         .text(d => this.formatDate(d))
 
+      var nextStep = moment(this.step).clone()
+
+      this.lanePeriod = this.slider
+        .insert('rect')
+        .attr('class', 'lane-rect')
+        .attr('y', -this.layers.length * (this.laneHeight + this.laneSpacing))
+        .attr(
+          'height',
+          this.layers.length * (this.laneHeight + this.laneSpacing)
+        )
+        .attr(
+          'width',
+          this.xScale(nextStep.add(1, this.mode.interval)) -
+            this.xScale(this.step)
+        )
+        .attr('fill', 'rgba(0, 0, 0, 0.2)')
+        .call(
+          d3
+            .drag()
+            .on('start.interrupt', () => {
+              this.slider.interrupt()
+            })
+            .on('start drag', () => {
+              this.dragging = true
+              this.step = this.xScale.invert(d3.event.x)
+              if (
+                this.step <= this.mode.extent[0] ||
+                this.step >= this.mode.extent[1]
+              ) {
+                this.slider.interrupt()
+                return null
+              }
+              this.updateHandle()
+            })
+        )
       this.handle = this.slider
         .insert('circle', '.track-overlay')
         .attr('class', 'handle')
         .attr('id', 'handle')
         .attr('r', 6)
     },
-    createDataLanes() {
-      this.dataLanes = this.svg
-        .append('g')
-        .attr('transform', `translate(${this.labelWidth}, 0)`)
-        .attr('class', 'layers')
+    createLaneGroup() {
+      this.laneGroup = this.svg.append('g').attr('z-index', 0)
+    },
+    updateLaneGroup() {
+      this.laneGroup
+        .attr('height', this.trackHeight)
         .attr('width', this.sliderWidth)
         .attr(
-          'height',
-          this.layers.length * (this.laneHeight + this.laneSpacing)
+          'transform',
+          `translate(0, ${this.trackHeight -
+            this.layers.length * this.laneHeight})`
         )
 
-      var nextStep = moment(this.step).clone()
-
-      this.lanePeriod = this.dataLanes
-        .append('rect')
-        .attr('class', 'lane-rect')
-        .attr(
-          'height',
-          this.layers.length * (this.laneHeight + this.laneSpacing)
-        )
-        .attr(
-          'width',
-          this.xScale(nextStep.add(1, this.mode.interval)) -
-            this.xScale(this.step)
-        )
-        .attr('fill', 'rgba(0, 0, 0, 0.2)')
-    },
-
-    updateDataLanes() {
       var y = d3
         .scaleLinear()
         .domain([0, this.layers.length])
         .range([0, this.layers.length * (this.laneHeight + this.laneSpacing)])
 
-      this.dataLanes
-        .attr('width', this.sliderWidth)
-        .attr(
-          'height',
-          this.layers.length * (this.laneHeight + this.laneSpacing)
-        )
-      this.dataLanes.selectAll('*').remove()
-
-      this.dataLanes = this.svg
-        .append('g')
-        .attr('transform', `translate(${this.labelWidth}, 0)`)
-        .attr('class', 'layers')
+      this.laneGroup.selectAll('*').remove()
 
       var fontsize = 7
       var margin = 4
-
       this.layers.forEach((data, index) => {
-        this.dataLanes
+        const dataLane = this.laneGroup
+          .append('g')
+          .attr('class', 'dataLane')
+          .attr('height', this.laneHeight)
+          .attr('x', this.labelWidth)
+          .attr('width', this.sliderWidth)
+
+        // Add the label of dataset for each dadalane
+        dataLane
           .append('text')
           .attr('class', 'lane-label')
           .attr('text-anchor', 'left')
           .text(data.name)
+          .attr('y', (index + 1) * this.laneHeight - fontsize)
           .attr('font-size', `${fontsize * 2}px`)
-          .attr(
-            'transform',
-            `translate(${-this.labelWidth}, ${y(index) -
-              this.laneSpacing / 2 +
-              this.laneHeight / 2 +
-              fontsize / 2} )`
-          )
+          .attr('font-family', "'Avenir', Helvetica, Arial, sans-serif")
 
-        this.dataLanes
-          .append('rect')
-          .attr('x', this.xScale.range()[0])
-          .attr('y', y(index) - this.laneSpacing / 2)
-          .attr('width', this.sliderWidth)
-          .attr('height', this.laneHeight)
-          .attr('ry', 5)
-          .attr('rx', 5)
-          .attr('fill', '#F0F0F0')
+        // Append line below datalane
+        dataLane
+          .append('line')
+          .attr('x1', this.labelWidth)
+          .attr('x2', this.sliderWidth + this.labelWidth)
+          .attr('y1', y(index) - this.laneSpacing / 2)
+          .attr('y2', y(index) - this.laneSpacing / 2)
           .attr('stroke', 'rgb(21,66,115)')
-          .attr('stroke-width', 1)
 
-        this.dataLanes
-          .append('g')
-          .selectAll('.dataIntervals')
-          .data(data.dates.filter(x => x.type === 'interval'))
-          .enter()
-          .append('rect')
-          .attr('class', d => d.id)
-          .attr('x', d => this.xScale(moment(d.start)))
-          .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
-          .attr('ry', 5)
-          .attr('rx', 5)
-          .attr(
-            'width',
-            d => this.xScale(moment(d.end)) - this.xScale(moment(d.start))
-          )
-          .attr('height', this.laneHeight - margin)
-
-        this.dataLanes
-          .append('g')
-          .selectAll('.dataInstances')
-          .data(data.dates.filter(x => x.type === 'instance'))
-          .enter()
-          .append('rect')
-          .attr('class', 'rect-instance')
-          .attr('id', d => d.id)
-          .attr('x', d => this.xScale(moment(d.time)))
-          .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
-          .attr('ry', 5)
-          .attr('rx', 5)
-          .attr('width', 2)
-          .attr('height', this.laneHeight - margin)
-          .on('click', d => {
-            this.step = moment(d.time)
-            this.updateSlider()
-          })
+        if (this.currentSliderMode === 'JAAR') {
+          dataLane
+            .append('g')
+            .selectAll('.dataIntervals')
+            .data(
+              data.dates.filter(
+                x =>
+                  x.type === 'interval' &&
+                  moment(x.start) >= this.mode.extent[0] &&
+                  moment(x.end) <= this.mode.extent[1]
+              )
+            )
+            .append('rect')
+            .attr('class', d => d.id)
+            .attr('x', d => this.xScale(moment(d.start)))
+            .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
+            .attr('ry', 5)
+            .attr('rx', 5)
+            .attr('id', d => moment(d.start).format('YYYY'))
+            .attr(
+              'width',
+              d =>
+                this.xScale(moment(d.end, 'DD-MM-YYYY')) -
+                this.xScale(moment(d.start, 'DD-MM-YYYY')) +
+                this.labelWidth
+            )
+            .attr('height', this.laneHeight - margin)
+        }
+        if (this.currentSliderMode === 'DAG') {
+          dataLane
+            .append('g')
+            .selectAll('.dataInstances')
+            .data(
+              data.dates.filter(
+                x =>
+                  x.type === 'instance' &&
+                  moment(x.time) >= this.mode.extent[0] &&
+                  moment(x.time) <= this.mode.extent[1]
+              )
+            )
+            .enter()
+            .append('rect')
+            .attr('class', 'rect-instance')
+            .attr('id', d => moment(d.time).format('DD-MM-YYYY'))
+            .attr(
+              'x',
+              d => this.xScale(moment(d.time, 'DD-MM-YYYY')) + this.labelWidth
+            )
+            .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
+            .attr('ry', 2)
+            .attr('rx', 2)
+            .attr('width', 3)
+            .attr('height', this.laneHeight - margin)
+            .on('click', d => {
+              this.step = moment(d.time, 'DD-MM-YYYY')
+              this.redraw()
+            })
+        }
       })
-
-      var nextStep = moment(this.step).clone()
-
-      this.lanePeriod = this.dataLanes
-        .append('rect')
-        .attr('class', 'lane-rect')
-        .attr(
-          'height',
-          this.layers.length * (this.laneHeight + this.laneSpacing)
-        )
-        .attr(
-          'width',
-          this.xScale(nextStep.add(1, this.mode.interval)) -
-            this.xScale(this.step)
-        )
-        .attr('fill', 'rgba(0, 0, 0, 0.2)')
     },
     play(now) {
+      this.dragging = true
       this.timer = requestAnimationFrame(this.play)
 
       // first update, when this.last is still null, set value and return
@@ -401,6 +433,7 @@ export default {
 
       // now we can just return if we are not playing (will result in a regular poll for playing)
       if (!this.state) {
+        this.dragging = false
         return
       }
       // elapsed time in seconds
@@ -421,22 +454,20 @@ export default {
       }
       this.updateHandle()
       this.last = now
+      this.updateImages()
     },
 
     updateHandle() {
-      const handleLocationRounded = this.xScale(
+      if (this.currentSliderMode === 'JAAR') {
+        this.handle.style('visibility', 'hidden')
+      } else {
+        this.handle.style('visibility', 'visible')
+      }
+      this.handleLocationRounded = this.xScale(
         moment(this.step).startOf(this.mode.interval)
       )
-      if (this.handleLocationRounded === handleLocationRounded) return
-      this.handleLocationRounded = handleLocationRounded
-      this.handle.attr('cx', handleLocationRounded)
-      this.lanePeriod.attr('x', handleLocationRounded)
-      this.currentPeriod.attr(
-        'text',
-        `${moment(this.step).format('DD/MM/YYYY')} - ${moment(this.step)
-          .add(1, this.mode.interval)
-          .format('DD/MM/YYYY')} `
-      )
+      this.handle.attr('cx', this.handleLocationRounded)
+      this.lanePeriod.attr('x', this.handleLocationRounded)
     },
 
     formatDate(d) {
@@ -451,12 +482,19 @@ export default {
       this.changeMargin()
       this.updateScale()
 
-      this.svg.attr('width', this.sliderWidth + this.labelWidth)
-      // .attr("height", this.sliderHeight)
-
-      this.updateDataLanes()
+      this.svg.attr('width', this.svgWidth)
+      this.updateLaneGroup()
       this.updateSlider()
       this.updateHandle()
+    },
+
+    updateImages() {
+      this.$emit('update-timeslider', {
+        dragging: this.dragging,
+        beginDate: moment(this.step),
+        endDate: moment(this.step).add(1, this.mode.interval),
+        GEELayerType: this.GEELayerType
+      })
     }
   }
 }
@@ -467,8 +505,9 @@ export default {
 @import '~ion-rangeslider/css/ion.rangeSlider.skinModern.css';
 #slider {
   /* padding: 50px; */
-  width: 100%;
-  height: 100px;
+  width: calc(100% - 20px);
+  height: 130px;
+  margin: 0 0 50 0;
 }
 
 .track,
@@ -491,7 +530,7 @@ export default {
 
 .track-overlay {
   pointer-events: stroke;
-  stroke-width: 50px;
+  stroke-width: 8px;
   stroke: transparent;
   cursor: pointer;
 }

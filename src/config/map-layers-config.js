@@ -169,45 +169,7 @@ const mapLayers = [
     data: [{}],
     vis: {},
     timeslider: true,
-    dates: [
-      {
-        id: 'image-1',
-        type: 'interval',
-        start: '01-01-2010',
-        end: '01-01-2011'
-      },
-      {
-        id: 'image-1',
-        type: 'interval',
-        start: '01-01-2011',
-        end: '01-01-2012'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2006'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2007'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2008'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2018'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-05-2019'
-      }
-    ]
+    dates: []
   },
 
   {
@@ -383,7 +345,9 @@ const mapLayers = [
       range: '-1 1'
     },
     data: [{}],
-    vis: {}
+    vis: {},
+    timeslider: true,
+    dates: []
   },
   {
     layertype: 'gee-layer',
@@ -403,39 +367,7 @@ const mapLayers = [
       }
     ],
     timeslider: true,
-    dates: [
-      {
-        id: 'image-1',
-        type: 'interval',
-        start: '01-01-2010',
-        end: '01-01-2015'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2006'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2007'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2008'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-01-2018'
-      },
-      {
-        id: 'image-1',
-        type: 'instance',
-        time: '01-05-2019'
-      }
-    ]
+    dates: []
   }
 ]
 

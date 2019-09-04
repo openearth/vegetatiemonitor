@@ -10,7 +10,6 @@
 </template>
 
 <script>
-var SERVER_URL = 'https://vegetatie-monitor.appspot.com'
 import ECharts from 'vue-echarts'
 import 'echarts/lib/chart/pie'
 import 'echarts/lib/component/tooltip'
@@ -101,19 +100,21 @@ export default {
       }
 
       const json_body = JSON.stringify(body)
-      fetch(`${SERVER_URL}/map/${this.datatype}/zonal-info/`, {
-        method: 'POST',
-        body: json_body,
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json'
+      fetch(
+        `${this.$store.state.SERVER_URL}/map/${this.datatype}/zonal-info/`,
+        {
+          method: 'POST',
+          body: json_body,
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json'
+          }
         }
-      })
+      )
         .then(res => {
           return res.json()
         })
         .then(chartData => {
-          console.log('chartData', chartData)
           const data = chartData[0].area_per_type.map(d => {
             const color = colors.find(color => color.type === d.type)
             return {
@@ -177,6 +178,7 @@ export default {
         ]
       }
       this.loading = false
+      this.$emit('loaded', true)
     }
   },
   components: {

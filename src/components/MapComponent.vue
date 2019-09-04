@@ -76,13 +76,21 @@ export default {
     layers: {
       deep: true,
       handler() {
-        if (!this.layers) return
+        if (!this.mapLayers) return
         this.toggleLayers()
         this.sortLayers()
       }
     }
   },
   computed: {
+    mapLayers: {
+      get() {
+        return this.layers
+      },
+      set(mapLayers) {
+        this.$emit('setLayers', mapLayers)
+      }
+    },
     extent: {
       get() {
         return [this.dateBegin, this.dateEnd]
@@ -93,8 +101,9 @@ export default {
       }
     },
     timesliderLayers() {
-      if (!this.layers) return
-      return this.layers.filter(layer => layer.timeslider && layer.active)
+      if (!this.mapLayers) return
+      console.log(this.mapLayers)
+      return this.mapLayers.filter(layer => layer.timeslider && layer.active)
     }
   },
   mounted() {
@@ -105,6 +114,9 @@ export default {
       this.addMapboxLayers()
       // this.updateGEELayers()
       this.updateLayers()
+      this.fetchDates()
+      this.map.on('zoomend', this.fetchDates)
+      this.map.on('dragend', this.fetchDates)
     })
   },
   provide() {
@@ -128,7 +140,7 @@ export default {
       console.log(map)
     },
     addMapboxLayers() {
-      this.layers.forEach(layer => {
+      this.mapLayers.forEach(layer => {
         if (layer.layertype === 'mapbox-layer') {
           layer.data.forEach(maplayer => {
             if (!this.map.getSource(maplayer)) {
@@ -139,7 +151,7 @@ export default {
       })
     },
     updateGEELayers() {
-      this.layers.forEach(layer => {
+      this.mapLayers.forEach(layer => {
         if (layer.layertype === 'gee-layer') {
           // If layer is not active, return
           if (!layer.active) return
@@ -153,7 +165,6 @@ export default {
       })
     },
     updateGEEImageLayer(layer) {
-      console.log('updating image layer')
       const data = layer.data[0]
 
       // If existing gee layer on already has the correct dates and dataset, return
@@ -194,7 +205,6 @@ export default {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
       } else {
-        console.log('layer', layer)
         fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
           method: 'POST',
           body: JSON.stringify(json_body),
@@ -212,6 +222,45 @@ export default {
             layer.data[0] = mapJson
           })
       }
+    },
+    fetchDates() {
+      const region = this.getRegion()
+      const body = JSON.stringify({
+        region: region
+      })
+      this.timesliderLayers.map(layer => {
+        if (!layer.active) return
+        console.log('fetching times', layer.dataset)
+        fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/`, {
+          method: 'POST',
+          body: body,
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json'
+          }
+        })
+          .then(res => {
+            return res.json()
+          })
+          .then(times => {
+            layer.dates = times.map(time => {
+              return {
+                id: time.imageId,
+                type: 'instance',
+                time: moment(time.datetime, 'YYYY-MM-DD HH:mm').format(
+                  'DD-MM-YYYY'
+                )
+              }
+            })
+            this.mapLayers = this.mapLayers.map(l => {
+              if (l.name === layer.name) {
+                return layer
+              } else {
+                return l
+              }
+            })
+          })
+      })
     },
     updateGEEVideoLayer(layer) {
       console.log(
@@ -242,14 +291,14 @@ export default {
     },
     sortLayers() {
       // Function to sort the layers according to their position in the menu
-      for (var i = this.layers.length - 2; i >= 0; --i) {
+      for (var i = this.mapLayers.length - 2; i >= 0; --i) {
         for (
           var thislayer = 0;
-          thislayer < this.layers[i].data.length;
+          thislayer < this.mapLayers[i].data.length;
           ++thislayer
         ) {
-          if (this.layers[i].data[thislayer].id) {
-            this.map.moveLayer(this.layers[i].data[thislayer].id)
+          if (this.mapLayers[i].data[thislayer].id) {
+            this.map.moveLayer(this.mapLayers[i].data[thislayer].id)
           }
         }
       }
@@ -279,10 +328,10 @@ export default {
     },
 
     toggleLayers() {
-      if (!this.layers) return
+      if (!this.mapLayers) return
       // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
-      this.layers.forEach(layer => {
+      this.mapLayers.forEach(layer => {
         // if (layer.layertype === 'gee-layer' && layer.active) {
         //   this.updateGEELayers(layer.dataset, this.region, layer.vis)
         // } else

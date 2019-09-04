@@ -27,6 +27,7 @@
         :dateEnd="dateEnd"
         :modes="modes"
         @setMap="map = $event"
+        @setLayers="layers = $event"
         @setDateBegin="dateBegin = $event"
         @setDateEnd="dateEnd = $event"
       />
@@ -54,21 +55,20 @@ export default {
       dateEnd: '2018-07-28'
     }
   },
-  // created() {
-  //   this.layers = mapLayers
-  //   this.modes = modes
-  // },
   watch: {
     map(val) {
       this.map = val
+    },
+    layers(val) {
+      this.layers = val
+      console.log('viewer', this.layers.map(layer => layer.name))
     }
   },
   components: {
     Toolbar,
     MapComponent,
     Drawer
-  },
-  methods: {}
+  }
 }
 </script>
 

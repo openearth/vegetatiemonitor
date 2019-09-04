@@ -38,7 +38,7 @@
         id="menuOpen"
         v-if="menu === 'Kaartlagen' && menuOpen"
         :layers="layers"
-        v-on:setLayers="mapLayers = $event"
+        @setLayers="mapLayers = $event"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
         :modes="modes"
@@ -123,6 +123,7 @@ export default {
         return this.layers
       },
       set(mapLayers) {
+        console.log('drawer', mapLayers)
         this.$emit('setLayers', mapLayers)
       }
     },

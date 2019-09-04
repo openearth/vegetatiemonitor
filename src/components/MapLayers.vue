@@ -134,12 +134,11 @@ export default {
       if (!this.layers) return []
       const layerNames = this.modes.find(mode => mode.name === this.$route.name)
         .mapLayersNames
-      const mapLayers = this.layers.forEach(layer => {
+      this.mapLayers = this.layers.forEach(layer => {
         if (!layerNames.includes(layer.name)) {
           layer.visible = false
         }
       })
-      this.$emit('setLayers', mapLayers)
       const layers = this.layers.filter(layer =>
         layerNames.includes(layer.name)
       )
