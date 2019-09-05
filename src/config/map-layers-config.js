@@ -137,6 +137,34 @@ const mapLayers = [
 
   {
     layertype: 'mapbox-layer',
+    name: 'Lalala',
+    icon: './images/legend-stroombaan.png',
+    opacity: 100,
+    active: true,
+    data: [
+      {
+        id: 'Lalala',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 18,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ]
+  },
+
+  {
+    layertype: 'mapbox-layer',
     name: 'Stroombanen',
     icon: './images/legend-stroombaan.png',
     opacity: 100,

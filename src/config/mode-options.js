@@ -3,6 +3,7 @@ const modes = [
     name: 'Veld',
     mapLayersItems: ['Kaartlagen', 'Analyse', 'Colofon'],
     mapLayersNames: [
+      'Lalala',
       'Kadaster',
       'Stroombanen',
       'Classificatie',

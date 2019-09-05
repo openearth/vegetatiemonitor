@@ -140,6 +140,8 @@ export default {
       ;(this.GEELayerType = event.GEELayerType),
         (this.dragging = event.dragging)
       this.updateGEELayers()
+
+      this.updateVideoLayers(this.extent[0])
     },
     addMapboxLayers() {
       this.mapLayers.forEach(layer => {
@@ -164,6 +166,42 @@ export default {
           }
         }
       })
+    },
+    updateVideoLayers(time) {
+      // HACK: prevent the first call with t = tMax
+      if (!this.timeSliderInitialized) {
+        this.timeSliderInitialized = true
+        return
+      }
+
+      // get all video layers (Mapbox layers)
+      let videoLayers = this.layers
+        .filter(l => l.layertype === 'mapbox-layer')
+        .map(l => l.data[0])
+        .filter(l => l.source.type === 'video-tiled')
+
+      // seek to current time
+      videoLayers.forEach(layer => this.updateVideoLayerTime(layer, time))
+    },
+    updateVideoLayerTime(layer, time) {
+      // compute time fraction
+      time = moment(time)
+      let begin = moment(layer.source.dateBegin)
+      let end = moment(layer.source.dateEnd)
+      let durationTotal = moment.duration(end.diff(begin)).asDays()
+      let durationCurrent = moment.duration(time.diff(begin)).asDays()
+
+      let fraction = durationCurrent / durationTotal
+      let t = layer.source.durationSec * fraction
+
+      t = Math.max(0, t)
+      t = Math.min(layer.source.durationSec, t)
+
+      console.log(`Setting time to ${t} ...`)
+
+      let player = this.map.getSource(layer.id).player
+
+      player.setCurrentTime(t)
     },
     updateGEEImageLayer(layer) {
       const data = layer.data[0]
