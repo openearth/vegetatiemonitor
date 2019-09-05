@@ -1,5 +1,6 @@
 <template>
   <div class="viewer">
+    <v-disclaimer></v-disclaimer>
     <toolbar
       :drawerstate="drawerstate"
       @setDrawerstate="drawerstate = $event"
@@ -27,7 +28,7 @@
         :dateEnd="dateEnd"
         :modes="modes"
         @setMap="map = $event"
-        @setLayers="layers = $event"
+        @setLayer="setLayer($event)"
         @setDateBegin="dateBegin = $event"
         @setDateEnd="dateEnd = $event"
       />
@@ -39,6 +40,7 @@
 import Toolbar from '@/components/Toolbar'
 import MapComponent from '@/components/MapComponent'
 import Drawer from '@/components/Drawer'
+import VDisclaimer from '@/components/VDisclaimer'
 
 import { mapLayers } from '../config/map-layers-config.js'
 import { modes } from '../config/mode-options.js'
@@ -48,9 +50,9 @@ export default {
   data: function() {
     return {
       drawerstate: true,
-      layers: mapLayers,
       modes: modes,
       map: {},
+      layers: mapLayers,
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28'
     }
@@ -59,15 +61,27 @@ export default {
     map(val) {
       this.map = val
     },
-    layers(val) {
+    layers(val, oldVal) {
       this.layers = val
-      console.log('viewer', this.layers.map(layer => layer.name))
+      console.log(
+        'viewer',
+        val.map(layer => layer.name),
+        oldVal.map(layer => layer.name)
+      )
+    }
+  },
+  methods: {
+    setLayer(layer) {
+      console.log(layer)
+      // let newlayer = this.layers.find(l => l.name === layer.name)
+      // newlayer = layer
     }
   },
   components: {
     Toolbar,
     MapComponent,
-    Drawer
+    Drawer,
+    VDisclaimer
   }
 }
 </script>

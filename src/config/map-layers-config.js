@@ -178,7 +178,7 @@ const mapLayers = [
     icon: './images/legend-classified.png',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'landuse', // important! this argument is needed to call the service
     legend: {
       colors: [

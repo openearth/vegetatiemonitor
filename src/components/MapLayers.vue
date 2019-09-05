@@ -7,7 +7,7 @@
       <draggable
         id="draggable"
         class="draggable"
-        v-model="mapLayers"
+        v-model="filteredLayers"
         @start="drag = true"
         @end="drag = false"
         v-bind="{ handle: '.draghandle' }"
@@ -35,7 +35,7 @@
                 <v-switch
                   class="ma-0"
                   v-model="layer.active"
-                  @change="$emit('setLayers', mapLayers)"
+                  @change="$emit('setLayer', layer)"
                 />
               </v-flex>
               <v-flex>
@@ -119,14 +119,6 @@ export default {
         layerNames.includes(layer.name)
       )
       return layers
-    },
-    mapLayers: {
-      get() {
-        return this.layers
-      },
-      set(mapLayers) {
-        this.$emit('setLayers', mapLayers)
-      }
     }
   },
   methods: {

@@ -145,6 +145,15 @@ export default {
       return this.layers.filter(layer => layer.layertype === 'gee-layer')
     }
   },
+  mounted() {
+    window.onkeyup = event => {
+      if (event.key === 'Escape') {
+        this.menuOpen = false
+        this.menu = ''
+        this.mini = true
+      }
+    }
+  },
   components: {
     MapLayers,
     Analyse,

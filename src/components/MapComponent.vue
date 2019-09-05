@@ -4,31 +4,32 @@
       access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
       map-style="mapbox://styles/mapbox/light-v9"
       :center="[5.673272, 52.079502]"
-      :zoom="7.88"
+      :zoom="7"
       :pitch="0"
       :bearing="0"
       :min-zoom="5"
       class="map"
       ref="map"
+      id="map"
     >
-      <v-mapbox-geocoder />
-      <v-mapbox-navigation-control />
-      <mapbox-geolocate />
-      <v-card id="t-slider" color="secondary">
-        <time-slider
-          ref="timeslider"
-          :layers="timesliderLayers"
-          :modes="modes"
-          @update-timeslider="updateTimeslider($event)"
-        >
-        </time-slider>
-      </v-card>
+      <v-mapbox-geocoder></v-mapbox-geocoder>
+      <v-mapbox-navigation-control></v-mapbox-navigation-control>
+      <v-mapbox-geolocate-control></v-mapbox-geolocate-control>
     </v-mapbox>
+    <v-card id="t-slider" color="secondary">
+      <time-slider
+        ref="timeslider"
+        :layers="timesliderLayers"
+        :modes="modes"
+        @update-timeslider="updateTimeslider($event)"
+        @setTimeMode="timeMode = $event"
+      >
+      </time-slider>
+    </v-card>
   </div>
 </template>
 
 <script>
-import MapboxGeolocate from '../scripts/MapboxGeolocate'
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
 
@@ -53,6 +54,7 @@ export default {
   data: function() {
     return {
       map: null,
+      timeMode: {},
       region: {
         coordinates: [
           [
@@ -102,14 +104,16 @@ export default {
     },
     timesliderLayers() {
       if (!this.mapLayers) return
-      console.log(this.mapLayers)
       return this.mapLayers.filter(layer => layer.timeslider && layer.active)
     }
   },
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
-      window.map = this.map
+      // TODO: THIS SHOULD NOT AT ALL BE NECESSARY... SHOULD BE IN V-MAPBOX ARGS
+      this.map.setZoom(7.88)
+      this.map.setCenter([5.673272, 52.079502])
+
       this.$emit('setMap', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
@@ -127,6 +131,7 @@ export default {
     }
   },
   methods: {
+    deferredMountedTo() {},
     updateTimeslider(event) {
       this.extent = [
         moment(event.beginDate).format('YYYY-MM-DD'),
@@ -135,9 +140,6 @@ export default {
       ;(this.GEELayerType = event.GEELayerType),
         (this.dragging = event.dragging)
       this.updateGEELayers()
-    },
-    deferredMountedTo(map) {
-      console.log(map)
     },
     addMapboxLayers() {
       this.mapLayers.forEach(layer => {
@@ -155,7 +157,6 @@ export default {
         if (layer.layertype === 'gee-layer') {
           // If layer is not active, return
           if (!layer.active) return
-          console.log('this.dragging', this.dragging)
           if (this.GEELayerType === 'image' && this.dragging === false) {
             this.updateGEEImageLayer(layer)
           } else if (this.GEELayerType === 'image') {
@@ -230,28 +231,25 @@ export default {
       })
       this.timesliderLayers.map(layer => {
         if (!layer.active) return
-        console.log('fetching times', layer.dataset)
-        fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/`, {
-          method: 'POST',
-          body: body,
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json'
+        console.log('fetching times', layer.dataset, this.timeMode.timing)
+        fetch(
+          `${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/${
+            this.timeMode.timing
+          }`,
+          {
+            method: 'POST',
+            body: body,
+            mode: 'cors',
+            headers: {
+              'Content-type': 'application/json'
+            }
           }
-        })
+        )
           .then(res => {
             return res.json()
           })
-          .then(times => {
-            layer.dates = times.map(time => {
-              return {
-                id: time.imageId,
-                type: 'instance',
-                time: moment(time.datetime, 'YYYY-MM-DD HH:mm').format(
-                  'DD-MM-YYYY'
-                )
-              }
-            })
+          .then(dates => {
+            layer.dates = dates
             this.mapLayers = this.mapLayers.map(l => {
               if (l.name === layer.name) {
                 return layer
@@ -349,16 +347,12 @@ export default {
     }
   },
   components: {
-    MapboxGeolocate,
     TimeSlider
   }
 }
 </script>
 
 <style>
-@import '~mapbox-gl/dist/mapbox-gl.css';
-@import '~mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-
 .map {
   width: 100%;
   height: 100%;
@@ -366,9 +360,9 @@ export default {
 
 #t-slider {
   position: absolute;
-  left: 20vw;
+  left: 10vw;
   bottom: 5vh;
-  width: 70vw;
+  width: 80vw;
   right: 90vw;
   z-index: 2;
 }

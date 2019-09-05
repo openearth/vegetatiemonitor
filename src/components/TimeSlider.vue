@@ -1,43 +1,42 @@
 <template>
-  <v-container fluid fill-height row class="ma-0 pa-0">
-    <!-- call play function so timer gets updated -->
-    <v-col md="1" no-gutters aling-end>
-      <v-row md="4" no-gutters>
-        <v-btn
-          v-if="GEELayerType !== 'video'"
-          text
-          v-model="state"
-          @click="
-            state = !state
-            play()
-          "
-        >
-          <v-icon v-if="state" small>fa-pause</v-icon>
-          <v-icon v-if="!state" small>fa-play</v-icon>
-        </v-btn>
-      </v-row>
-      <v-row md="4" no-gutters>
-        <v-btn
-          v-if="GEELayerType !== 'video'"
-          text
-          v-model="loop"
-          @click="loop = !loop"
-        >
-          <v-icon>fa-redo-alt</v-icon>
-        </v-btn>
-      </v-row>
-      <v-row md="4" no-gutters>
-        <v-btn text @click="changeMode">
-          {{ currentSliderMode }}
-        </v-btn>
-      </v-row>
-    </v-col>
-    <v-col md="11" no-gutters>
-      <div id="slider"></div>
-    </v-col>
+  <v-container>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-card flat color="transparent">
+          <div id="slider"></div>
+        </v-card>
+      </v-col>
+      <v-col cols="12">
+        <v-card flat color="transparent">
+          <v-btn text @click="changeMode">
+            {{ currentSliderMode }}
+          </v-btn>
+          <v-btn
+            v-if="GEELayerType !== 'video'"
+            text
+            v-model="state"
+            @click="
+              state = !state
+              play()
+            "
+          >
+            <v-icon v-if="state" small>fa-pause</v-icon>
+            <v-icon v-if="!state" small>fa-play</v-icon>
+          </v-btn>
+          <v-btn
+            v-if="GEELayerType !== 'video'"
+            text
+            v-model="loop"
+            @click="loop = !loop"
+          >
+            <v-icon>fa-redo-alt</v-icon>
+          </v-btn>
+          {{ currentTimeMessage }}
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
-
 <script>
 import moment from 'moment'
 import * as d3 from 'd3'
@@ -55,7 +54,7 @@ export default {
   data() {
     return {
       state: false,
-      step: '',
+      step: moment(),
       dataLanes: null,
       loop: false,
       labelWidth: 150,
@@ -67,6 +66,8 @@ export default {
           name: 'JAAR',
           format: '%Y',
           interval: 'year',
+          timing: 'yearly',
+          momentFormat: 'YYYY',
           extent: [
             moment()
               .startOf('year')
@@ -81,6 +82,8 @@ export default {
           name: 'DAG',
           format: '%-m-%Y',
           interval: 'day',
+          timing: 'daily',
+          momentFormat: 'DD-MM-YYYY',
           extent: [
             moment()
               .startOf('day')
@@ -117,17 +120,31 @@ export default {
       if (!this.layers) return
       this.redraw()
     },
-    step(val, oldVal) {
-      console.log(moment(val).format('DD-MM-YYYY'), d3)
-      d3.select('rect#08-04-2019.rect-instance')
-        .node()
-        .attr('fill', 'green')
-      d3.select(moment(val).format('DD-MM-YYYY'))
-        .node()
-        .attr('fill', 'red')
-      d3.select(moment(oldVal).format('DD-MM-YYYY'))
-        .node()
-        .attr('fill', 'blue')
+    mode(val) {
+      this.$emit('setTimeMode', val)
+    }
+    // step(val, oldVal) {
+    //   console.log(moment(val).format('DD-MM-YYYY'), d3)
+    //   const el = document.getElementById('rect#12-02-2019')
+    //   console.log('el', el)
+    //   d3.selectAll('rect#08-04-2019.rect-instance')
+    //     .node()
+    //     .attr('fill', 'green')
+    // d3.select(moment(val).format('DD-MM-YYYY'))
+    //   .node()
+    //   .attr('fill', 'red')
+    // d3.select(moment(oldVal).format('DD-MM-YYYY'))
+    //   .node()
+    //   .attr('fill', 'blue')
+    // }
+  },
+  computed: {
+    currentTimeMessage() {
+      return `Current Image: from ${moment(this.step).format(
+        this.mode.momentFormat
+      )} to: ${moment(this.step)
+        .add(1, this.mode.interval)
+        .format(this.mode.momentFormat)}`
     }
   },
   mounted() {
@@ -150,7 +167,6 @@ export default {
     this.createLaneGroup()
     this.updateLaneGroup()
     this.createSlider()
-
     // this.createCurrentPeriod()
     this.redraw()
     window.addEventListener('resize', () => {
@@ -176,9 +192,7 @@ export default {
     },
     changeMargin() {
       var nLanes = this.layers.length
-      this.svgWidth = document.querySelector(
-        '#t-slider > div > div.col-md-11.col'
-      ).clientWidth
+      this.svgWidth = document.querySelector('div#slider').clientWidth
       this.margin = 10
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin
       this.sliderHeight =
@@ -306,8 +320,10 @@ export default {
               this.updateHandle()
             })
         )
+
       this.handle = this.slider
-        .insert('circle', '.track-overlay')
+        .insert('circle')
+        .attr('class', 'track-overlay')
         .attr('class', 'handle')
         .attr('id', 'handle')
         .attr('r', 6)
@@ -362,6 +378,7 @@ export default {
           .attr('stroke', 'rgb(21,66,115)')
 
         if (this.currentSliderMode === 'JAAR') {
+          console.log('jaar')
           dataLane
             .append('g')
             .selectAll('.dataIntervals')
@@ -369,25 +386,36 @@ export default {
               data.dates.filter(
                 x =>
                   x.type === 'interval' &&
-                  moment(x.start) >= this.mode.extent[0] &&
-                  moment(x.end) <= this.mode.extent[1]
+                  moment(x.date_start) >= this.mode.extent[0] &&
+                  moment(x.date_end) <= this.mode.extent[1]
               )
             )
+            .enter()
             .append('rect')
-            .attr('class', d => d.id)
-            .attr('x', d => this.xScale(moment(d.start)))
+            .attr('id', x =>
+              moment(x.date_start, x.dateFormat).format('DD-MM-YYYY')
+            )
+            .attr(
+              'x',
+              x =>
+                this.xScale(moment(x.date_start, x.dateFormat)) +
+                this.labelWidth
+            )
             .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
             .attr('ry', 5)
             .attr('rx', 5)
-            .attr('id', d => moment(d.start).format('YYYY'))
+            .attr('id', d => moment(d.date_start).format('YYYY'))
             .attr(
               'width',
               d =>
-                this.xScale(moment(d.end, 'DD-MM-YYYY')) -
-                this.xScale(moment(d.start, 'DD-MM-YYYY')) +
-                this.labelWidth
+                this.xScale(moment(d.date_end, d.dateFormat)) -
+                this.xScale(moment(d.date_start, d.dateFormat))
             )
             .attr('height', this.laneHeight - margin)
+            .on('click', x => {
+              this.step = moment(x.date_start, x.dateFormat)
+              this.redraw()
+            })
         }
         if (this.currentSliderMode === 'DAG') {
           dataLane
@@ -397,25 +425,25 @@ export default {
               data.dates.filter(
                 x =>
                   x.type === 'instance' &&
-                  moment(x.time) >= this.mode.extent[0] &&
-                  moment(x.time) <= this.mode.extent[1]
+                  moment(x.date, x.dateFormat) >= this.mode.extent[0] &&
+                  moment(x.date, x.dateFormat) <= this.mode.extent[1]
               )
             )
             .enter()
             .append('rect')
             .attr('class', 'rect-instance')
-            .attr('id', d => moment(d.time).format('DD-MM-YYYY'))
+            .attr('id', x => moment(x.date, x.dateFormat).format('DD-MM-YYYY'))
             .attr(
               'x',
-              d => this.xScale(moment(d.time, 'DD-MM-YYYY')) + this.labelWidth
+              x => this.xScale(moment(x.date, x.dateFormat)) + this.labelWidth
             )
             .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
             .attr('ry', 2)
             .attr('rx', 2)
-            .attr('width', 3)
+            .attr('width', 2)
             .attr('height', this.laneHeight - margin)
-            .on('click', d => {
-              this.step = moment(d.time, 'DD-MM-YYYY')
+            .on('click', x => {
+              this.step = moment(x.date, x.dateFormat)
               this.redraw()
             })
         }
@@ -445,7 +473,7 @@ export default {
       }
 
       this.step = moment(this.step).add(1, this.mode.interval)
-      if (this.step > this.mode.extent[1]) {
+      if (this.step >= this.mode.extent[1]) {
         if (this.loop) {
           this.step = this.mode.extent[0]
         } else {
@@ -473,9 +501,6 @@ export default {
     formatDate(d) {
       var timeFormat = d3.timeFormat(this.mode.format)
       return timeFormat(d)
-    },
-    deferredMountedTo(map) {
-      console.log(map)
     },
 
     redraw() {
@@ -507,7 +532,6 @@ export default {
   /* padding: 50px; */
   width: calc(100% - 20px);
   height: 130px;
-  margin: 0 0 50 0;
 }
 
 .track,
@@ -543,6 +567,9 @@ export default {
   transition: 0.5s r;
 }
 
+.rect {
+  margin: 2px;
+}
 .rect-instance:hover {
   fill: red;
 }
