@@ -1,26 +1,15 @@
 /* eslint-disable react/react-in-jsx-scope */
 
 import { storiesOf } from "@storybook/vue";
-import { action } from "@storybook/addon-actions";
-import { linkTo } from "@storybook/addon-links";
 
-import MyButton from "./MyButton";
-import Welcome from "./Welcome";
+import Vue from "vue";
+import Vuetify from "vuetify";
 
-storiesOf("Welcome", module).add("to Storybook", () => ({
-  components: { Welcome },
-  template: '<welcome :showApp="action" />',
-  methods: { action: linkTo("Button") }
+import TimeSlider from "../src/components/TimeSlider.vue";
+
+Vue.use(Vuetify);
+
+storiesOf("TimeSlider", module).add("default", () => ({
+  components: { TimeSlider },
+  template: "<time-slider></time-slider>"
 }));
-
-storiesOf("Button", module)
-  .add("with text", () => ({
-    components: { MyButton },
-    template: '<my-button @click="action">Hello Button</my-button>',
-    methods: { action: action("clicked") }
-  }))
-  .add("with some emoji", () => ({
-    components: { MyButton },
-    template: '<my-button @click="action">😀 😎 👍 💯</my-button>',
-    methods: { action: action("clicked") }
-  }));
