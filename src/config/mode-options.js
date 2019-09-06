@@ -8,8 +8,9 @@ const modes = [
       'Stroombanen',
       'Classificatie',
       'Classificatie vs Legger',
-      'VegetatieLegger',
-      'Satelliet beelden'
+      'Vegetatielegger',
+      'Satelliet beelden',
+      'Luchtfoto'
     ],
     timeModes: [
       {
@@ -26,8 +27,9 @@ const modes = [
       'Stroombanen',
       'Classificatie',
       'Classificatie vs Legger',
-      'VegetatieLegger',
-      'Satelliet beelden'
+      'Vegetatielegger',
+      'Satelliet beelden',
+      'Luchtfoto'
     ],
     timeModes: [
       {
@@ -44,9 +46,10 @@ const modes = [
       'Stroombanen',
       'Classificatie',
       'Classificatie vs Legger',
-      'VegetatieLegger',
+      'Vegetatielegger',
       'Vegetatie (NDVI)',
-      'Satelliet beelden'
+      'Satelliet beelden',
+      'Luchtfoto'
     ],
     timeModes: [
       {

@@ -38,10 +38,12 @@
         id="menuOpen"
         v-if="menu === 'Kaartlagen' && menuOpen"
         :layers="layers"
-        @setLayers="mapLayers = $event"
+        @setLayer="$emit('setLayer', $event)"
+        @setLayerOrder="$emit('setLayerOrder', $event)"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
         :modes="modes"
+        :map="map"
       />
       <analyse
         id="menuOpen"
@@ -55,7 +57,7 @@
         id="menuOpen"
         v-if="menu === 'Download' && menuOpen"
         :map="map"
-        :layers="GEELayers"
+        :layers="downloadableLayers"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
       />
@@ -123,7 +125,6 @@ export default {
         return this.layers
       },
       set(mapLayers) {
-        console.log('drawer', mapLayers)
         this.$emit('setLayers', mapLayers)
       }
     },
@@ -141,8 +142,8 @@ export default {
         this.$emit('setDrawerstate', drawerstate)
       }
     },
-    GEELayers() {
-      return this.layers.filter(layer => layer.layertype === 'gee-layer')
+    downloadableLayers() {
+      return this.layers.filter(layer => layer.download)
     }
   },
   mounted() {

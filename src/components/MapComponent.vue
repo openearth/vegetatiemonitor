@@ -55,6 +55,7 @@ export default {
     return {
       map: null,
       timeMode: {},
+      layerTypes: ['imageLayers', 'mapboxLayers'],
       region: {
         coordinates: [
           [
@@ -70,18 +71,6 @@ export default {
       },
       polygons: [],
       scale: 10
-    }
-  },
-  watch: {
-    // Watch "layers". This is a switch, which can toggle a layer on or off
-    // When toggled, this watcher will activate the toggleLayers function.
-    layers: {
-      deep: true,
-      handler() {
-        if (!this.mapLayers) return
-        this.toggleLayers()
-        this.sortLayers()
-      }
     }
   },
   computed: {
@@ -117,7 +106,6 @@ export default {
       this.$emit('setMap', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
-      this.updateLayers()
       this.fetchDates()
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
@@ -134,54 +122,46 @@ export default {
     deferredMountedTo() {},
     updateTimeslider(event) {
       this.extent = [
-        moment(event.beginDate).format('YYYY-MM-DD'),
-        moment(event.endDate).format('YYYY-MM-DD')
+        event.beginDate.format('YYYY-MM-DD'),
+        event.endDate.format('YYYY-MM-DD')
       ]
-      ;(this.GEELayerType = event.GEELayerType),
-        (this.dragging = event.dragging)
-      this.updateGEELayers()
+      this.timing = event.timing
+      this.dragging = event.dragging
+      this.updateTimedLayers()
 
-      this.updateVideoLayers(this.extent[0])
+      // this.updateVideoLayers(this.extent[0])
     },
     addMapboxLayers() {
       this.mapLayers.forEach(layer => {
-        if (layer.layertype === 'mapbox-layer') {
-          layer.data.forEach(maplayer => {
-            if (!this.map.getSource(maplayer)) {
-              this.map.addLayer(maplayer)
-            }
-          })
-        }
+        layer.mapboxLayers.forEach(maplayer => {
+          if (!maplayer.id) return
+          if (!this.map.getSource(maplayer)) {
+            this.map.addLayer(maplayer)
+          }
+        })
       })
     },
-    updateGEELayers() {
+    updateTimedLayers() {
       this.mapLayers.forEach(layer => {
-        if (layer.layertype === 'gee-layer') {
+        if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
-          if (this.GEELayerType === 'image' && this.dragging === false) {
-            this.updateGEEImageLayer(layer)
-          } else if (this.GEELayerType === 'image') {
-            this.updateGEEVideoLayer(layer)
+          if (this.currentSliderMode === 'DAG' && this.dragging === false) {
+            this.updateImageLayer(layer)
+          } else if (this.timing === 'JAAR') {
+            const videoLayer = layer.mapboxLayers.find(d => {
+              if (!d.source) {
+                return false
+              } else {
+                return d.source.type === 'video-tiled'
+              }
+            })
+            if (videoLayer) {
+              this.updateVideoLayerTime(videoLayer, this.extent[0])
+            }
           }
         }
       })
-    },
-    updateVideoLayers(time) {
-      // HACK: prevent the first call with t = tMax
-      if (!this.timeSliderInitialized) {
-        this.timeSliderInitialized = true
-        return
-      }
-
-      // get all video layers (Mapbox layers)
-      let videoLayers = this.layers
-        .filter(l => l.layertype === 'mapbox-layer')
-        .map(l => l.data[0])
-        .filter(l => l.source.type === 'video-tiled')
-
-      // seek to current time
-      videoLayers.forEach(layer => this.updateVideoLayerTime(layer, time))
     },
     updateVideoLayerTime(layer, time) {
       // compute time fraction
@@ -197,17 +177,15 @@ export default {
       t = Math.max(0, t)
       t = Math.min(layer.source.durationSec, t)
 
-      console.log(`Setting time to ${t} ...`)
-
       let player = this.map.getSource(layer.id).player
 
       player.setCurrentTime(t)
     },
-    updateGEEImageLayer(layer) {
-      const data = layer.data[0]
+    updateImageLayer(layer) {
+      const imageLayers = layer.imageLayers[0]
 
       // If existing gee layer on already has the correct dates and dataset, return
-      if (layer.data.length > 0 && data.extent == this.extent) {
+      if (layer.imageLayers.length > 0 && imageLayers.extent == this.extent) {
         return
         //
       } else {
@@ -223,8 +201,8 @@ export default {
           }
         }
 
-        if (data && data.extent) {
-          const oldMapId = `${layer.dataset}_${data.extent.join('_')}`
+        if (imageLayers && imageLayers.extent) {
+          const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
           if (this.map.getSource(oldMapId)) {
             this.map.removeLayer(oldMapId)
             this.map.removeSource(oldMapId)
@@ -258,7 +236,7 @@ export default {
           .then(mapUrl => {
             mapJson.source['tiles'] = [mapUrl['url']]
             this.map.addLayer(mapJson)
-            layer.data[0] = mapJson
+            layer.imageLayers[0] = mapJson
           })
       }
     },
@@ -269,7 +247,6 @@ export default {
       })
       this.timesliderLayers.map(layer => {
         if (!layer.active) return
-        console.log('fetching times', layer.dataset, this.timeMode.timing)
         fetch(
           `${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/${
             this.timeMode.timing
@@ -298,16 +275,6 @@ export default {
           })
       })
     },
-    updateGEEVideoLayer(layer) {
-      console.log(
-        'updateing video layer for: ',
-        layer.dataset,
-        'at',
-        this.extent,
-        'wtih',
-        this.GEELayerType
-      )
-    },
     getRegion() {
       var N = this.map.getBounds().getNorth()
       var E = this.map.getBounds().getEast()
@@ -318,70 +285,6 @@ export default {
         geodesic: true,
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
       }
-    },
-    updateLayers() {
-      if (this.map) {
-        this.sortLayers()
-        this.toggleLayers()
-      }
-    },
-    sortLayers() {
-      // Function to sort the layers according to their position in the menu
-      for (var i = this.mapLayers.length - 2; i >= 0; --i) {
-        for (
-          var thislayer = 0;
-          thislayer < this.mapLayers[i].data.length;
-          ++thislayer
-        ) {
-          if (this.mapLayers[i].data[thislayer].id) {
-            this.map.moveLayer(this.mapLayers[i].data[thislayer].id)
-          }
-        }
-      }
-    },
-
-    setOpacity(layer, sublayer) {
-      if (layer.opacity) {
-        try {
-          var opacity = Math.max(layer.opacity * 0.01, 0.01)
-          var property
-          if (layer.layertype == 'gee-layer') {
-            property = 'raster-opacity'
-          } else if (sublayer.type == 'fill') {
-            property = 'fill-opacity'
-          } else if (sublayer.type == 'line') {
-            property = 'line-opacity'
-          }
-          if (property) {
-            this.map.setPaintProperty(sublayer.id, property, opacity)
-          }
-        } catch (err) {
-          console.log(
-            'error setting opacity: ' + opacity + '(' + err.message + ')'
-          )
-        }
-      }
-    },
-
-    toggleLayers() {
-      if (!this.mapLayers) return
-      // Function to toggle the visibility and opacity of the layers.
-      var vis = ['none', 'visible']
-      this.mapLayers.forEach(layer => {
-        // if (layer.layertype === 'gee-layer' && layer.active) {
-        //   this.updateGEELayers(layer.dataset, this.region, layer.vis)
-        // } else
-        if (layer.layertype === 'mapbox-layer') {
-          layer.data.forEach(sublayer => {
-            if (layer.active) {
-              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
-              this.setOpacity(layer, sublayer)
-            } else {
-              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
-            }
-          })
-        }
-      })
     }
   },
   components: {

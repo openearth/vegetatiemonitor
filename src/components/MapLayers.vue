@@ -28,8 +28,19 @@
               <v-flex xs2 fill-height>
                 <v-img contain max-height="100%" :src="layer.icon" />
               </v-flex>
-              <v-flex xs6 class="pa-1">
+              <v-flex xs5 class="pa-1">
                 {{ layer.name }}
+              </v-flex>
+              <v-flex xs1>
+                <v-tooltip v-if="layer.timeslider" bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon small v-on="on">fa-clock</v-icon>
+                  </template>
+                  <span
+                    >Deze laag is tijdsafhankelijk en kan bestuurd worden met de
+                    tijdsbalk.</span
+                  >
+                </v-tooltip>
               </v-flex>
               <v-flex xs2 @click.stop="">
                 <v-switch
@@ -107,18 +118,44 @@ export default {
     },
     modes: {
       type: Array
+    },
+    map: {
+      type: Object
+    }
+  },
+  data() {
+    return {
+      layerTypes: ['imageLayers', 'mapboxLayers']
+    }
+  },
+  watch: {
+    // Watch "layers". This is a switch, which can toggle a layer on or off
+    // When toggled, this watcher will activate the toggleLayers function.
+    layers: {
+      deep: true,
+      handler() {
+        if (!this.layers) return
+        this.toggleLayers()
+        this.sortLayers()
+      }
     }
   },
   computed: {
-    filteredLayers: function() {
-      if (!this.layers) return []
-      const layerNames = this.modes.find(mode => mode.name === this.$route.name)
-        .mapLayersNames
+    filteredLayers: {
+      get() {
+        if (!this.layers) return []
+        const layerNames = this.modes.find(
+          mode => mode.name === this.$route.name
+        ).mapLayersNames
 
-      const layers = this.layers.filter(layer =>
-        layerNames.includes(layer.name)
-      )
-      return layers
+        const layers = this.layers.filter(layer =>
+          layerNames.includes(layer.name)
+        )
+        return layers
+      },
+      set(val) {
+        this.$emit('setLayerOrder', val)
+      }
     }
   },
   methods: {
@@ -126,7 +163,7 @@ export default {
       if (!this.layers) return []
       const layerNames = this.modes.find(mode => mode.name === this.$route.name)
         .mapLayersNames
-      this.mapLayers = this.layers.forEach(layer => {
+      this.layers.forEach(layer => {
         if (!layerNames.includes(layer.name)) {
           layer.visible = false
         }
@@ -135,6 +172,66 @@ export default {
         layerNames.includes(layer.name)
       )
       return layers
+    },
+    toggleLayers() {
+      // When layers in the menu are switched on or off update the map layers
+      if (!this.filteredLayers) return
+      // Function to toggle the visibility and opacity of the layers.
+      var vis = ['none', 'visible']
+      this.filteredLayers.forEach(layer => {
+        this.layerTypes.forEach(data => {
+          if (!layer[data]) return
+          layer[data].forEach(sublayer => {
+            if (!sublayer.id) return
+            if (layer.active) {
+              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
+              this.setOpacity(layer, sublayer)
+            } else {
+              this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
+            }
+          })
+        })
+      })
+    },
+    setOpacity(layer, sublayer) {
+      // When updating the slider, update the corresponding layer with the new opacity
+      if (layer.opacity) {
+        try {
+          var opacity = Math.max(layer.opacity * 0.01, 0.01)
+          var property
+          if (sublayer.type === 'raster') {
+            property = 'raster-opacity'
+          } else if (sublayer.type == 'fill') {
+            property = 'fill-opacity'
+          } else if (sublayer.type == 'line') {
+            property = 'line-opacity'
+          }
+          if (property) {
+            this.map.setPaintProperty(sublayer.id, property, opacity)
+          }
+        } catch (err) {
+          console.log(
+            'error setting opacity: ' + opacity + '(' + err.message + ')'
+          )
+        }
+      }
+    },
+    sortLayers() {
+      // Function to sort the layers according to their position in the menu
+      for (var i = this.filteredLayers.length - 2; i >= 0; --i) {
+        this.layerTypes.forEach(data => {
+          if (!this.filteredLayers[i][data]) return
+          for (
+            var thislayer = 0;
+            thislayer < this.filteredLayers[i][data].length;
+            ++thislayer
+          ) {
+            if (this.filteredLayers[i][data][thislayer].id) {
+              this.map.moveLayer(this.filteredLayers[i][data][thislayer].id)
+            }
+          }
+        })
+      }
     }
   },
   components: {

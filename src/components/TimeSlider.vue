@@ -12,7 +12,7 @@
             {{ currentSliderMode }}
           </v-btn>
           <v-btn
-            v-if="GEELayerType !== 'video'"
+            v-if="currentSliderMode === 'JAAR'"
             text
             v-model="state"
             @click="
@@ -24,12 +24,15 @@
             <v-icon v-if="!state" small>fa-play</v-icon>
           </v-btn>
           <v-btn
-            v-if="GEELayerType !== 'video'"
+            v-if="currentSliderMode === 'JAAR'"
             text
             v-model="loop"
             @click="loop = !loop"
           >
             <v-icon>fa-redo-alt</v-icon>
+          </v-btn>
+          <v-btn text @click="changeSpeed">
+            {{ currentSpeed.name }}
           </v-btn>
           {{ currentTimeMessage }}
         </v-card>
@@ -105,14 +108,28 @@ export default {
       svgWidth: 0,
       trackHeight: 90,
       currentTime: '01-01-2009',
-      GEELayerType: 'image',
       currentSliderMode: 'JAAR',
-      dragging: false
+      dragging: false,
+      speeds: [
+        {
+          value: 10000,
+          name: 'LANGZAAM'
+        },
+        {
+          name: 'NORMAAL',
+          value: 5000
+        },
+        {
+          value: 1000,
+          name: 'SNEL'
+        }
+      ],
+      currentSpeed: 'NORMAAL'
     }
   },
   watch: {
     $route(val) {
-      const mode = this.modes.find(mode => mode.name === val)
+      const mode = this.modes.find(m => m.name === val.name)
       this.sliderModes = mode.timeModes
       this.changeMode()
     },
@@ -123,20 +140,6 @@ export default {
     mode(val) {
       this.$emit('setTimeMode', val)
     }
-    // step(val, oldVal) {
-    //   console.log(moment(val).format('DD-MM-YYYY'), d3)
-    //   const el = document.getElementById('rect#12-02-2019')
-    //   console.log('el', el)
-    //   d3.selectAll('rect#08-04-2019.rect-instance')
-    //     .node()
-    //     .attr('fill', 'green')
-    // d3.select(moment(val).format('DD-MM-YYYY'))
-    //   .node()
-    //   .attr('fill', 'red')
-    // d3.select(moment(oldVal).format('DD-MM-YYYY'))
-    //   .node()
-    //   .attr('fill', 'blue')
-    // }
   },
   computed: {
     currentTimeMessage() {
@@ -174,21 +177,31 @@ export default {
     })
   },
   methods: {
+    changeSpeed() {
+      this.currentSpeed = this.getNextElementInArray(
+        this.speeds,
+        this.currentSpeed
+      )
+    },
     changeMode() {
-      this.GEELayerType = this.sliderModes.find(
-        mode => mode.mode === this.currentSliderMode
-      ).type
       const sliderModes = this.sliderModes.map(mode => mode.mode)
-      const ind = sliderModes.indexOf(this.currentSliderMode)
-      if (ind === sliderModes.length - 1 || ind === -1) {
-        this.currentSliderMode = sliderModes[0]
-      } else if (sliderModes.length !== 1) {
-        this.currentSliderMode = sliderModes[ind + 1]
-      }
+      this.currentSliderMode = this.getNextElementInArray(
+        sliderModes,
+        this.currentSliderMode
+      )
       this.mode = this.timeModes.find(
         mode => mode.name === this.currentSliderMode
       )
       this.redraw()
+    },
+    getNextElementInArray(array, selected) {
+      const ind = array.indexOf(selected)
+      if (ind === array.length - 1 || ind === -1) {
+        selected = array[0]
+      } else if (array.length !== 1) {
+        selected = array[ind + 1]
+      }
+      return selected
     },
     changeMargin() {
       var nLanes = this.layers.length
@@ -241,7 +254,9 @@ export default {
             })
             .on('start drag', () => {
               this.dragging = true
-              this.step = this.xScale.invert(d3.event.x)
+              this.step = moment(this.xScale.invert(d3.event.x)).startOf(
+                this.mode.interval
+              )
               if (
                 this.step <= this.mode.extent[0] ||
                 this.step >= this.mode.extent[1]
@@ -309,7 +324,9 @@ export default {
             })
             .on('start drag', () => {
               this.dragging = true
-              this.step = this.xScale.invert(d3.event.x)
+              this.step = moment(this.xScale.invert(d3.event.x)).startOf(
+                this.mode.interval
+              )
               if (
                 this.step <= this.mode.extent[0] ||
                 this.step >= this.mode.extent[1]
@@ -378,7 +395,6 @@ export default {
           .attr('stroke', 'rgb(21,66,115)')
 
         if (this.currentSliderMode === 'JAAR') {
-          console.log('jaar')
           dataLane
             .append('g')
             .selectAll('.dataIntervals')
@@ -464,22 +480,28 @@ export default {
         this.dragging = false
         return
       }
+
       // elapsed time in seconds
-      const elapsed = (now - this.last) / 1000
+      const elapsed = (now - this.last) / this.currentSpeed.value
       // seconds per frame did not elapse, we're done
       if (elapsed < 1 / this.maxFps) {
         // this keeps the number of events low (otherwise you get 60 events per second)
         return
       }
 
-      this.step = moment(this.step).add(1, this.mode.interval)
-      if (this.step >= this.mode.extent[1]) {
+      const nextStep = moment(this.step).add(1, this.mode.interval)
+
+      if (nextStep >= this.mode.extent[1]) {
         if (this.loop) {
           this.step = this.mode.extent[0]
         } else {
+          this.state = false
           return
         }
+      } else {
+        this.step = nextStep
       }
+
       this.updateHandle()
       this.last = now
       this.updateImages()
@@ -518,7 +540,7 @@ export default {
         dragging: this.dragging,
         beginDate: moment(this.step),
         endDate: moment(this.step).add(1, this.mode.interval),
-        GEELayerType: this.GEELayerType
+        timing: this.currentSliderMode
       })
     }
   }

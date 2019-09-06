@@ -13,7 +13,8 @@
         :drawerstate="drawerstate"
         :layers="layers"
         @setDrawerstate="drawerstate = $event"
-        @setLayers="layers = $event"
+        @setLayer="updateLayer($event)"
+        @setLayerOrder="updateLayerOrder($event)"
         :map="map"
         :dateBegin="dateBegin"
         :dateEnd="dateEnd"
@@ -61,20 +62,30 @@ export default {
     map(val) {
       this.map = val
     },
-    layers(val, oldVal) {
+    layers(val) {
       this.layers = val
-      console.log(
-        'viewer',
-        val.map(layer => layer.name),
-        oldVal.map(layer => layer.name)
-      )
+    },
+    dateBegin(val) {
+      this.dateBegin = val
+    },
+    dateEnd(val) {
+      this.dateEnd = val
     }
   },
   methods: {
-    setLayer(layer) {
-      console.log(layer)
-      // let newlayer = this.layers.find(l => l.name === layer.name)
-      // newlayer = layer
+    updateLayer(layer) {
+      this.layers = this.layers.map(l => {
+        if (l.name === layer.name) return layer
+        else return l
+      })
+    },
+    updateLayerOrder(layers) {
+      const updatedLayerNames = layers.map(l => l.name)
+      const hiddenLayers = this.layers.filter(
+        l => !updatedLayerNames.includes(l.name)
+      )
+      hiddenLayers.forEach(layer => layers.push(layer))
+      this.layers = layers
     }
   },
   components: {

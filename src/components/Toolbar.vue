@@ -4,7 +4,7 @@
 
     <v-app-bar-nav-icon @click="drawer = true">
       <v-icon>
-        fa-bar
+        fa-bars
       </v-icon>
     </v-app-bar-nav-icon>
     <v-toolbar-title class="hidden-sm-and-down"
