@@ -66,14 +66,5 @@
     "vue-jest": "^3.0.4",
     "vue-template-compiler": "^2.5.21",
     "vuetify-loader": "^1.0.5"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,vue}": [
-      "vue-cli-service lint",
-      "git add"
-    ]
   }
 }
