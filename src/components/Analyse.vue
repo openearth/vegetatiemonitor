@@ -16,23 +16,6 @@
               @loaded="loading = $event"
             ></v-piechart>
           </div>
-          <v-btn
-            v-on:click.native="closeSelectMode()"
-            v-if="selectMode"
-            outline
-            color="indigo"
-            >Verwijder
-            <v-icon right>close</v-icon>
-          </v-btn>
-          <v-btn
-            :disabled="workLoad > 0"
-            v-on:click.native="downloadSelection()"
-            v-if="selectMode"
-            outline
-            color="indigo"
-            >Download
-            <v-icon right>file_download</v-icon>
-          </v-btn>
         </div>
       </v-flex>
       <v-flex xs1>
@@ -155,6 +138,20 @@ export default {
               filter
             ])
           })
+        }
+      })
+    },
+
+    closeSelectMode() {
+      this.properties = []
+      this.datatypes = []
+      this.layers.forEach(layer => {
+        if (layer.selectFilter) {
+          this.map.setFilter(layer.selectFilter, [
+            '==',
+            layer.selectProperty,
+            ''
+          ])
         }
       })
     }
