@@ -68,7 +68,7 @@ const mapLayers = [
     selectProperty: 'ADMINPERCE',
     datatypes: ['landuse', 'legger'],
     info:
-      'Dit is een superduper awesome laag. Ik heb even opvulling nodig voor het informatie stukje bladiebladieblad',
+      'Deze kaart toont de kadasterpercelen in het gebied en kan worden gebruikt om een analyse per perceel op uit te voeren.',
     mapboxLayers: [
       {
         id: 'Kadaster',
@@ -139,6 +139,8 @@ const mapLayers = [
     icon: './images/legend-stroombaan.png',
     opacity: 100,
     active: true,
+    info:
+      'De stroombanenkaart toont de hoofdstroombanen tijdens hoog water over de uiterwaarden.',
     mapboxLayers: [
       {
         id: 'Streamlines',
@@ -159,6 +161,8 @@ const mapLayers = [
   {
     name: 'Classificatie vs Legger',
     icon: './images/legend-classified.png',
+    info:
+      'Deze kaart vergelijkt de huidige classificatie met de legger in een kleurenschaal van groen (vegetatie is gladder dan de toegestane klasse) naar rood (vegetatie is ruwer dan de toegestane klasse).',
     opacity: 100,
     active: false,
     dataset: 'landuse-vs-legger',
@@ -174,6 +178,8 @@ const mapLayers = [
   {
     name: 'Classificatie',
     icon: './images/legend-classified.png',
+    info:
+      'Deze kaart toont de classificatie van het gekozen enkele satellietbeeld of jaargemiddelde beeld.',
     download: true,
     opacity: 100,
     active: true,
@@ -225,6 +231,8 @@ const mapLayers = [
   {
     name: 'Vegetatielegger',
     icon: './images/legend-legger.png',
+    info:
+      'De vegetatielegger toont welke vegetatie formeel op een gegeven locatie mag voorkomen.',
     opacity: 100,
     active: true,
     datatypes: ['landuse'],
@@ -333,6 +341,8 @@ const mapLayers = [
   {
     name: 'Vegetatie (NDVI)',
     icon: './images/legend-ndvi.png',
+    info:
+      'Deze kaart toont de groenwaarde van het betreffende satellietbeeld, uitgedrukt in de ‘Normalized Difference Vegetation Index’. Hoe groener de waarde, hoe groener de vegetatie.',
     opacity: 100,
     active: false,
     download: true,
@@ -369,6 +379,8 @@ const mapLayers = [
   {
     name: 'Satelliet beelden',
     icon: './images/legend-rgb.png',
+    info:
+      'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
     opacity: 100,
     active: true,
@@ -389,6 +401,8 @@ const mapLayers = [
   {
     name: 'Luchtfoto',
     icon: './images/legend-rgb.png',
+    info:
+      'Deze kaart toont de meest recente luchtfoto voor visuele vergelijking met de classificatieresultaten.',
     download: false,
     opacity: 0,
     active: false,

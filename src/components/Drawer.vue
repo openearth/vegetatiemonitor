@@ -5,7 +5,7 @@
     @transitionend="transitionEnd()"
     :mini-variant="mini"
     mini-variant-width="48px"
-    width="500px"
+    width="400px"
     absolute
     floating
     fixed
