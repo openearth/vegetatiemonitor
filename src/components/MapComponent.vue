@@ -3,8 +3,8 @@
     <v-mapbox
       access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
       map-style="mapbox://styles/mapbox/light-v9"
-      :center="[5.673272, 52.079502]"
-      :zoom="7"
+      :center="center"
+      :zoom="7.88"
       :pitch="0"
       :bearing="0"
       :min-zoom="5"
@@ -53,6 +53,7 @@ export default {
   },
   data: function() {
     return {
+      center: [5.673272, 52.079502],
       map: null,
       timeMode: {},
       layerTypes: ['imageLayers', 'mapboxLayers'],
@@ -99,10 +100,6 @@ export default {
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
-      // TODO: THIS SHOULD NOT AT ALL BE NECESSARY... SHOULD BE IN V-MAPBOX ARGS
-      this.map.setZoom(7.88)
-      this.map.setCenter([5.673272, 52.079502])
-
       this.$emit('setMap', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
@@ -142,11 +139,12 @@ export default {
       })
     },
     updateTimedLayers() {
+      console.log(this.timing, this.dragging)
       this.mapLayers.forEach(layer => {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
-          if (this.currentSliderMode === 'DAG' && this.dragging === false) {
+          if (this.timing === 'DAG' && this.dragging === false) {
             this.updateImageLayer(layer)
           } else if (this.timing === 'JAAR') {
             const videoLayer = layer.mapboxLayers.find(d => {

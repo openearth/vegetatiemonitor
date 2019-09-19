@@ -112,19 +112,22 @@ export default {
       dragging: false,
       speeds: [
         {
-          value: 10000,
+          value: 50000,
           name: 'LANGZAAM'
         },
         {
           name: 'NORMAAL',
-          value: 5000
+          value: 10000
         },
         {
-          value: 1000,
+          value: 5000,
           name: 'SNEL'
         }
       ],
-      currentSpeed: 'NORMAAL'
+      currentSpeed: {
+        name: 'NORMAAL',
+        value: 10000
+      }
     }
   },
   watch: {
@@ -193,6 +196,7 @@ export default {
         mode => mode.name === this.currentSliderMode
       )
       this.redraw()
+      this.updateImages()
     },
     getNextElementInArray(array, selected) {
       const ind = array.indexOf(selected)
@@ -210,7 +214,7 @@ export default {
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin
       this.sliderHeight =
         this.trackHeight + this.laneHeight * nLanes + this.periodHeight
-      const nt = parseInt(this.sliderWidth / 40)
+      const nt = parseInt(this.sliderWidth / 60)
       this.nTicks = nt > this.mode.ticks ? this.mode.ticks : nt
     },
 
@@ -402,34 +406,33 @@ export default {
               data.dates.filter(
                 x =>
                   x.type === 'interval' &&
-                  moment(x.date_start) >= this.mode.extent[0] &&
-                  moment(x.date_end) <= this.mode.extent[1]
+                  moment(x.dateStart) >= this.mode.extent[0] &&
+                  moment(x.dateEnd) <= this.mode.extent[1]
               )
             )
             .enter()
             .append('rect')
             .attr('id', x =>
-              moment(x.date_start, x.dateFormat).format('DD-MM-YYYY')
+              moment(x.dateStart, x.dateFormat).format('DD-MM-YYYY')
             )
             .attr(
               'x',
               x =>
-                this.xScale(moment(x.date_start, x.dateFormat)) +
-                this.labelWidth
+                this.xScale(moment(x.dateStart, x.dateFormat)) + this.labelWidth
             )
             .attr('y', y(index) - this.laneSpacing / 2 + margin / 2)
             .attr('ry', 5)
             .attr('rx', 5)
-            .attr('id', d => moment(d.date_start).format('YYYY'))
+            .attr('id', d => moment(d.dateStart).format('YYYY'))
             .attr(
               'width',
               d =>
-                this.xScale(moment(d.date_end, d.dateFormat)) -
-                this.xScale(moment(d.date_start, d.dateFormat))
+                this.xScale(moment(d.dateEnd, d.dateFormat)) -
+                this.xScale(moment(d.dateStart, d.dateFormat))
             )
             .attr('height', this.laneHeight - margin)
             .on('click', x => {
-              this.step = moment(x.date_start, x.dateFormat)
+              this.step = moment(x.dateStart, x.dateFormat)
               this.redraw()
             })
         }

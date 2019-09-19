@@ -1,25 +1,39 @@
 <template>
   <div id="analyse">
-    <v-layout column fill-height justify-end>
-      <h1 class="pa-4">
-        Analyse
-      </h1>
-      <v-flex xs11 align-stretch>
+    <v-layout column fill-height>
+      <v-flex xs3 align-stretch>
+        <h1 class="pa-4">
+          Analyse
+        </h1>
         <div id="analysistable">
           <information-table :properties="properties"> </information-table>
-          <div id="pie-div" v-for="datatype in datatypes" :key="datatype">
-            <v-piechart
-              :datatype="datatype"
-              :polygon="polygon"
-              :dateBegin="dateBegin"
-              :dateEnd="dateEnd"
-              @loaded="loading = $event"
-            ></v-piechart>
-          </div>
         </div>
       </v-flex>
+      <v-flex id="piediv" xs8>
+        <div v-for="(type, index) in datatypes" :key="index">
+          <v-echarts
+            :ref="index"
+            :datatype="type.datatype"
+            :polygon="polygon"
+            :dateBegin="dateBegin"
+            :dateEnd="dateEnd"
+            :zonalType="type.zonalType"
+            @loaded="loading = $event"
+          ></v-echarts>
+        </div>
+        <v-timeseries
+          v-if="$route.name === 'voorspel'"
+          :options="voorspelOptions"
+        >
+        </v-timeseries>
+      </v-flex>
       <v-flex xs1>
-        <v-layout justify-space-around align-space-around>
+        <v-layout
+          fill-height
+          justify-space-around
+          align-space-around
+          class="pa-auto"
+        >
           <v-btn
             v-on:click.native="closeSelectMode()"
             v-if="selectedProperty !== ''"
@@ -44,8 +58,10 @@
 </template>
 
 <script>
-import VPiechart from './VPiechart'
+import VEcharts from './VEcharts'
 import InformationTable from './InformationTable'
+import jsPDF from 'jspdf'
+// import autoTable from 'jspdf-autotable'
 
 export default {
   name: 'v-analysis-control',
@@ -68,6 +84,10 @@ export default {
     map() {
       if (!this.layers) return
       this.watchMapForAnalysis()
+    },
+
+    loading() {
+      console.log(this.loading)
     }
   },
   data() {
@@ -76,7 +96,11 @@ export default {
       datatypes: [],
       polygon: [],
       properties: [],
-      selectedProperty: ''
+      selectedProperty: '',
+      selectedLayer: '',
+      loading: true,
+      landuseLabels: [],
+      leggerLabels: []
     }
   },
 
@@ -88,6 +112,8 @@ export default {
         // hovering over a layer which has a hoverFilter
         if (layer.hoverFilter) {
           this.map.on('mousemove', layer.baseLayer, e => {
+            // if layer not active, no action
+            if (!layer.active) return
             this.map.getCanvas().style.cursor = 'pointer'
             const filter = e.features[0].properties[layer.selectProperty]
             this.map.setFilter(layer.hoverFilter, [
@@ -118,16 +144,43 @@ export default {
         // When clicking on a layer which has a selctFilter create Piecharts
         if (layer.selectFilter) {
           this.map.on('click', layer.baseLayer, e => {
-            this.datatypes = []
+            // if layer not active, no action
+            if (!layer.active) return
             let filter = ''
-            if (this.selectedProperty === layer.selectProperty) {
-              this.selectedProperty = ''
+
+            // if clicked on the already selected property, remove selection
+            if (
+              this.datatypes.length > 0 &&
+              this.selectedProperty === layer.selectProperty
+            ) {
+              console.log('remove selcet mode', layer.name, layer)
+              this.datatypes = []
+              this.closeSelectMode()
             } else {
+              this.datatypes = []
+              console.log('new calc', layer.name)
               this.selectedProperty = layer.selectProperty
+              this.selectedLayer = layer.name
               const feature = this.map.queryRenderedFeatures(e.point, {
                 layers: [layer.baseLayer]
               })[0]
-              this.datatypes = layer.datatypes
+              // this.datatypes = layer.datatypes
+              const datatypes = []
+              layer.datatypes.forEach(type => {
+                // TODO: use modes (and adjust mode options config) to make this if statement...
+                if (this.$route.name === 'Voorspel' && type === 'landuse') {
+                  datatypes.push({
+                    datatype: type,
+                    zonalType: 'zonal-timeseries'
+                  })
+                }
+                datatypes.push({
+                  datatype: type,
+                  zonalType: 'zonal-info'
+                })
+              })
+              this.datatypes = datatypes
+
               this.polygon = feature.geometry
               filter = e.features[0].properties[layer.selectProperty]
               this.loading = true
@@ -143,6 +196,7 @@ export default {
     },
 
     closeSelectMode() {
+      this.selectedProperty = ''
       this.properties = []
       this.datatypes = []
       this.layers.forEach(layer => {
@@ -154,10 +208,74 @@ export default {
           ])
         }
       })
+      this.loading = true
+    },
+    // Build pdf with table, two piecharts and snapshot of mapbox
+    downloadSelection() {
+      var doc = new jsPDF()
+      var W = doc.internal.pageSize.getWidth()
+      var H = doc.internal.pageSize.getHeight()
+      // var res = doc.autoTableHtmlToJson()
+      doc.autoTable(document.getElementsByClassName('v-data-table')[0])
+      if (this.$refs['legger']) {
+        var imgData = this.$refs['legger'][0].$el.innerHTML
+        doc.fromHTML(imgData, W * 0.1, H * 0.2)
+      }
+      if (this.$refs['landuse']) {
+        imgData = this.$refs['landuse'][0].$el.innerHTML
+        doc.fromHTML(imgData, W * 0.5, H * 0.2)
+      }
+
+      var table = []
+      this.leggerLabels.forEach((label, i) => {
+        table.push([label, this.leggerData[i]])
+      })
+      doc.autoTable(['Label', 'legger klassen [%]'], table, {
+        startY: 0.35 * H,
+        tableWidth: 0.4 * W,
+        margin: { left: 0.05 * W }
+      })
+      table = []
+      this.landuseLabels.forEach((label, i) => {
+        table.push([label, this.landuseData[i]])
+      })
+      doc.autoTable(['Label', 'landuse klassen [%]'], table, {
+        startY: 0.35 * H,
+        tableWidth: 0.4 * W,
+        margin: { left: W * 0.55 }
+      })
+      this.takeScreenshot(this.map).then(data => {
+        var canvas = this.map.getCanvas()
+        var mapw = canvas.width
+        var maph = canvas.height
+
+        doc.addImage(
+          data,
+          'JPEG',
+          W * 0.05,
+          0.6 * H,
+          0.9 * W,
+          ((0.9 * W) / mapw) * maph
+        )
+        doc.save(`${this.perceelnumber}_${this.dateEnd}_${this.dateBegin}.pdf`)
+      })
+    },
+
+    // Note: Normally the preserveDrawerBuffer in the mapbox options is used. However This
+    // is not yet build in vue2mapbox-gl and using this function the rendering of the image
+    // will not reduce the performance of the mapbox components.
+    takeScreenshot(map) {
+      return new Promise(function(resolve) {
+        map.once('render', function() {
+          resolve(map.getCanvas().toDataURL())
+        })
+        /* trigger render */
+        map.setBearing(map.getBearing())
+      })
     }
   },
   components: {
-    VPiechart,
+    VEcharts,
     InformationTable
   }
 }
@@ -165,9 +283,12 @@ export default {
 
 <style>
 #analyse,
-#pie-div,
 #analyse-card {
   height: 100%;
   width: 100%;
+}
+
+#piediv {
+  overflow: auto;
 }
 </style>

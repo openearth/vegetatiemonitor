@@ -10,11 +10,15 @@
     "lint:fix": "vue-cli-service lint --fix"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.1.2",
+    "@mdi/font": "^4.3.95",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
     "d3": "^5.9.7",
     "echarts": "^4.2.1",
     "ion-rangeslider": "<2.3.0",
+    "jspdf": "^1.5.3",
+    "jspdf-autotable": "^3.2.4",
     "mapbox-gl": "https://github.com/gena/mapbox-gl-js/releases/download/v1.2.0-tiled-video-0.1/mapbox-gl-v1.2.1.tgz",
     "mapbox-gl-geocoder": "^2.0.1",
     "moment": "^2.24.0",
@@ -22,7 +26,7 @@
     "vue": "^2.6.10",
     "vue-echarts": "^4.0.3",
     "vue-router": "^3.0.3",
-    "vue2mapbox-gl": "^0.8.3",
+    "vue2mapbox-gl": "^0.8.4",
     "vuedraggable": "^2.20.0",
     "vuetify": "^2.0.10",
     "vuex": "^3.0.1"

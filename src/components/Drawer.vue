@@ -5,13 +5,11 @@
     @transitionend="transitionEnd()"
     :mini-variant="mini"
     mini-variant-width="48px"
-    width="360px"
+    width="500px"
     absolute
     floating
     fixed
-    temporary
     hide-overlay
-    stateless
     clipped
   >
     <v-layout fill-height>
@@ -183,6 +181,7 @@ export default {
 #menuOpen {
   width: 90%;
   height: calc(100vh - 48px);
+  overflow-y: hidden;
 }
 
 a.v-list__tile {

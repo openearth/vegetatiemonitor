@@ -1,21 +1,22 @@
 <template>
-  <v-flex class="component-wrapper">
+  <div class="component-wrapper">
     <v-progress-circular
-      class="ma-auto"
+      class="ma-6"
       v-if="loading"
       indeterminate
     ></v-progress-circular>
-    <e-charts :options="options" :autoresize="true"> </e-charts>
-  </v-flex>
+    <e-charts :ref="datatype" :options="options" :autoresize="true"> </e-charts>
+  </div>
 </template>
 
 <script>
 import ECharts from 'vue-echarts'
 import 'echarts/lib/chart/pie'
+import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
-
+import moment from 'moment'
 var colors = [
   {
     type: '1',
@@ -60,6 +61,9 @@ export default {
     datatype: {
       type: String
     },
+    zonalType: {
+      type: String
+    },
     polygon: {
       type: Object
     },
@@ -77,10 +81,10 @@ export default {
     }
   },
   mounted() {
-    this.fetchPieData()
+    this.fetchZonalData()
   },
   methods: {
-    fetchPieData() {
+    fetchZonalData() {
       const body = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
@@ -99,9 +103,19 @@ export default {
         scale: 10
       }
 
+      // If in voorspel mode,  the timeseries
+      if (this.zonalType === 'zonal-timeseries') {
+        body.dateBegin = moment(2000, 'YYYY').format('YYYY-MM-DD')
+        body.dateEnd = moment()
+          .add(10, 'years')
+          .format('YYYY-MM-DD')
+      }
+
       const json_body = JSON.stringify(body)
       fetch(
-        `${this.$store.state.SERVER_URL}/map/${this.datatype}/zonal-info/`,
+        `${this.$store.state.SERVER_URL}/map/${this.datatype}/${
+          this.zonalType
+        }/`,
         {
           method: 'POST',
           body: json_body,
@@ -115,21 +129,62 @@ export default {
           return res.json()
         })
         .then(chartData => {
-          const data = chartData[0].area_per_type.map(d => {
-            const color = colors.find(color => color.type === d.type)
-            return {
-              name: color.name,
-              value: d.area,
-              itemStyle: {
-                color: color.color
+          if (this.zonalType === 'zonal-info') {
+            const data = chartData[0].area_per_type.map(d => {
+              const color = colors.find(color => color.type === d.type)
+              return {
+                name: color.name,
+                value: d.area,
+                itemStyle: {
+                  color: color.color
+                }
               }
-            }
-          })
-          this.createPieChart(data)
+            })
+            this.createPieChart(data)
+          } else if (this.zonalType === 'zonal-timeseries') {
+            this.createLineChart(chartData[0])
+          }
         })
+    },
+    createLineChart(data) {
+      console.log(data.series)
+      const options = {
+        id: this.datatype,
+        title: {
+          text: `Tijdseries van ${this.datatype}`,
+          subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
+          x: 'center',
+          textStyle: {
+            fontFamily: 'Helvetica',
+            fontSize: 16
+          },
+          subTextStyle: {
+            fontFamily: 'Helvetica',
+            fontSize: 14
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: a => {
+            return `${a.name}: ${a.value.toFixed(2)}m&sup2)`
+          }
+        },
+        legend: {
+          bottom: 'bottom',
+          padding: [32, 0],
+          textStyle: {
+            fontFamily: 'Helvetica',
+            fontSize: 14
+          }
+        }
+      }
+      this.options = { ...data, ...options }
+      this.loading = false
+      this.$emit('loaded', this.loading)
     },
     createPieChart(data) {
       this.options = {
+        id: this.datatype,
         title: {
           text: `Verdeling van ${this.datatype} klassen`,
           subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
@@ -178,7 +233,7 @@ export default {
         ]
       }
       this.loading = false
-      this.$emit('loaded', true)
+      this.$emit('loaded', this.loading)
     }
   },
   components: {
@@ -189,7 +244,7 @@ export default {
 
 <style>
 .component-wrapper {
-  height: 500px;
+  height: 450px;
   width: 100%;
 }
 .echarts {
