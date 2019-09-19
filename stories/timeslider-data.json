@@ -1,0 +1,97 @@
+{
+  "state": false,
+  "step": "1999-12-31T23:00:00.000Z",
+  "dataLanes": null,
+  "loop": false,
+  "labelWidth": 150,
+  "laneHeight": 20,
+  "laneSpacing": 0,
+  "margin": 10,
+  "timeModes": [
+    {
+      "name": "JAAR",
+      "format": "%Y",
+      "interval": "year",
+      "timing": "yearly",
+      "momentFormat": "YYYY",
+      "extent": [
+        "1998-12-31T23:00:00.000Z",
+        "2019-12-31T23:00:00.000Z"
+      ],
+      "ticks": 19
+    },
+    {
+      "name": "DAG",
+      "format": "%-m-%Y",
+      "interval": "day",
+      "timing": "daily",
+      "momentFormat": "DD-MM-YYYY",
+      "extent": [
+        "2018-09-18T22:00:00.000Z",
+        "2019-09-18T22:00:00.000Z"
+      ],
+      "ticks": 12
+    }
+  ],
+  "periodHeight": 20,
+  "svg": {
+    "_groups": [
+      [
+        {}
+      ]
+    ],
+    "_parents": [
+      {}
+    ]
+  },
+  "mode": {
+    "name": "JAAR",
+    "format": "%Y",
+    "interval": "year",
+    "timing": "yearly",
+    "momentFormat": "YYYY",
+    "extent": [
+      "1998-12-31T23:00:00.000Z",
+      "2019-12-31T23:00:00.000Z"
+    ],
+    "ticks": 19
+  },
+  "nTicks": 14,
+  "showPlay": true,
+  "maxFps": 10,
+  "slider": {
+    "_groups": [
+      [
+        {}
+      ]
+    ],
+    "_parents": [
+      {}
+    ]
+  },
+  "sliderWidth": 866,
+  "sliderHeight": 150,
+  "svgWidth": 1036,
+  "trackHeight": 90,
+  "currentTime": "01-01-2009",
+  "currentSliderMode": "JAAR",
+  "dragging": false,
+  "speeds": [
+    {
+      "value": 50000,
+      "name": "LANGZAAM"
+    },
+    {
+      "name": "NORMAAL",
+      "value": 10000
+    },
+    {
+      "value": 5000,
+      "name": "SNEL"
+    }
+  ],
+  "currentSpeed": {
+    "name": "NORMAAL",
+    "value": 10000
+  }
+}

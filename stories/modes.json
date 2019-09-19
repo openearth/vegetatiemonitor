@@ -1,0 +1,581 @@
+[
+  {
+    "name": "Classificatie",
+    "icon": "./images/legend-classified.png",
+    "info": "Deze kaart toont de classificatie van het gekozen enkele satellietbeeld of jaargemiddelde beeld.",
+    "download": true,
+    "opacity": 100,
+    "active": true,
+    "dataset": "landuse",
+    "legend": {
+      "colors": [
+        "#bdeeff",
+        "#ff817e",
+        "#eefad4",
+        "#debdde",
+        "#73bf73",
+        "#d97a36"
+      ],
+      "labels": [
+        "water",
+        "bebouwd of verhard",
+        "gras en akker",
+        "riet en ruigte",
+        "bos",
+        "struweel"
+      ]
+    },
+    "mapboxLayers": [
+      {
+        "id": "classificatie-video",
+        "type": "raster",
+        "source": {
+          "type": "video-tiled",
+          "tiles": [
+            "https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm"
+          ],
+          "tileSize": 512,
+          "durationSec": 18,
+          "dateBegin": "2000-01-01",
+          "dateEnd": "2018-01-01",
+          "maxzoom": 14,
+          "minzoom": 9,
+          "scheme": "xyz",
+          "geometry": []
+        }
+      }
+    ],
+    "imageLayers": [
+      {}
+    ],
+    "vis": {},
+    "timeslider": true,
+    "dates": [
+      {
+        "dateEnd": "2001-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2000-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2002-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2001-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2003-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2002-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2004-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2003-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2005-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2004-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2006-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2005-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2007-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2006-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2008-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2007-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2009-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2008-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2010-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2009-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2011-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2010-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2012-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2011-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2014-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2013-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2015-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2014-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2016-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2015-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2017-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2016-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2018-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2017-01-01",
+        "type": "interval"
+      },
+      {
+        "dateEnd": "2019-01-01",
+        "dateFormat": "YYYY-MM-DD",
+        "dateStart": "2018-01-01",
+        "type": "interval"
+      }
+    ]
+  },
+  {
+    "name": "Satelliet beelden",
+    "icon": "./images/legend-rgb.png",
+    "info": "Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.",
+    "download": true,
+    "opacity": 100,
+    "active": true,
+    "dataset": "satellite",
+    "mapboxLayers": [
+      {}
+    ],
+    "imageLayers": [
+      {}
+    ],
+    "vis": {
+      "bands": [
+        "red",
+        "green",
+        "blue"
+      ],
+      "min": 0.05,
+      "max": [
+        0.35,
+        0.35,
+        0.45
+      ],
+      "gamma": 1.4
+    },
+    "settings": [
+      {
+        "type": "select",
+        "items": [
+          {
+            "name": "Natural colors",
+            "vis": {
+              "bands": [
+                "red",
+                "green",
+                "blue"
+              ],
+              "min": 0.05,
+              "max": [
+                0.35,
+                0.35,
+                0.45
+              ],
+              "gamma": 1.4
+            }
+          },
+          {
+            "name": "False color infrared",
+            "vis": {
+              "bands": [
+                "nir",
+                "red",
+                "green"
+              ],
+              "min": 0.05,
+              "max": 0.35,
+              "gamma": 1.4
+            }
+          },
+          {
+            "name": "False color urban",
+            "vis": {
+              "bands": [
+                "swir2",
+                "swir",
+                "red"
+              ],
+              "min": 0.05,
+              "max": 0.35,
+              "gamma": 1.4
+            }
+          },
+          {
+            "name": "Agriculture",
+            "vis": {
+              "bands": [
+                "swir",
+                "nir",
+                "blue"
+              ],
+              "min": 0.05,
+              "max": 0.35,
+              "gamma": 1.4
+            }
+          },
+          {
+            "name": "Healthy vegetation",
+            "vis": {
+              "bands": [
+                "nir",
+                "swir",
+                "blue"
+              ],
+              "min": 0.05,
+              "max": 0.35,
+              "gamma": 1.4
+            }
+          },
+          {
+            "name": "Vegetation Analysis",
+            "vis": {
+              "bands": [
+                "swir",
+                "nir",
+                "red"
+              ],
+              "min": 0.05,
+              "max": 0.35,
+              "gamma": 1.4
+            }
+          }
+        ],
+        "selected": "Natural colors"
+      }
+    ],
+    "timeslider": true,
+    "dates": [
+      {
+        "date": "2018-09-25",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-09-28",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-09-30",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-05",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-10",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-13",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-15",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-20",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-10-28",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-11-04",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-11-14",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-11-17",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-12-04",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-12-09",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-12-14",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-12-24",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2018-12-27",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-01-18",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-01-21",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-02-15",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-02-17",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-02-20",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-02-25",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-02-27",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-03-19",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-03-22",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-03-24",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-03-29",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-04-01",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-04-08",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-04-16",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-04-18",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-04-21",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-05-06",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-05-13",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-05-18",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-05-26",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-02",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-07",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-17",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-22",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-25",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-27",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-06-30",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-05",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-10",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-22",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-25",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-27",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-07-30",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-04",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-14",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-16",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-21",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-24",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-26",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-08-31",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-09-10",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      },
+      {
+        "date": "2019-09-15",
+        "dateFormat": "YYYY-MM-DD",
+        "type": "instance"
+      }
+    ]
+  }
+]
