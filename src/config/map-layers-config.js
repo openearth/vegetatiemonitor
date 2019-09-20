@@ -370,7 +370,26 @@ const mapLayers = [
       ],
       range: '-1 1'
     },
-    mapboxLayers: [{}],
+    mapboxLayers: [
+      {
+        id: 'ndvi-video',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/ndvi-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 18,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
     imageLayers: [{}],
     vis: {},
     timeslider: true,
@@ -385,7 +404,26 @@ const mapLayers = [
     opacity: 100,
     active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
-    mapboxLayers: [{}],
+    mapboxLayers: [
+      {
+        id: 'satellite-natural-video',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/satellite-natural-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 18,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
     imageLayers: [{}],
     vis: pseudoColors[0].vis,
     settings: [
@@ -404,7 +442,7 @@ const mapLayers = [
     info:
       'Deze kaart toont de meest recente luchtfoto voor visuele vergelijking met de classificatieresultaten.',
     download: false,
-    opacity: 0,
+    opacity: 100,
     active: false,
     mapboxLayers: [
       {
