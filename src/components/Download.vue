@@ -24,41 +24,72 @@
           </v-flex>
         </v-layout>
       </v-flex>
+
       <v-flex shrink>
         <h1 class="pa-4">
           Settings
         </h1>
-        <v-card small flat class="py">
-          <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12>
-                <v-text-field
-                  dense
-                  v-model="resolution"
-                  label="Resolutie"
-                  clearable
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <p>Geselecteerd gebied: {{ bbox }}</p>
-              </v-flex>
-              <v-flex>
-                <v-layout justify-center align-start>
-                  <v-btn outlined color="btncolor" @click="getBbox()">
-                    Polygoon van huidig beeld
-                  </v-btn>
-                </v-layout>
-              </v-flex>
-            </v-layout>
-          </v-card-text>
-        </v-card>
+        <select-period
+          :startDateDef="startDate"
+          :endDateDef="endDate"
+          @set-start-date="startDate = $event"
+          @set-end-date="endDate = $event"
+        ></select-period>
+      </v-flex>
+      <v-flex grow>
+        <div class="pa-4">
+          <v-alert outlined type="info" v-if="bbox.coordinates">
+            Een polygoon is geselecteerd en kan gedownload worden!
+          </v-alert>
+          <v-alert outlined type="info" v-if="downloading">
+            {{
+              `Lagen: ${selectedLayers()} voor de periode: ${
+                this.startDate
+              } tot ${
+                this.endDate
+              } worden gedownload. Een klein momentje geduld aub.`
+            }}
+          </v-alert>
+          <v-alert outlined type="warning" v-if="map.getZoom() < 9">
+            Zoom in op de kaart om het te downloaden gebied te verkleinen.
+          </v-alert>
+        </div>
       </v-flex>
       <v-flex shrink>
-        <v-layout justify-center align-start>
-          <v-btn outlined color="btncolor" @click="downloadGeotiff()">
-            download
-          </v-btn>
-        </v-layout>
+        <div class="pa-4">
+          <v-layout row wrap>
+            <v-btn
+              class="mb-1"
+              :disabled="downloading"
+              block
+              outlined
+              color="btncolor"
+              @click="downloadCurrentView()"
+            >
+              Download huidige viewerbeeld
+            </v-btn>
+            <v-btn
+              class="mb-1"
+              :disabled="downloading || !bbox.coordinates || map.getZoom() > 9"
+              block
+              outlined
+              color="btncolor"
+              @click="downloadGeotiff(bbox)"
+            >
+              Download geselecteerd polygoon
+            </v-btn>
+            <v-btn
+              class="mb-1"
+              :disabled="downloading"
+              block
+              outlined
+              color="btncolor"
+              @click="downloadYearMap()"
+            >
+              Volledige beheergebied jaarkaart
+            </v-btn>
+          </v-layout>
+        </div>
       </v-flex>
     </v-layout>
   </div>
@@ -66,6 +97,8 @@
 
 <script>
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import SelectPeriod from '../components/SelectPeriod'
+import moment from 'moment'
 
 export default {
   props: {
@@ -76,12 +109,6 @@ export default {
     layers: {
       type: Array,
       required: true
-    },
-    dateBegin: {
-      type: String
-    },
-    dateEnd: {
-      type: String
     }
   },
   computed: {
@@ -95,10 +122,18 @@ export default {
     return {
       resolution: 100,
       bbox: '',
-      draw: {}
+      draw: {},
+      startDate: moment()
+        .startOf('year')
+        .format('YYYY-MM-DD'),
+      endDate: moment()
+        .startOf('year')
+        .add(1, 'year')
+        .format('YYYY-MM-DD'),
+      downloading: false
     }
   },
-  components: {},
+  components: { SelectPeriod },
   mounted() {
     this.draw = new MapboxDraw({
       displayControlsDefault: false,
@@ -111,6 +146,7 @@ export default {
 
     this.map.on('draw.create', () => {
       if (this.draw.getAll().features.length > 1) {
+        console.log('this.draw , ', this.draw)
         const oldId = this.draw.getAll().features[0].id
         this.draw.delete(oldId)
       }
@@ -120,33 +156,47 @@ export default {
     this.map.on('draw.update', () => {
       this.bbox = this.draw.getAll().features[0].geometry
     })
+
+    this.map.on('draw.delete', () => {
+      this.bbox = {}
+    })
   },
   beforeDestroy() {
     this.map.removeControl(this.draw)
+    this.map.off('draw.create')
+    this.map.off('draw.update')
+    this.map.off('draw.delete')
   },
   methods: {
+    downloadCurrentView() {
+      const bbox = this.getBbox()
+      this.downloadGeotiff(bbox)
+    },
     getBbox() {
       var N = this.map.getBounds().getNorth()
       var E = this.map.getBounds().getEast()
       var S = this.map.getBounds().getSouth()
       var W = this.map.getBounds().getWest()
-      this.bbox = {
+      return {
         type: 'Polygon',
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
       }
     },
-    downloadGeotiff() {
+    selectedLayers() {
+      const selectedLayers = this.dataLayers.filter(x => x.active)
+      const layernames = selectedLayers.map(layer => layer.name)
+      return layernames.join(', ')
+    },
+    downloadGeotiff(bbox) {
+      this.downloading = true
       var selectedLayers = this.dataLayers.filter(x => x.active)
       selectedLayers.forEach(layer => {
-        if (this.bbox === '') {
-          this.getBbox()
-        }
         var json_body = {
-          region: this.bbox,
-          dateBegin: this.dateBegin,
-          dateEnd: this.dateEnd,
+          region: bbox,
+          dateBegin: this.startDate,
+          dateEnd: this.endDate,
           vis: layer.vis,
-          scale: this.resolution
+          scale: 10
         }
         fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/export/`, {
           method: 'POST',
@@ -161,8 +211,17 @@ export default {
           })
           .then(mapUrl => {
             window.open(mapUrl['url'])
+            this.downloading = false
           })
       })
+    },
+
+    downloadYearMap() {
+      // Downlaod the seasonal map for latest year, entire netherlands
+      // TODO: URL doesn't give the correct tiff back yet.
+      window.open(
+        `https://storage.cloud.google.com/vegetatiemonitor/yearly-classified-geotiffs/classified-image-2019.tif`
+      )
     }
   }
 }
