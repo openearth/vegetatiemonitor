@@ -14,12 +14,22 @@ import './styles.css'
 import TimeSlider from "../src/components/TimeSlider.vue"
 import SvgTimeSlider from "../src/components/SvgTimeSlider.vue"
 
+import { modes } from  '../src/config/mode-options.js'
+import layers from './layers.json'
+
 // Vue.use(Vuetify)
 
-const settings =
+
 storiesOf("TimeSlider", module).add("default", () => ({
   components: { TimeSlider },
-  template: "<time-slider></time-slider>"
+  data () {
+    return {
+      modes,
+      layers
+
+    }
+  },
+  template: `<time-slider :modes="modes" :layers="layers"></time-slider>`
 }))
 
 storiesOf("SvgTimeSlider", module)

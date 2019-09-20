@@ -9,22 +9,24 @@
       <v-col cols="12">
         <v-card flat color="transparent">
           <v-btn text @click="changeMode">
-            {{ currentSliderMode }}
+            {{ currentTimeMode }}
           </v-btn>
           <v-btn
-            v-if="currentSliderMode === 'JAAR'"
             text
-            v-model="state"
-            @click="
-              state = !state;
-              play();
-            "
+            @click="play()"
+            v-if="state === 'PAUSED'"
           >
-            <v-icon v-if="state" small>fa-pause</v-icon>
-            <v-icon v-if="!state" small>fa-play</v-icon>
+            <v-icon small>fa-play</v-icon>
           </v-btn>
           <v-btn
-            v-if="currentSliderMode === 'JAAR'"
+            text
+            v-if="state === 'PLAYING'"
+            @click="pause()"
+          >
+            <v-icon  small>fa-pause</v-icon>
+          </v-btn>
+
+          <v-btn
             text
             v-model="loop"
             @click="loop = !loop"
@@ -53,6 +55,14 @@ export default {
         return [];
       }
     },
+    timeModesEnabled: {
+      default: () => {
+        return {
+          JAAR: true,
+          DAG: true
+        }
+      }
+    },
     modes: {
       type: Array,
       default: () => {
@@ -62,7 +72,7 @@ export default {
   },
   data() {
     return {
-      state: false,
+      state: 'PAUSED',
       step: moment(),
       dataLanes: null,
       loop: false,
@@ -114,7 +124,7 @@ export default {
       svgWidth: 0,
       trackHeight: 90,
       currentTime: "01-01-2009",
-      currentSliderMode: "JAAR",
+      currentTimeMode: "JAAR",
       dragging: false,
       speeds: [
         {
@@ -134,20 +144,9 @@ export default {
     };
   },
   watch: {
-    $route(val) {
-      const mode = this.modes.find(m => m.name === val.name);
-      if (!mode) {
-        return;
-      }
-      this.sliderModes = mode.timeModes;
-      this.changeMode();
-    },
     layers() {
       if (!this.layers) return;
       this.redraw();
-    },
-    mode(val) {
-      this.$emit("setTimeMode", val);
     }
   },
   computed: {
@@ -167,13 +166,13 @@ export default {
   },
   mounted() {
     // Set the current mode (yearly or daily according to the selected route)
-    const mode = this.modes.find(mode => mode.name === this.$route.name);
-    if (mode) {
-      this.sliderModes = mode.timeModes;
-      this.mode = this.timeModes[0];
-    }
+    let mode = this.timeModes.find(
+      mode => mode.name === this.currentTimeMode
+    )
+    this.mode = mode
 
     // Create the svg OBJECTID
+
     this.svg = d3.select("#slider").append("svg");
 
     // Update the margins and scale
@@ -204,12 +203,12 @@ export default {
     },
     changeMode() {
       const sliderModes = this.sliderModes.map(mode => mode.mode);
-      this.currentSliderMode = this.getNextElementInArray(
+      this.currentTimeMode = this.getNextElementInArray(
         sliderModes,
-        this.currentSliderMode
+        this.currentTimeMode
       );
       this.mode = this.timeModes.find(
-        mode => mode.name === this.currentSliderMode
+        mode => mode.name === this.currentTimeMode
       );
       this.redraw();
     },
@@ -278,7 +277,7 @@ export default {
               );
               if (
                 this.step <= this.mode.extent[0] ||
-                this.step >= this.mode.extent[1]
+                  this.step >= this.mode.extent[1]
               ) {
                 this.slider.interrupt();
                 this.handle.attr("r", 6);
@@ -348,7 +347,7 @@ export default {
               );
               if (
                 this.step <= this.mode.extent[0] ||
-                this.step >= this.mode.extent[1]
+                  this.step >= this.mode.extent[1]
               ) {
                 this.slider.interrupt();
                 return null;
@@ -378,9 +377,9 @@ export default {
         );
 
       var y = d3
-        .scaleLinear()
-        .domain([0, this.layers.length])
-        .range([0, this.layers.length * (this.laneHeight + this.laneSpacing)]);
+          .scaleLinear()
+          .domain([0, this.layers.length])
+          .range([0, this.layers.length * (this.laneHeight + this.laneSpacing)]);
 
       this.laneGroup.selectAll("*").remove();
 
@@ -388,11 +387,11 @@ export default {
       var margin = 4;
       this.layers.forEach((data, index) => {
         const dataLane = this.laneGroup
-          .append("g")
-          .attr("class", "dataLane")
-          .attr("height", this.laneHeight)
-          .attr("x", this.labelWidth)
-          .attr("width", this.sliderWidth);
+              .append("g")
+              .attr("class", "dataLane")
+              .attr("height", this.laneHeight)
+              .attr("x", this.labelWidth)
+              .attr("width", this.sliderWidth);
 
         // Add the label of dataset for each dadalane
         dataLane
@@ -413,7 +412,7 @@ export default {
           .attr("y2", y(index) - this.laneSpacing / 2)
           .attr("stroke", "rgb(21,66,115)");
 
-        if (this.currentSliderMode === "JAAR") {
+        if (this.currentTimeMode === "JAAR") {
           dataLane
             .append("g")
             .selectAll(".dataIntervals")
@@ -428,8 +427,8 @@ export default {
             .enter()
             .append("rect")
             .attr("id", x =>
-              moment(x.date_start, x.dateFormat).format("DD-MM-YYYY")
-            )
+                  moment(x.date_start, x.dateFormat).format("DD-MM-YYYY")
+                 )
             .attr(
               "x",
               x =>
@@ -452,7 +451,7 @@ export default {
               this.redraw();
             });
         }
-        if (this.currentSliderMode === "DAG") {
+        if (this.currentTimeMode === "DAG") {
           dataLane
             .append("g")
             .selectAll(".dataInstances")
@@ -485,49 +484,55 @@ export default {
       });
     },
     play(now) {
-      this.dragging = true;
-      this.timer = requestAnimationFrame(this.play);
+      this.state = 'PLAYING'
+      this.dragging = true
 
-      // first update, when this.last is still null, set value and return
-      if (!this.last) {
-        this.last = now;
-        return;
-      }
-
-      // now we can just return if we are not playing (will result in a regular poll for playing)
-      if (!this.state) {
-        this.dragging = false;
-        return;
-      }
-
-      // elapsed time in seconds
-      const elapsed = (now - this.last) / this.currentSpeed.value;
-      // seconds per frame did not elapse, we're done
-      if (elapsed < 1 / this.maxFps) {
-        // this keeps the number of events low (otherwise you get 60 events per second)
-        return;
-      }
-
-      const nextStep = moment(this.step).add(1, this.mode.interval);
-
-      if (nextStep >= this.mode.extent[1]) {
-        if (this.loop) {
-          this.step = this.mode.extent[0];
-        } else {
-          this.state = false;
-          return;
+      let playLoop = () => {
+        this.timer = requestAnimationFrame(playLoop)
+        // first update, when this.last is still null, set value and return
+        if (!this.last) {
+          this.last = now
+          return
         }
-      } else {
-        this.step = nextStep;
+
+        // now we can just return if we are not playing (will result in a regular poll for playing)
+        if (this.state !== 'PLAYING') {
+          this.dragging = false
+          return
+        }
+
+        // elapsed time in seconds
+        const elapsed = (now - this.last) / this.currentSpeed.value;
+        // seconds per frame did not elapse, we're done
+        if (elapsed < 1 / this.maxFps) {
+          // this keeps the number of events low (otherwise you get 60 events per second)
+          return
+        }
+
+        const nextStep = moment(this.step).add(1, this.mode.interval);
+
+        if (nextStep >= this.mode.extent[1]) {
+          if (this.loop) {
+            this.step = this.mode.extent[0]
+          } else {
+            this.state = 'PAUSED'
+            return
+          }
+        } else {
+          this.step = nextStep;
+        }
+        this.updateHandle()
+        this.last = now
+        this.updateImages()
       }
+      playLoop()
 
-      this.updateHandle();
-      this.last = now;
-      this.updateImages();
     },
-
+    pause() {
+      this.state = 'PAUSED'
+    },
     updateHandle() {
-      if (this.currentSliderMode === "JAAR") {
+      if (this.currentTimeMode === "JAAR") {
         this.handle.style("visibility", "hidden");
       } else {
         this.handle.style("visibility", "visible");
@@ -562,7 +567,7 @@ export default {
         dragging: this.dragging,
         beginDate: moment(this.step),
         endDate: moment(this.step).add(1, this.mode.interval),
-        timing: this.currentSliderMode
+        timing: this.currentTimeMode
       });
     }
   }
@@ -570,8 +575,6 @@ export default {
 </script>
 
 <style>
-@import "~ion-rangeslider/css/ion.rangeSlider.css";
-@import "~ion-rangeslider/css/ion.rangeSlider.skinModern.css";
 #slider {
   /* padding: 50px; */
   width: calc(100% - 20px);

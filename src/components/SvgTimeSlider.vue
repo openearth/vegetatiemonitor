@@ -1,8 +1,8 @@
 <template>
-<v-container>
+<v-container class="svg-time-slider">
   <v-row>
     <v-col cols="12">
-      <div>
+      <div class="container">
         <svg :width="slider.width + 2*slider.margin" :height="slider.height + 2*slider.margin">
           <!-- <g> -->
             <!--   <\!-- embed custom charts -\-> -->
@@ -493,6 +493,12 @@ export default {
 /*   transform: translate(${this.labelWidth}, ${this.trackHeight})` */
 
 /* } */
+.svg-time-slider .container {
+  max-width: 80vw;
+}
+.svg-time-slider .container svg {
+  width: 100%;
+}
 
 .frame {
   stroke: rgb(21, 66, 115);
@@ -514,6 +520,11 @@ export default {
 .axes .x .ticks {
   stroke-width: 1px;
   stroke: black;
+}
+
+.axes  {
+  pointer-events: none;
+  user-select: none;
 }
 /* .track, */
 /* .track-inset, */
