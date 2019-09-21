@@ -16,22 +16,18 @@
         @setLayer="updateLayer($event)"
         @setLayerOrder="updateLayerOrder($event)"
         :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        v-bind:dateBegin.sync="dateBegin"
+        v-bind:dateEnd.sync="dateEnd"
         class="navdrawer"
         :modes="modes"
       />
 
       <map-component
-        :layers="layers"
-        :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        v-bind:layers.sync="layers"
+        v-bind:map.sync="map"
+        v-bind:dateBegin.sync="dateBegin"
+        v-bind:dateEnd.sync="dateEnd"
         :modes="modes"
-        @setMap="map = $event"
-        @setLayer="setLayer($event)"
-        @setDateBegin="dateBegin = $event"
-        @setDateEnd="dateEnd = $event"
       />
     </v-content>
   </div>

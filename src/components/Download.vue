@@ -70,7 +70,7 @@
             </v-btn>
             <v-btn
               class="mb-1"
-              :disabled="downloading || !bbox.coordinates || map.getZoom() > 9"
+              :disabled="downloading || bbox.coordinates || map.getZoom() > 9"
               block
               outlined
               color="btncolor"

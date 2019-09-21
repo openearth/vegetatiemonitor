@@ -34,12 +34,12 @@
       </v-navigation-drawer>
       <map-layers
         id="menuOpen"
-        v-if="menu === 'Kaartlagen' && menuOpen"
-        :layers="layers"
+        v-show="menu === 'Kaartlagen' && menuOpen"
+        v-bind:layers.sync="layers"
         @setLayer="$emit('setLayer', $event)"
         @setLayerOrder="$emit('setLayerOrder', $event)"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        v-bind:dateBegin.sync="dateBegin"
+        v-bind:dateEnd.sync="dateEnd"
         :modes="modes"
         :map="map"
       />
@@ -48,16 +48,16 @@
         v-show="menu === 'Analyse' && menuOpen"
         :layers="layers"
         :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        v-bind:dateBegin.sync="dateBegin"
+        v-bind:dateEnd.sync="dateEnd"
       />
       <download
         id="menuOpen"
         v-if="menu === 'Download' && menuOpen"
         :map="map"
         :layers="downloadableLayers"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        v-bind:dateBegin.sync="dateBegin"
+        v-bind:dateEnd.sync="dateEnd"
       />
       <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
@@ -123,7 +123,7 @@ export default {
         return this.layers
       },
       set(mapLayers) {
-        this.$emit('setLayers', mapLayers)
+        this.$emit('update:layers', mapLayers)
       }
     },
     filteredItems() {

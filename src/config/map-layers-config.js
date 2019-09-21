@@ -67,6 +67,7 @@ const mapLayers = [
     selectFilter: 'KadasterSelect',
     selectProperty: 'ADMINPERCE',
     datatypes: ['landuse', 'legger'],
+    activeLayerType: 'mapboxLayers',
     info:
       'Deze kaart toont de kadasterpercelen in het gebied en kan worden gebruikt om een analyse per perceel op uit te voeren.',
     mapboxLayers: [
@@ -141,6 +142,7 @@ const mapLayers = [
     active: true,
     info:
       'De stroombanenkaart toont de hoofdstroombanen tijdens hoog water over de uiterwaarden.',
+    activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'Streamlines',
@@ -167,6 +169,7 @@ const mapLayers = [
     active: false,
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
+    activeLayerType: 'mapboxLayers',
     imageLayers: [{}],
     mapboxLayers: [{}],
     download: true,
@@ -184,6 +187,7 @@ const mapLayers = [
     opacity: 100,
     active: true,
     dataset: 'landuse', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
     legend: {
       colors: [
         '#bdeeff',
@@ -236,6 +240,7 @@ const mapLayers = [
     opacity: 100,
     active: true,
     datatypes: ['landuse'],
+    activeLayerType: 'mapboxLayers',
     type: 'group',
     legend: {
       colors: [
@@ -347,6 +352,7 @@ const mapLayers = [
     active: false,
     download: true,
     dataset: 'ndvi', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
     legend: {
       colors: [
         '#000000',
@@ -404,6 +410,7 @@ const mapLayers = [
     opacity: 100,
     active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'satellite-natural-video',
@@ -444,6 +451,7 @@ const mapLayers = [
     download: false,
     opacity: 100,
     active: false,
+    activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'Luchtfoto',

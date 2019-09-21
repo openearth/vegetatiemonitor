@@ -80,7 +80,7 @@ export default {
         return this.layers
       },
       set(mapLayers) {
-        this.$emit('setLayers', mapLayers)
+        this.$emit('update:layers', mapLayers)
       }
     },
     extent: {
@@ -88,8 +88,8 @@ export default {
         return [this.dateBegin, this.dateEnd]
       },
       set(extent) {
-        this.$emit('setDateBegin', extent[0])
-        this.$emit('setDateEnd', extent[1])
+        this.$emit('update:dateBegin', extent[0])
+        this.$emit('update:dateEnd', extent[1])
       }
     },
     timesliderLayers() {
@@ -100,7 +100,7 @@ export default {
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
-      this.$emit('setMap', this.map)
+      this.$emit('update:map', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
       this.fetchDates()
@@ -139,13 +139,13 @@ export default {
       })
     },
     updateTimedLayers() {
-      console.log(this.timing, this.dragging)
       this.mapLayers.forEach(layer => {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
           if (this.timing === 'DAG' && this.dragging === false) {
             this.updateImageLayer(layer)
+            layer.activeLayerType = 'imageLayers'
           } else if (this.timing === 'JAAR') {
             const videoLayer = layer.mapboxLayers.find(d => {
               if (!d.source) {
@@ -157,6 +157,7 @@ export default {
             if (videoLayer) {
               this.updateVideoLayerTime(videoLayer, this.extent[0])
             }
+            layer.activeLayerType = 'mapboxLayers'
           }
         }
       })
@@ -185,58 +186,59 @@ export default {
       // If existing gee layer on already has the correct dates and dataset, return
       if (layer.imageLayers.length > 0 && imageLayers.extent == this.extent) {
         return
-        //
-      } else {
-        var mapId = `${layer.dataset}_${this.extent.join('_')}`
-        var mapJson = {
-          id: mapId,
+      }
+
+      var mapId = `${layer.dataset}_${this.extent.join('_')}`
+      var mapJson = {
+        id: mapId,
+        type: 'raster',
+        extent: this.extent,
+        source: {
           type: 'raster',
-          extent: this.extent,
-          source: {
-            type: 'raster',
-            tiles: [],
-            tileSize: 256
-          }
+          tiles: [],
+          tileSize: 256
         }
+      }
 
-        if (imageLayers && imageLayers.extent) {
-          const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-          if (this.map.getSource(oldMapId)) {
-            this.map.removeLayer(oldMapId)
-            this.map.removeSource(oldMapId)
-          }
-        }
+      console.log(mapId)
 
-        const region = this.getRegion()
-        var json_body = {
-          dateBegin: this.extent[0],
-          dateEnd: this.extent[1],
-          region: region,
-          vis: layer.vis
+      if (imageLayers && imageLayers.extent) {
+        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
+        console.log(oldMapId)
+        if (this.map.getSource(oldMapId)) {
+          this.map.removeLayer(oldMapId)
+          this.map.removeSource(oldMapId)
         }
+      }
+
+      const region = this.getRegion()
+      var json_body = {
+        dateBegin: this.extent[0],
+        dateEnd: this.extent[1],
+        region: region,
+        vis: layer.vis
       }
 
       if (this.map.getSource(mapId)) {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
-      } else {
-        fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
-          method: 'POST',
-          body: JSON.stringify(json_body),
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(res => {
-            return res.json()
-          })
-          .then(mapUrl => {
-            mapJson.source['tiles'] = [mapUrl['url']]
-            this.map.addLayer(mapJson)
-            layer.imageLayers[0] = mapJson
-          })
       }
+      fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
+        method: 'POST',
+        body: JSON.stringify(json_body),
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          return res.json()
+        })
+        .then(mapUrl => {
+          mapJson.source['tiles'] = [mapUrl['url']]
+          this.map.addLayer(mapJson)
+          layer.imageLayers[0] = mapJson
+        })
     },
     fetchDates() {
       const region = this.getRegion()
@@ -299,10 +301,11 @@ export default {
 
 #t-slider {
   position: absolute;
-  left: 10vw;
-  bottom: 5vh;
-  width: 80vw;
-  right: 90vw;
+  left: 400px;
+  bottom: 0px;
+  width: calc(100% - 440px);
+  /* right: 90vw; */
+  margin: 20px;
   z-index: 2;
 }
 </style>

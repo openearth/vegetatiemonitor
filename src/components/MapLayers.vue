@@ -129,11 +129,18 @@ export default {
     }
   },
   watch: {
+    $route: {
+      handler() {
+        // this.updateFilteredLayers()
+        this.toggleLayers()
+      }
+    },
     // Watch "layers". This is a switch, which can toggle a layer on or off
     // When toggled, this watcher will activate the toggleLayers function.
     layers: {
       deep: true,
       handler() {
+        console.log('this.layers')
         if (!this.layers) return
         this.toggleLayers()
         this.sortLayers()
@@ -151,39 +158,56 @@ export default {
         const layers = this.layers.filter(layer =>
           layerNames.includes(layer.name)
         )
+        console.log('get filtered layers', layers)
+
         return layers
       },
       set(val) {
+        console.log('set filtered layers', val)
+
         this.$emit('setLayerOrder', val)
       }
     }
   },
   methods: {
-    updateFilteredLayers() {
-      if (!this.layers) return []
-      const layerNames = this.modes.find(mode => mode.name === this.$route.name)
-        .mapLayersNames
-      this.layers.forEach(layer => {
-        if (!layerNames.includes(layer.name)) {
-          layer.visible = false
-        }
-      })
-      const layers = this.layers.filter(layer =>
-        layerNames.includes(layer.name)
-      )
-      return layers
-    },
+    // updateFilteredLayers() {
+    //   console.log('update filteres layers')
+    //   if (!this.layers) return []
+    //   const layerNames = this.modes.find(mode => mode.name === this.$route.name)
+    //     .mapLayersNames
+    //   this.layers.forEach(layer => {
+    //     console.log(layerNames, layer.name)
+    //     if (!layerNames.includes(layer.name)) {
+    //       console.log('setting invisible', layer.name)
+    //       layer.active = false
+    //     }
+    //   })
+    //   const layers = this.layers.filter(layer =>
+    //     layerNames.includes(layer.name)
+    //   )
+    //  return layers
+    // },
     toggleLayers() {
+      console.log('togglelayers')
       // When layers in the menu are switched on or off update the map layers
       if (!this.filteredLayers) return
       // Function to toggle the visibility and opacity of the layers.
       var vis = ['none', 'visible']
-      this.filteredLayers.forEach(layer => {
+
+      // get the names of the layers that are available in this mode
+      const layerNames = this.modes.find(mode => mode.name === this.$route.name)
+        .mapLayersNames
+      this.layers.forEach(layer => {
         this.layerTypes.forEach(data => {
           if (!layer[data]) return
           layer[data].forEach(sublayer => {
             if (!sublayer.id) return
-            if (layer.active) {
+            if (layer.active && layer.activeLayerType === data) {
+              if (!layerNames.includes(layer.name)) {
+                console.log('setting invisible', layer.name)
+                layer.active = false
+                this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
+              }
               this.map.setLayoutProperty(sublayer.id, 'visibility', vis[1])
               this.setOpacity(layer, sublayer)
             } else {
