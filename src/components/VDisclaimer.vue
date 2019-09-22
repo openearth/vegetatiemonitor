@@ -24,9 +24,9 @@
           geen rechten worden ontleend.
         </v-card-text>
         <v-card-actions class="text-xs-center">
-          <v-btn @click.stop="disclaimer = false" color="primary" dark
-            >Accepteer en naar website</v-btn
-          >
+          <v-btn @click.stop="hideDisclaimer" color="primary" dark
+                 >Accepteer en naar website
+          </v-btn>
           <!-- <v-btn tutorialDialog=true" round color="primary" dark>Decline</v-btn> -->
         </v-card-actions>
       </v-card>
@@ -35,10 +35,27 @@
 </template>
 
 <script>
+
+import * as Cookies from 'tiny-cookie'
+
 export default {
-  data: function() {
+  data () {
+    let disclaimer = Cookies.get('disclaimer')
+    // if not set yet, return true
+    if (disclaimer === null) {
+      disclaimer = true
+    }
+    if (disclaimer === 'false') {
+      disclaimer = false
+    }
     return {
-      disclaimer: true
+      disclaimer
+    }
+  },
+  methods: {
+    hideDisclaimer () {
+      this.disclaimer = false
+      Cookies.set('disclaimer', false)
     }
   }
 }
