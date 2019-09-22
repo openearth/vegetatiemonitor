@@ -140,7 +140,6 @@ export default {
     layers: {
       deep: true,
       handler() {
-        console.log('this.layers')
         if (!this.layers) return
         this.toggleLayers()
         this.sortLayers()
@@ -158,37 +157,15 @@ export default {
         const layers = this.layers.filter(layer =>
           layerNames.includes(layer.name)
         )
-        console.log('get filtered layers', layers)
-
         return layers
       },
       set(val) {
-        console.log('set filtered layers', val)
-
         this.$emit('setLayerOrder', val)
       }
     }
   },
   methods: {
-    // updateFilteredLayers() {
-    //   console.log('update filteres layers')
-    //   if (!this.layers) return []
-    //   const layerNames = this.modes.find(mode => mode.name === this.$route.name)
-    //     .mapLayersNames
-    //   this.layers.forEach(layer => {
-    //     console.log(layerNames, layer.name)
-    //     if (!layerNames.includes(layer.name)) {
-    //       console.log('setting invisible', layer.name)
-    //       layer.active = false
-    //     }
-    //   })
-    //   const layers = this.layers.filter(layer =>
-    //     layerNames.includes(layer.name)
-    //   )
-    //  return layers
-    // },
     toggleLayers() {
-      console.log('togglelayers')
       // When layers in the menu are switched on or off update the map layers
       if (!this.filteredLayers) return
       // Function to toggle the visibility and opacity of the layers.
@@ -204,7 +181,6 @@ export default {
             if (!sublayer.id) return
             if (layer.active && layer.activeLayerType === data) {
               if (!layerNames.includes(layer.name)) {
-                console.log('setting invisible', layer.name)
                 layer.active = false
                 this.map.setLayoutProperty(sublayer.id, 'visibility', vis[0])
               }

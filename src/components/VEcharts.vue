@@ -147,12 +147,10 @@ export default {
         })
     },
     createLineChart(data) {
-      console.log(data.series)
       const options = {
         id: this.datatype,
         title: {
           text: `Tijdseries van ${this.datatype}`,
-          subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
           x: 'center',
           textStyle: {
             fontFamily: 'Helvetica',
@@ -187,7 +185,7 @@ export default {
         id: this.datatype,
         title: {
           text: `Verdeling van ${this.datatype} klassen`,
-          subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
+          subtext: `Van: ${this.dateBegin} Tot: ${this.dateEnd}`,
           x: 'center',
           textStyle: {
             fontFamily: 'Helvetica',

@@ -44,9 +44,6 @@ export default {
         rowsPerPage: 4
       }
     }
-  },
-  mounted() {
-    console.log('information table loaded')
   }
 }
 </script>

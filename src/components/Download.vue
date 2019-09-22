@@ -146,7 +146,6 @@ export default {
 
     this.map.on('draw.create', () => {
       if (this.draw.getAll().features.length > 1) {
-        console.log('this.draw , ', this.draw)
         const oldId = this.draw.getAll().features[0].id
         this.draw.delete(oldId)
       }

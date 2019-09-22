@@ -539,11 +539,6 @@ export default {
     },
 
     updateImages() {
-      console.log(
-        'update images ',
-        moment(this.step),
-        moment(this.step).add(1, this.mode.interval)
-      )
       this.$emit('update-timeslider', {
         dragging: this.dragging,
         beginDate: moment(this.step),

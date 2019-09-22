@@ -84,10 +84,6 @@ export default {
     map() {
       if (!this.layers) return
       this.watchMapForAnalysis()
-    },
-
-    loading() {
-      console.log(this.loading)
     }
   },
   data() {
@@ -153,12 +149,10 @@ export default {
               this.datatypes.length > 0 &&
               this.selectedProperty === layer.selectProperty
             ) {
-              console.log('remove selcet mode', layer.name, layer)
               this.datatypes = []
               this.closeSelectMode()
             } else {
               this.datatypes = []
-              console.log('new calc', layer.name)
               this.selectedProperty = layer.selectProperty
               this.selectedLayer = layer.name
               const feature = this.map.queryRenderedFeatures(e.point, {

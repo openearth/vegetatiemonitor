@@ -155,6 +155,7 @@ export default {
               }
             })
             if (videoLayer) {
+              console.log('update video layer', layer.name, this.extent)
               this.updateVideoLayerTime(videoLayer, this.extent[0])
             }
             layer.activeLayerType = 'mapboxLayers'
@@ -200,11 +201,14 @@ export default {
         }
       }
 
-      console.log(mapId)
-
       if (imageLayers && imageLayers.extent) {
         const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-        console.log(oldMapId)
+        console.log(
+          'old map id',
+          oldMapId,
+          'removing',
+          this.map.getSource(oldMapId)
+        )
         if (this.map.getSource(oldMapId)) {
           this.map.removeLayer(oldMapId)
           this.map.removeSource(oldMapId)
@@ -223,6 +227,7 @@ export default {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
       }
+      console.log('adding new layer', mapId)
       fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
         body: JSON.stringify(json_body),
