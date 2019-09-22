@@ -430,6 +430,9 @@ export default {
           .attr("stroke", "rgb(21,66,115)");
 
 
+        let click = () => {
+          console.log('click', d3.event)
+        }
         if (this.timeMode.name === "JAAR") {
           let yearData = data.dates.filter(
             x =>
@@ -474,6 +477,7 @@ export default {
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
               this.step = moment(x.dateStart, x.dateFormat);
+              this.$emit('select:interval', x)
               this.redraw();
             });
         }
@@ -507,6 +511,7 @@ export default {
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
               this.step = moment(x.date, x.dateFormat);
+              this.$emit('select:instance', x)
               this.redraw();
             });
         }
