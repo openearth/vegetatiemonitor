@@ -393,7 +393,7 @@ export default {
             this.layers.length * this.laneHeight})`
         );
 
-      var y = d3
+      var yScale = d3
           .scaleLinear()
           .domain([0, this.layers.length])
           .range([0, this.layers.length * (this.laneHeight + this.laneSpacing)]);
@@ -425,8 +425,8 @@ export default {
           .append("line")
           .attr("x1", this.labelWidth)
           .attr("x2", this.sliderWidth + this.labelWidth)
-          .attr("y1", y(index) - this.laneSpacing / 2)
-          .attr("y2", y(index) - this.laneSpacing / 2)
+          .attr("y1", yScale(index) - this.laneSpacing / 2)
+          .attr("y2", yScale(index) - this.laneSpacing / 2)
           .attr("stroke", "rgb(21,66,115)");
 
 
@@ -444,37 +444,51 @@ export default {
             return
           }
 
+          // add some relevant data
+          yearData = yearData.map(d => {
+
+            let startDate = moment(d.dateStart, d.dateFormat)
+            let id = startDate.format("DD-MM-YYYY")
+
+            let x = this.xScale(startDate) + this.labelWidth
+
+            let height = this.laneSpacing / 2
+            let y = yScale(index) - height + margin / 2
+
+            let xEnd = this.xScale(moment(d.dateEnd, d.dateFormat))
+            let xStart = this.xScale(moment(d.dateStart, d.dateFormat))
+            let width = xEnd - xStart
+            let origin = [x + 0.5 * width, y + 0.5 * (this.laneHeight - margin)]
+            let transformOrigin = `${origin[0]}px ${origin[1]}px`
+
+            // return all the new variables
+            return {
+              ...d,
+              id,
+              x,
+              y,
+              width,
+              height,
+              origin,
+              transformOrigin
+            }
+
+          })
+
           dataLane
             .append("g")
-            .selectAll(".dataIntervals")
+            .classed('intervals', true)
+            .selectAll("rect")
             .data(yearData)
             .enter()
             .append("rect")
-            .attr("id", d => {
-              let startDate = moment(d.dateStart, d.dateFormat).format("DD-MM-YYYY")
-              return startDate
-            })
-            .attr(
-              "x",
-              d => {
-                let startDate = moment(d.dateStart, d.dateFormat)
-                let x = this.xScale(startDate) + this.labelWidth
-                return x
-              }
-            )
-            .attr("y", y(index) - this.laneSpacing / 2 + margin / 2)
-            .attr("ry", 5)
-            .attr("rx", 5)
-            .attr("id", d => moment(d.dateStart).format("YYYY"))
-            .attr(
-              "width",
-              d => {
-                let xEnd = this.xScale(moment(d.dateEnd, d.dateFormat))
-                let xStart = this.xScale(moment(d.dateStart, d.dateFormat))
-                let width = xEnd - xStart
-                return width
-              })
+            .attr("id", d => d.id)
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("id", d => d.id)
+            .attr("width", d => d.width)
             .attr("height", this.laneHeight - margin)
+            .style('transform-origin', d => d.transformOrigin)
             .on("click", x => {
               this.step = moment(x.dateStart, x.dateFormat);
               this.$emit('select:interval', x)
@@ -504,7 +518,7 @@ export default {
               "x",
               x => this.xScale(moment(x.date, x.dateFormat)) + this.labelWidth
             )
-            .attr("y", y(index) - this.laneSpacing / 2 + margin / 2)
+            .attr("y", yScale(index) - this.laneSpacing / 2 + margin / 2)
             .attr("ry", 2)
             .attr("rx", 2)
             .attr("width", 2)
@@ -659,14 +673,6 @@ svg >>> .handle {
 svg >>> .handle.dragging {
   stroke-width: 3px;
 }
-
-svg >>> .rect {
-  margin: 2px;
-}
-svg >>> .rect-instance:hover {
-  fill: red;
-}
-
 svg >>> .lane-rect {
   stroke: #000;
   stroke-opacity: 0.5;
@@ -679,5 +685,27 @@ svg >>> .lane-rect.dragging {
   stroke-width: 3px;
 
 }
+
+
+
+svg >>> .rect {
+  margin: 2px;
+}
+svg >>> .rect-instance:hover {
+  fill: red;
+}
+
+svg >>> .intervals rect {
+  stroke: #000;
+  stroke-width: 1.25px;
+  fill-opacity: 0.2;
+  cursor: pointer;
+  transform: scale(0.8);
+}
+svg >>> .intervals rect:hover {
+  transform: scale(1);
+  transition: 0.5s transform;
+}
+
 
 </style>
