@@ -171,7 +171,7 @@ export default {
           .format(this.timeMode.momentFormat);
       }
 
-      let message = `Current Image: from ${from} to ${to}`;
+      let message = `Huidig beeld: van ${from} tot ${to}`;
       return message;
     },
     enabledTimeModes() {
