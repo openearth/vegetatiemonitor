@@ -29,7 +29,7 @@ storiesOf("TimeSlider", module).add("default", () => ({
 
     }
   },
-  template: `<time-slider :modes="modes" :layers="layers"></time-slider>`
+  template: `<time-slider :modes="modes" :layers="[]"></time-slider>`
 }))
 
 storiesOf("SvgTimeSlider", module)
