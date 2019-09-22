@@ -152,9 +152,12 @@ export default {
     };
   },
   watch: {
-    layers() {
-      if (!this.layers) return;
-      this.redraw();
+    layers: {
+      handler: function () {
+        if (!this.layers) return;
+        this.redraw();
+      },
+      deep: true
     }
   },
   computed: {
@@ -207,6 +210,7 @@ export default {
     window.addEventListener("resize", () => {
       this.redraw();
     });
+    this.$emit('update:time-mode', timeMode)
   },
   methods: {
     changeSpeed() {
@@ -220,6 +224,7 @@ export default {
         this.enabledTimeModes,
         this.timeMode
       )
+      this.$emit('update:time-mode', this.timeMode)
       this.redraw();
     },
     getNextElementInArray(array, selected) {
@@ -348,8 +353,9 @@ export default {
         .text(d => this.formatDate(d));
 
 
-      let currentStep = moment(this.step).clone()
+      let currentStep = moment(this.step)
       let nextStep = currentStep
+          .clone()
           .add(1, this.timeMode.interval)
       let width = this.xScale(nextStep) - this.xScale(currentStep)
 
@@ -423,57 +429,69 @@ export default {
           .attr("y2", y(index) - this.laneSpacing / 2)
           .attr("stroke", "rgb(21,66,115)");
 
-        if (this.currentTimeMode === "JAAR") {
+
+        if (this.timeMode.name === "JAAR") {
+          let yearData = data.dates.filter(
+            x =>
+              x.type === "interval" &&
+              moment(x.dateStart) >= this.timeMode.extent[0] &&
+              moment(x.dateEnd) <= this.timeMode.extent[1]
+          )
+          if (yearData.length === 0) {
+            return
+          }
+
           dataLane
             .append("g")
             .selectAll(".dataIntervals")
-            .data(
-              data.dates.filter(
-                x =>
-                  x.type === "interval" &&
-                  moment(x.date_start) >= this.timeMode.extent[0] &&
-                  moment(x.date_end) <= this.timeMode.extent[1]
-              )
-            )
+            .data(yearData)
             .enter()
             .append("rect")
-            .attr("id", x =>
-                  moment(x.date_start, x.dateFormat).format("DD-MM-YYYY")
-                 )
+            .attr("id", d => {
+              let startDate = moment(d.dateStart, d.dateFormat).format("DD-MM-YYYY")
+              return startDate
+            })
             .attr(
               "x",
-              x =>
-                this.xScale(moment(x.date_start, x.dateFormat)) +
-                this.labelWidth
+              d => {
+                let startDate = moment(d.dateStart, d.dateFormat)
+                let x = this.xScale(startDate) + this.labelWidth
+                return x
+              }
             )
             .attr("y", y(index) - this.laneSpacing / 2 + margin / 2)
             .attr("ry", 5)
             .attr("rx", 5)
-            .attr("id", d => moment(d.date_start).format("YYYY"))
+            .attr("id", d => moment(d.dateStart).format("YYYY"))
             .attr(
               "width",
-              d =>
-                this.xScale(moment(d.date_end, d.dateFormat)) -
-                this.xScale(moment(d.date_start, d.dateFormat))
-            )
+              d => {
+                let xEnd = this.xScale(moment(d.dateEnd, d.dateFormat))
+                let xStart = this.xScale(moment(d.dateStart, d.dateFormat))
+                let width = xEnd - xStart
+                return width
+              })
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
-              this.step = moment(x.date_start, x.dateFormat);
+              this.step = moment(x.dateStart, x.dateFormat);
               this.redraw();
             });
         }
-        if (this.currentTimeMode === "DAG") {
-          dataLane
-            .append("g")
-            .selectAll(".dataInstances")
-            .data(
-              data.dates.filter(
-                x =>
-                  x.type === "instance" &&
+        if (this.timeMode.name === "DAG") {
+          let instanceDates = data.dates.filter(
+            x =>
+              x.type === "instance" &&
                   moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&
                   moment(x.date, x.dateFormat) <= this.timeMode.extent[1]
               )
-            )
+
+          if (instanceDates.length === 0) {
+            return
+          }
+          dataLane
+            .append("g")
+            .selectAll(".dataInstances")
+            .data(instanceDates)
             .enter()
             .append("rect")
             .attr("class", "rect-instance")
