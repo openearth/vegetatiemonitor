@@ -7,7 +7,9 @@
     "build": "vue-cli-service build",
     "test": "jest",
     "lint": "vue-cli-service lint",
-    "lint:fix": "vue-cli-service lint --fix"
+    "lint:fix": "vue-cli-service lint --fix",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.1.2",
@@ -23,6 +25,7 @@
     "mapbox-gl-geocoder": "^2.0.1",
     "moment": "^2.24.0",
     "register-service-worker": "^1.6.2",
+    "tiny-cookie": "^2.3.1",
     "vue": "^2.6.10",
     "vue-echarts": "^4.0.3",
     "vue-router": "^3.0.3",
@@ -35,6 +38,10 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@fortawesome/fontawesome-free": "^5.8.2",
+    "@storybook/addon-actions": "^5.1.11",
+    "@storybook/addon-links": "^5.1.11",
+    "@storybook/addons": "^5.1.11",
+    "@storybook/vue": "^5.1.11",
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.7.0",
     "@vue/cli-plugin-pwa": "^3.7.0",
@@ -45,7 +52,9 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",
+    "babel-loader": "^8.0.6",
     "babel-plugin-dynamic-import-node": "2.2.0",
+    "babel-preset-vue": "^2.0.2",
     "css-loader": "^2.1.1",
     "deepmerge": "^4.0.0",
     "eslint": "^5.16.0",
@@ -62,14 +71,5 @@
     "vue-jest": "^3.0.4",
     "vue-template-compiler": "^2.5.21",
     "vuetify-loader": "^1.0.5"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,vue}": [
-      "vue-cli-service lint",
-      "git add"
-    ]
   }
 }

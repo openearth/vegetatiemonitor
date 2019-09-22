@@ -1,0 +1,327 @@
+[
+  {
+    "date": "2018-09-28",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-09-30",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-05",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-08",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-10",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-13",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-15",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-20",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-10-28",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-02",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-04",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-07",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-09",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-14",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-17",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-19",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-11-29",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-12-04",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-12-14",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-12-24",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2018-12-27",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-01-03",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-01-06",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-01-18",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-01-21",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-07",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-15",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-17",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-20",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-25",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-02-27",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-03-17",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-03-19",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-03-22",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-03-24",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-03-29",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-01",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-08",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-16",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-18",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-21",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-23",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-04-26",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-05-06",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-05-13",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-05-18",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-05-23",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-02",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-07",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-10",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-17",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-22",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-25",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-27",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-06-30",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-07-22",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-07-25",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-07-27",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-07-30",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-08-14",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-08-24",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-08-26",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-08-31",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-09-10",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  },
+  {
+    "date": "2019-09-15",
+    "dateFormat": "YYYY-MM-DD",
+    "type": "instance"
+  }
+]
