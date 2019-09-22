@@ -54,6 +54,8 @@
 import moment from "moment";
 import * as d3 from "d3";
 
+import {force} from './collision'
+
 const timeModes = [
   {
     name: "JAAR",
@@ -151,7 +153,7 @@ export default {
       currentTime: "01-01-2009",
       dragging: false,
       speeds: speeds,
-      currentSpeed: speeds[1]
+      speed: null
     }
   },
   watch: {
@@ -188,7 +190,7 @@ export default {
     let timeMode = this.enabledTimeModes[0]
     this.timeMode = timeMode
 
-    let speed = this.speeds[0]
+    let speed = this.speeds[1]
     this.speed = speed
 
     // Create the svg OBJECTID
@@ -250,7 +252,7 @@ export default {
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
       this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight
       const nt = parseInt(this.sliderWidth / 60)
-      this.nTicks = nt > this.mode.ticks ? this.mode.ticks : nt
+      this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt
     },
 
     updateScale() {
