@@ -87,6 +87,21 @@ const timeModes = [
   }
 ]
 
+const speeds = [
+  {
+    value: 50000,
+    name: 'LANGZAAM'
+  },
+  {
+    name: 'NORMAAL',
+    value: 10000
+  },
+  {
+    value: 5000,
+    name: 'SNEL'
+  }
+]
+
 export default {
   name: "time-slider",
   props: {
@@ -135,22 +150,9 @@ export default {
       trackHeight: 90,
       currentTime: "01-01-2009",
       dragging: false,
-      speeds: [
-        {
-          value: 10000,
-          name: "LANGZAAM"
-        },
-        {
-          name: "NORMAAL",
-          value: 5000
-        },
-        {
-          value: 1000,
-          name: "SNEL"
-        }
-      ],
-      speed: null
-    };
+      speeds: speeds,
+      currentSpeed: speeds[1]
+    }
   },
   watch: {
     layers: {
@@ -226,7 +228,8 @@ export default {
         this.timeMode
       )
       this.$emit('update:time-mode', this.timeMode)
-      this.redraw();
+      this.redraw()
+      this.updateImages()
     },
     getNextElementInArray(array, selected) {
       // return next element in array
@@ -245,10 +248,9 @@ export default {
       this.svgWidth = document.querySelector("div#slider").clientWidth;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
-      this.sliderHeight =
-        this.trackHeight + this.laneHeight * nLanes + this.periodHeight;
-      const nt = parseInt(this.sliderWidth / 40);
-      this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt;
+      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight
+      const nt = parseInt(this.sliderWidth / 60)
+      this.nTicks = nt > this.mode.ticks ? this.mode.ticks : nt
     },
 
     updateScale() {
