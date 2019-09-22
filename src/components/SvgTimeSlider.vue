@@ -476,18 +476,18 @@ export default {
     },
 
     updateImages() {
-      this.$emit("update-timeslider", {
+      this.$emit("update:timeslider", {
         dragging: this.dragging,
         beginDate: moment(this.step),
         endDate: moment(this.step).add(1, this.mode.interval),
         timing: this.currentSliderMode
-      });
+      })
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 
 /* #slider .container{ */
 /*   transform: translate(${this.labelWidth}, ${this.trackHeight})` */
@@ -506,7 +506,7 @@ export default {
   fill: none;
 }
 
-.handle {
+.svg >>> .handle {
   stroke-linecap: round;
   stroke: rgb(30, 30, 30);
   fill: black;
