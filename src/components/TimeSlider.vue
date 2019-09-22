@@ -1,6 +1,7 @@
 <template>
 <v-container>
-  <v-row no-gutters>
+  <!-- hide on small devices smaller than 600px -->
+  <v-row no-gutters class="hidden-xs-only">
     <v-col cols="12">
       <v-card flat color="transparent">
         <div id="slider">
