@@ -3,7 +3,6 @@ const modes = [
     name: 'Veld',
     mapLayersItems: ['Kaartlagen', 'Analyse', 'Colofon'],
     mapLayersNames: [
-      'Lalala',
       'Kadaster',
       'Stroombanen',
       'Classificatie',
@@ -49,6 +48,7 @@ const modes = [
       'Vegetatielegger',
       'Vegetatie (NDVI)',
       'Satelliet beelden',
+      'Satelliet - valse kleur',
       'Luchtfoto'
     ],
     timeModes: [

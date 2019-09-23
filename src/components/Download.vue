@@ -27,14 +27,9 @@
 
       <v-flex shrink>
         <h1 class="pa-4">
-          Settings
+          Tijdselectie
         </h1>
-        <select-period
-          :startDateDef="startDate"
-          :endDateDef="endDate"
-          @set-start-date="startDate = $event"
-          @set-end-date="endDate = $event"
-        ></select-period>
+        <p class="px-4">Datum: {{this.dateBegin}}</p>
       </v-flex>
       <v-flex grow>
         <div class="pa-4">
@@ -44,9 +39,9 @@
           <v-alert outlined type="info" v-if="downloading">
             {{
               `Lagen: ${selectedLayers()} voor de periode: ${
-                this.startDate
+                this.dateBegin
               } tot ${
-                this.endDate
+                this.dateEnd
               } worden gedownload. Een klein momentje geduld aub.`
             }}
           </v-alert>
@@ -109,6 +104,12 @@ export default {
     layers: {
       type: Array,
       required: true
+    },
+    dateBegin: {
+      type: String
+    },
+    dateEnd: {
+      type: String
     }
   },
   computed: {
@@ -120,16 +121,8 @@ export default {
   },
   data() {
     return {
-      resolution: 100,
       bbox: '',
       draw: {},
-      startDate: moment()
-        .startOf('year')
-        .format('YYYY-MM-DD'),
-      endDate: moment()
-        .startOf('year')
-        .add(1, 'year')
-        .format('YYYY-MM-DD'),
       downloading: false
     }
   },
@@ -192,8 +185,8 @@ export default {
       selectedLayers.forEach(layer => {
         var json_body = {
           region: bbox,
-          dateBegin: this.startDate,
-          dateEnd: this.endDate,
+          dateBegin: this.dateBegin,
+          dateEnd: this.dateEnd,
           vis: layer.vis,
           scale: 10
         }

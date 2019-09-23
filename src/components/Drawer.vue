@@ -117,6 +117,13 @@ export default {
       ]
     }
   },
+  watch: {
+    mini: {
+      handler() {
+        this.$emit('openDrawer', this.menuOpen)
+      }
+    }
+  },
   computed: {
     mapLayers: {
       get() {

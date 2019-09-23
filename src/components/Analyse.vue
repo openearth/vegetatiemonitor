@@ -61,7 +61,7 @@
 import VEcharts from './VEcharts'
 import InformationTable from './InformationTable'
 import jsPDF from 'jspdf'
-// import autoTable from 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 export default {
   name: 'v-analysis-control',

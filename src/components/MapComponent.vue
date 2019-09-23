@@ -4,7 +4,7 @@
       access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
       map-style="mapbox://styles/mapbox/light-v9"
       :center="center"
-      :zoom="7.88"
+      :zoom="9"
       :pitch="0"
       :bearing="0"
       :min-zoom="5"
@@ -16,7 +16,10 @@
       <v-mapbox-navigation-control></v-mapbox-navigation-control>
       <v-mapbox-geolocate-control></v-mapbox-geolocate-control>
     </v-mapbox>
-    <v-card id="t-slider" color="secondary">
+    <v-card
+      class="t-slider"
+      :id="[openDrawer ? 'small-slider' : 'big-slider']"
+      color="secondary">
       <time-slider
         ref="timeslider"
         :layers="timesliderLayers"
@@ -36,6 +39,9 @@ import moment from 'moment'
 export default {
   name: 'map-component',
   props: {
+    openDrawer: {
+      type: Boolean
+    },
     layers: {
       type: Array
     },
@@ -53,7 +59,7 @@ export default {
   },
   data: function() {
     return {
-      center: [5.673272, 52.079502],
+      center: [5.2, 51.8],
       map: null,
       timeMode: {},
       layerTypes: ['imageLayers', 'mapboxLayers'],
@@ -118,15 +124,15 @@ export default {
   methods: {
     deferredMountedTo() {},
     updateTimeslider(event) {
-      this.extent = [
-        event.beginDate.format('YYYY-MM-DD'),
-        event.endDate.format('YYYY-MM-DD')
+      const extent = [
+        event.beginDate,
+        event.endDate
       ]
+
+      this.extent = extent
       this.timing = event.timing
       this.dragging = event.dragging
-      this.updateTimedLayers()
-
-      // this.updateVideoLayers(this.extent[0])
+      this.updateTimedLayers(extent)
     },
     addMapboxLayers() {
       this.mapLayers.forEach(layer => {
@@ -138,13 +144,13 @@ export default {
         })
       })
     },
-    updateTimedLayers() {
+    updateTimedLayers(extent) {
       this.mapLayers.forEach(layer => {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
           if (this.timing === 'DAG' && this.dragging === false) {
-            this.updateImageLayer(layer)
+            this.updateImageLayer(layer, extent)
             layer.activeLayerType = 'imageLayers'
           } else if (this.timing === 'JAAR') {
             const videoLayer = layer.mapboxLayers.find(d => {
@@ -155,8 +161,7 @@ export default {
               }
             })
             if (videoLayer) {
-              console.log('update video layer', layer.name, this.extent)
-              this.updateVideoLayerTime(videoLayer, this.extent[0])
+              this.updateVideoLayerTime(videoLayer, extent[0])
             }
             layer.activeLayerType = 'mapboxLayers'
           }
@@ -170,7 +175,6 @@ export default {
       let end = moment(layer.source.dateEnd)
       let durationTotal = moment.duration(end.diff(begin)).asDays()
       let durationCurrent = moment.duration(time.diff(begin)).asDays()
-
       let fraction = durationCurrent / durationTotal
       let t = layer.source.durationSec * fraction
 
@@ -179,21 +183,23 @@ export default {
 
       let player = this.map.getSource(layer.id).player
 
+      console.log('t', t, 'durationTotal', durationTotal)
+
       player.setCurrentTime(t)
     },
-    updateImageLayer(layer) {
+    updateImageLayer(layer, extent) {
       const imageLayers = layer.imageLayers[0]
 
       // If existing gee layer on already has the correct dates and dataset, return
-      if (layer.imageLayers.length > 0 && imageLayers.extent == this.extent) {
+      if (layer.imageLayers.length > 0 && imageLayers.extent == extent) {
         return
       }
 
-      var mapId = `${layer.dataset}_${this.extent.join('_')}`
+      var mapId = `${layer.dataset}_${extent.join('_')}`
       var mapJson = {
         id: mapId,
         type: 'raster',
-        extent: this.extent,
+        extent: extent,
         source: {
           type: 'raster',
           tiles: [],
@@ -203,12 +209,6 @@ export default {
 
       if (imageLayers && imageLayers.extent) {
         const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-        console.log(
-          'old map id',
-          oldMapId,
-          'removing',
-          this.map.getSource(oldMapId)
-        )
         if (this.map.getSource(oldMapId)) {
           this.map.removeLayer(oldMapId)
           this.map.removeSource(oldMapId)
@@ -217,8 +217,8 @@ export default {
 
       const region = this.getRegion()
       var json_body = {
-        dateBegin: this.extent[0],
-        dateEnd: this.extent[1],
+        dateBegin: extent[0],
+        dateEnd: extent[1],
         region: region,
         vis: layer.vis
       }
@@ -227,7 +227,6 @@ export default {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
       }
-      console.log('adding new layer', mapId)
       fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
         body: JSON.stringify(json_body),
@@ -304,13 +303,20 @@ export default {
   height: 100%;
 }
 
-#t-slider {
+.t-slider {
   position: absolute;
-  left: 400px;
   bottom: 0px;
-  width: calc(100% - 440px);
   /* right: 90vw; */
   margin: 20px;
   z-index: 2;
+}
+
+.t-slider#big-slider {
+  left: 50px;
+  width: calc(100% - 90px);
+}
+.t-slider#small-slider {
+  left: 400px;
+  width: calc(100% - 440px);
 }
 </style>

@@ -15,6 +15,7 @@
         @setDrawerstate="drawerstate = $event"
         @setLayer="updateLayer($event)"
         @setLayerOrder="updateLayerOrder($event)"
+        @openDrawer="openDrawer = $event "
         :map="map"
         v-bind:dateBegin.sync="dateBegin"
         v-bind:dateEnd.sync="dateEnd"
@@ -23,6 +24,7 @@
       />
 
       <map-component
+        :openDrawer="openDrawer"
         v-bind:layers.sync="layers"
         v-bind:map.sync="map"
         v-bind:dateBegin.sync="dateBegin"
@@ -51,7 +53,8 @@ export default {
       map: {},
       layers: mapLayers,
       dateBegin: '2018-07-25',
-      dateEnd: '2018-07-28'
+      dateEnd: '2018-07-28',
+      openDrawer: false
     }
   },
   watch: {
@@ -66,6 +69,10 @@ export default {
     },
     dateEnd(val) {
       this.dateEnd = val
+    },
+    openDrawer(val) {
+      console.log(val)
+      this.openDrawer = val
     }
   },
   methods: {

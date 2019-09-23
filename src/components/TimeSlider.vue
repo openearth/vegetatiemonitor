@@ -66,9 +66,8 @@ const timeModes = [
     extent: [
       moment()
         .startOf("year")
-        .subtract(20, "year"),
+        .subtract(19, "year"),
       moment()
-        .add(1, "year")
         .startOf("year")
     ],
     ticks: 19
@@ -131,9 +130,9 @@ export default {
   data() {
     return {
       state: 'PAUSED',
-      step: moment(),
+      step: moment().subtract(1, 'year'),
       dataLanes: null,
-      loop: false,
+      loop: true,
       labelWidth: 150,
       laneHeight: 20,
       laneSpacing: 0,
@@ -190,7 +189,7 @@ export default {
     let timeMode = this.enabledTimeModes[0]
     this.timeMode = timeMode
 
-    let speed = this.speeds[1]
+    let speed = this.speeds[2]
     this.speed = speed
 
     // Create the svg OBJECTID
@@ -496,7 +495,8 @@ export default {
             .style('transform-origin', d => d.transformOrigin)
             .on("click", x => {
               this.step = moment(x.dateStart, x.dateFormat);
-              this.$emit('select:interval', x)
+              // this.$emit('select:interval', x)
+              this.updateImages()
               this.redraw();
             });
         }
@@ -530,7 +530,8 @@ export default {
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
               this.step = moment(x.date, x.dateFormat);
-              this.$emit('select:instance', x)
+              // this.$emit('select:instance', x)
+              this.updateImages()
               this.redraw();
             });
         }
@@ -616,11 +617,12 @@ export default {
     },
 
     updateImages() {
+      console.log( moment(this.step).format('YYYY-MM-DD'))
       this.$emit("update-timeslider", {
         dragging: this.dragging,
-        beginDate: moment(this.step),
-        endDate: moment(this.step).add(1, this.timeMode.interval),
-        timing: this.timeMode
+        beginDate: moment(this.step).format('YYYY-MM-DD'),
+        endDate: moment(this.step).add(1, this.timeMode.interval).format('YYYY-MM-DD'),
+        timing: this.timeMode.name
       });
     }
   }

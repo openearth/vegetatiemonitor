@@ -167,9 +167,15 @@ export default {
             return `${a.name}: ${a.value.toFixed(2)}m&sup2)`
           }
         },
+        grid: {
+          x: 70,
+          x2: 50,
+          y: 30,
+          y2: 150,
+        },
         legend: {
           bottom: 'bottom',
-          padding: [32, 0],
+          padding: 20,
           textStyle: {
             fontFamily: 'Helvetica',
             fontSize: 14
@@ -210,6 +216,10 @@ export default {
             fontSize: 14
           }
         },
+        grid: {
+          y: 60,
+          y2: 150,
+        },
         series: [
           {
             name: this.datatype,
@@ -242,7 +252,7 @@ export default {
 
 <style>
 .component-wrapper {
-  height: 450px;
+  height: 400px;
   width: 100%;
 }
 .echarts {

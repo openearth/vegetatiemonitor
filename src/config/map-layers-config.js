@@ -171,8 +171,26 @@ const mapLayers = [
     legendtable: 'difference',
     activeLayerType: 'mapboxLayers',
     imageLayers: [{}],
-    mapboxLayers: [{}],
-    download: true,
+    mapboxLayers: [
+      {
+        id: 'classificatie-vs-legger-video',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 1.8,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],    download: true,
     vis: {},
     timeslider: true,
     dates: []
@@ -185,7 +203,7 @@ const mapLayers = [
       'Deze kaart toont de classificatie van het gekozen enkele satellietbeeld of jaargemiddelde beeld.',
     download: true,
     opacity: 100,
-    active: true,
+    active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
     legend: {
@@ -216,7 +234,7 @@ const mapLayers = [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm'
           ],
           tileSize: 512,
-          durationSec: 18,
+          durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
           maxzoom: 14,
@@ -238,7 +256,7 @@ const mapLayers = [
     info:
       'De vegetatielegger toont welke vegetatie formeel op een gegeven locatie mag voorkomen.',
     opacity: 100,
-    active: true,
+    active: false,
     datatypes: ['landuse'],
     activeLayerType: 'mapboxLayers',
     type: 'group',
@@ -386,7 +404,7 @@ const mapLayers = [
             'https://storage.googleapis.com/vegetatiemonitor/ndvi-video/{z}/{x}/{y}.webm'
           ],
           tileSize: 512,
-          durationSec: 18,
+          durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
           maxzoom: 14,
@@ -402,13 +420,47 @@ const mapLayers = [
     dates: []
   },
   {
-    name: 'Satelliet beelden',
+    name: 'Satelliet - valse kleur',
     icon: './images/legend-rgb.png',
     info:
       'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
     opacity: 100,
     active: true,
+    dataset: 'satellite', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
+    mapboxLayers: [
+      {
+        id: 'satellite-false-video',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/satellite-false-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 1.8,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
+    imageLayers: [{}],
+    timeslider: true,
+    dates: []
+  },
+  {
+    name: 'Satelliet beelden',
+    icon: './images/legend-rgb.png',
+    info:
+      'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
+    download: true,
+    opacity: 100,
+    active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
     mapboxLayers: [
@@ -421,7 +473,7 @@ const mapLayers = [
             'https://storage.googleapis.com/vegetatiemonitor/satellite-natural-video/{z}/{x}/{y}.webm'
           ],
           tileSize: 512,
-          durationSec: 18,
+          durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
           maxzoom: 14,
