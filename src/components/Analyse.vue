@@ -1,15 +1,34 @@
 <template>
   <div id="analyse">
     <v-layout column fill-height>
-      <v-flex xs3 align-stretch>
+      <v-flex xs3>
         <h1 class="pa-4">
           Analyse
         </h1>
+        <p class="pa-4"> Selecteer de laag om polygonen te gebruiken </p>
+          <v-radio-group v-model="selectedLayer">
+            <v-layout
+              id="cardlayout"
+              align-center
+              v-for="layer in dataLayers"
+              :key="layer.name"
+            >
+              <v-flex xs2>
+                <v-radio :value="layer"></v-radio>
+              </v-flex>
+              <v-flex xs2>
+                <v-img contain max-height="100%" class="ma-1" :src="layer.icon" />
+              </v-flex>
+              <v-flex xs7>
+                {{ layer.name }}
+              </v-flex>
+            </v-layout>
+          </v-radio-group>
         <div id="analysistable">
           <information-table :properties="properties"> </information-table>
         </div>
       </v-flex>
-      <v-flex id="piediv" xs8>
+      <v-flex id="piediv" xs8 align-stretch>
         <div v-for="(type, index) in datatypes" :key="index">
           <v-echarts
             :ref="index"
@@ -80,10 +99,31 @@ export default {
       type: String
     }
   },
+  computed: {
+    dataLayers: {
+      get() {
+        return this.layers
+      },
+      set(layers) {
+        this.$emit('update:layers', layers)
+      }
+    }
+  },
   watch: {
-    map() {
-      if (!this.layers) return
-      this.watchMapForAnalysis()
+    selectedLayer: {
+      handler(newValue, oldValue) {
+        this.layers.forEach(layer => {
+          if(layer.name === newValue.name) {
+            layer.active = true
+          } else {
+            layer.active = false
+          }
+          this.$emit('setLayer', layer)
+        })
+        console.log(oldValue, newValue)
+        this.addEventListenersToMap(newValue)
+        this.removeEventListenersFromMap(oldValue)
+      }
     }
   },
   data() {
@@ -93,102 +133,106 @@ export default {
       polygon: [],
       properties: [],
       selectedProperty: '',
-      selectedLayer: '',
       loading: true,
       landuseLabels: [],
+      selectedLayer: {},
       leggerLabels: []
     }
   },
-
-  mounted() {},
+  mounted() {
+    // When mounted set a default layer. If none selected -> none, if 1 layer selected
+    // choose that layer, if both selected -> choose first one.
+    const activeLayers = this.layers.filter(layer => layer.active)
+    this.selectedLayer = activeLayers[0]
+  },
   methods: {
-    watchMapForAnalysis() {
-      this.layers.forEach(layer => {
-        // Creaet a hover effect and fill in the data in the datatable when
-        // hovering over a layer which has a hoverFilter
-        if (layer.hoverFilter) {
-          this.map.on('mousemove', layer.baseLayer, e => {
-            // if layer not active, no action
-            if (!layer.active) return
-            this.map.getCanvas().style.cursor = 'pointer'
-            const filter = e.features[0].properties[layer.selectProperty]
-            this.map.setFilter(layer.hoverFilter, [
-              '==',
-              layer.selectProperty,
-              filter
-            ])
-            if (this.selectedProperty === '') {
-              this.properties = []
-              layer.tableProperties.forEach(prop => {
-                this.properties.push({
-                  value: false,
-                  name: prop.name,
-                  data: e.features[0].properties[prop.key]
-                })
-              })
-            }
-          })
-          this.map.on('mouseleave', layer.baseLayer, () => {
-            this.map.getCanvas().style.cursor = ''
-            this.map.setFilter(layer.hoverFilter, [
-              '==',
-              layer.selectProperty,
-              ''
-            ])
-          })
-        }
-        // When clicking on a layer which has a selctFilter create Piecharts
-        if (layer.selectFilter) {
-          this.map.on('click', layer.baseLayer, e => {
-            // if layer not active, no action
-            if (!layer.active) return
-            let filter = ''
-
-            // if clicked on the already selected property, remove selection
-            if (
-              this.datatypes.length > 0 &&
-              this.selectedProperty === layer.selectProperty
-            ) {
-              this.datatypes = []
-              this.closeSelectMode()
-            } else {
-              this.datatypes = []
-              this.selectedProperty = layer.selectProperty
-              this.selectedLayer = layer.name
-              const feature = this.map.queryRenderedFeatures(e.point, {
-                layers: [layer.baseLayer]
-              })[0]
-              // this.datatypes = layer.datatypes
-              const datatypes = []
-              layer.datatypes.forEach(type => {
-                // TODO: use modes (and adjust mode options config) to make this if statement...
-                if (this.$route.name === 'Voorspel' && type === 'landuse') {
-                  datatypes.push({
-                    datatype: type,
-                    zonalType: 'zonal-timeseries'
-                  })
-                }
-                datatypes.push({
-                  datatype: type,
-                  zonalType: 'zonal-info'
-                })
-              })
-              this.datatypes = datatypes
-
-              this.polygon = feature.geometry
-              filter = e.features[0].properties[layer.selectProperty]
-              this.loading = true
-            }
-            this.map.setFilter(layer.selectFilter, [
-              '==',
-              layer.selectProperty,
-              filter
-            ])
-          })
-        }
-      })
+    addEventListenersToMap(newLayers) {
+      // Add all eventlisteners to the map for the selected layer
+      this.map.on('mousemove', newLayers.baseLayer, this.onMouseMove)
+      this.map.on('mouseleave', newLayers.baseLayer, this.onMouseLeave)
+      this.map.on('click', newLayers.baseLayer, this.onClick)
     },
 
+    removeEventListenersFromMap(oldLayers) {
+      // Remove all eventlisteners to the map for the selected layer
+      this.map.off('mousemove', oldLayers.baseLayer, this.onMouseMove)
+      this.map.off('mouseleave', oldLayers.baseLayer, this.onMouseLeave)
+      this.map.off('click', oldLayers.baseLayer, this.onClick)
+    },
+    onMouseMove(e) {
+      const layer = this.selectedLayer
+      // if layer not active, no action
+      this.map.getCanvas().style.cursor = 'pointer'
+      const filter = e.features[0].properties[layer.selectProperty]
+      this.map.setFilter(layer.hoverFilter, [
+        '==',
+        layer.selectProperty,
+        filter
+      ])
+      if (this.selectedProperty === '') {
+        this.properties = []
+        layer.tableProperties.forEach(prop => {
+          this.properties.push({
+            value: false,
+            name: prop.name,
+            data: e.features[0].properties[prop.key]
+          })
+        })
+      }
+    },
+    onMouseLeave() {
+      const layer = this.selectedLayer
+      this.map.getCanvas().style.cursor = ''
+      this.map.setFilter(layer.hoverFilter, [
+        '==',
+        layer.selectProperty,
+        ''
+      ])
+    },
+    onClick(e) {
+      const layer = this.selectedLayer
+      let filter = ''
+
+      // if clicked on the already selected property, remove selection
+      if (
+        this.datatypes.length > 0 &&
+        this.selectedProperty === layer.selectProperty
+      ) {
+        this.datatypes = []
+        this.closeSelectMode()
+      } else {
+        this.datatypes = []
+        this.selectedProperty = layer.selectProperty
+        const feature = this.map.queryRenderedFeatures(e.point, {
+          layers: [layer.baseLayer]
+        })[0]
+        // this.datatypes = layer.datatypes
+        const datatypes = []
+        layer.datatypes.forEach(type => {
+          // TODO: use modes (and adjust mode options config) to make this if statement...
+          if (this.$route.name === 'Voorspel' && type === 'landuse') {
+            datatypes.push({
+              datatype: type,
+              zonalType: 'zonal-timeseries'
+            })
+          }
+          datatypes.push({
+            datatype: type,
+            zonalType: 'zonal-info'
+          })
+        })
+        this.datatypes = datatypes
+
+        this.polygon = feature.geometry
+        filter = e.features[0].properties[layer.selectProperty]
+        this.loading = true
+      }
+      this.map.setFilter(layer.selectFilter, [
+        '==',
+        layer.selectProperty,
+        filter
+      ])
+    },
     closeSelectMode() {
       this.selectedProperty = ''
       this.properties = []
@@ -267,6 +311,9 @@ export default {
         map.setBearing(map.getBearing())
       })
     }
+  },
+  beforeDestroy() {
+    this.removeEventListenersFromMap(this.selectedLayer)
   },
   components: {
     VEcharts,

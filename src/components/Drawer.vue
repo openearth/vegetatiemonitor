@@ -45,8 +45,9 @@
       />
       <analyse
         id="menuOpen"
-        v-show="menu === 'Analyse' && menuOpen"
-        :layers="layers"
+        v-if="menu === 'Analyse' && menuOpen"
+        :layers="analyseLayers"
+        @setLayer="$emit('setLayer', $event)"
         :map="map"
         v-bind:dateBegin.sync="dateBegin"
         v-bind:dateEnd.sync="dateEnd"
@@ -149,6 +150,10 @@ export default {
     },
     downloadableLayers() {
       return this.layers.filter(layer => layer.download)
+    },
+    analyseLayers() {
+      console.log(this.layers, this.layers.filter(layer => layer.hoverFilter))
+      return this.layers.filter(layer => layer.hoverFilter)
     }
   },
   mounted() {
