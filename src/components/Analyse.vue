@@ -5,13 +5,14 @@
         <h1 class="pa-4">
           Analyse
         </h1>
-        <p class="pa-4"> Selecteer de laag om polygonen te gebruiken </p>
+        <p class="px-4"> Selecteer de laag om polygonen te gebruiken </p>
           <v-radio-group v-model="selectedLayer">
             <v-layout
               id="cardlayout"
               align-center
               v-for="layer in dataLayers"
               :key="layer.name"
+              class="px-4"
             >
               <v-flex xs2>
                 <v-radio :value="layer"></v-radio>
@@ -29,6 +30,12 @@
         </div>
       </v-flex>
       <v-flex id="piediv" xs8 align-stretch>
+        <div class="pa-4">
+          <v-alert outlined type="info" v-if="selectedProperty === ''">
+            Een analyse kan worden uitgevoerd op een geselecteerd polygoon voor een bepaalde periode.
+            Op de kaart kan een polygoon geselecteerd worden. Met behulp van de tijdslider kan een periode geselecteerd worden.
+          </v-alert>
+        </div>
         <div v-for="(type, index) in datatypes" :key="index">
           <v-echarts
             :ref="index"
@@ -51,7 +58,7 @@
           fill-height
           justify-space-around
           align-space-around
-          class="pa-auto"
+          class="px-auto py-4"
         >
           <v-btn
             v-on:click.native="closeSelectMode()"
@@ -112,17 +119,21 @@ export default {
   watch: {
     selectedLayer: {
       handler(newValue, oldValue) {
-        this.layers.forEach(layer => {
-          if(layer.name === newValue.name) {
-            layer.active = true
-          } else {
-            layer.active = false
-          }
-          this.$emit('setLayer', layer)
-        })
         console.log(oldValue, newValue)
-        this.addEventListenersToMap(newValue)
-        this.removeEventListenersFromMap(oldValue)
+        if(newValue){
+          this.layers.forEach(layer => {
+            if(layer.name === newValue.name) {
+              layer.active = true
+            } else {
+              layer.active = false
+            }
+            this.$emit('setLayer', layer)
+          })
+          this.addEventListenersToMap(newValue)
+        }
+        if(oldValue){
+          this.removeEventListenersFromMap(oldValue)
+        }
       }
     }
   },
@@ -143,7 +154,7 @@ export default {
     // When mounted set a default layer. If none selected -> none, if 1 layer selected
     // choose that layer, if both selected -> choose first one.
     const activeLayers = this.layers.filter(layer => layer.active)
-    this.selectedLayer = activeLayers[0]
+    this.selectedLayer = activeLayers.shift()
   },
   methods: {
     addEventListenersToMap(newLayers) {

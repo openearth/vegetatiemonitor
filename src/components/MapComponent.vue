@@ -112,6 +112,7 @@ export default {
       this.fetchDates()
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
+      this.updateTimeslider()
     })
   },
   provide() {
@@ -182,9 +183,6 @@ export default {
       t = Math.min(layer.source.durationSec, t)
 
       let player = this.map.getSource(layer.id).player
-
-      console.log('t', t, 'durationTotal', durationTotal)
-
       player.setCurrentTime(t)
     },
     updateImageLayer(layer, extent) {

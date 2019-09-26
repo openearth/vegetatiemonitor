@@ -2,10 +2,14 @@
   <div class="component-wrapper">
     <v-progress-circular
       class="ma-6"
-      v-if="loading"
+      v-if="loading && !error"
       indeterminate
     ></v-progress-circular>
-    <e-charts :ref="datatype" :options="options" :autoresize="true"> </e-charts>
+    <v-alert outlined type="error" v-if="error" class="py-auto">
+      {{`Er is iets mis gegaan!
+      De analyse voor ${datatype} kan niet worden geladen.`}}
+    </v-alert>
+    <e-charts :ref="datatype" :options="options"> </e-charts>
   </div>
 </template>
 
@@ -77,7 +81,8 @@ export default {
   data() {
     return {
       loading: true,
-      options: {}
+      options: {},
+      error: false
     }
   },
   mounted() {
@@ -145,6 +150,9 @@ export default {
             this.createLineChart(chartData[0])
           }
         })
+      .catch(error => {
+        this.error = true
+      })
     },
     createLineChart(data) {
       const options = {
@@ -191,7 +199,7 @@ export default {
         id: this.datatype,
         title: {
           text: `Verdeling van ${this.datatype} klassen`,
-          subtext: `Van: ${this.dateBegin} Tot: ${this.dateEnd}`,
+          subtext: this.dataype === 'legger'? `Van: ${this.dateBegin} Tot: ${this.dateEnd}` : '',
           x: 'center',
           textStyle: {
             fontFamily: 'Helvetica',

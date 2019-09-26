@@ -51,6 +51,7 @@
         :map="map"
         v-bind:dateBegin.sync="dateBegin"
         v-bind:dateEnd.sync="dateEnd"
+        :modes="modes"
       />
       <download
         id="menuOpen"
@@ -152,7 +153,6 @@ export default {
       return this.layers.filter(layer => layer.download)
     },
     analyseLayers() {
-      console.log(this.layers, this.layers.filter(layer => layer.hoverFilter))
       return this.layers.filter(layer => layer.hoverFilter)
     }
   },
