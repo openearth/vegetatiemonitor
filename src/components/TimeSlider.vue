@@ -175,7 +175,11 @@ export default {
           .format(this.timeMode.momentFormat);
       }
 
-      let message = `Huidig beeld: van ${from} tot ${to}`;
+      let time = ''
+      if(this.timeMode) {
+        time = this.timeMode.name.toLowerCase()
+      }
+      let message = `Huidige beeld: ${time}kaart ${from}`
       return message;
     },
     enabledTimeModes() {

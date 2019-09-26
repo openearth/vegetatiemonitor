@@ -1,87 +1,56 @@
 <template>
-  <div id="analyse">
-    <v-layout column fill-height>
-      <v-flex xs3>
-        <h1 class="pa-4">
-          Analyse
-        </h1>
-        <p class="px-4"> Selecteer de laag om polygonen te gebruiken </p>
-          <v-radio-group v-model="selectedLayer">
-            <v-layout
-              id="cardlayout"
-              align-center
-              v-for="layer in layers"
-              :key="layer.name"
-              class="px-4"
-            >
-              <v-flex xs2>
-                <v-radio :value="layer"></v-radio>
-              </v-flex>
-              <v-flex xs2>
-                <v-img contain max-height="100%" class="ma-1" :src="layer.icon" />
-              </v-flex>
-              <v-flex xs7>
-                {{ layer.name }}
-              </v-flex>
-            </v-layout>
-          </v-radio-group>
-        <div id="analysistable">
-          <information-table :properties="properties"> </information-table>
-        </div>
-      </v-flex>
-      <v-flex id="piediv" xs8 align-stretch>
-        <div class="pa-4">
-          <v-alert outlined type="info" v-if="selectedProperty === ''">
-            Een analyse kan worden uitgevoerd op een geselecteerd polygoon voor een bepaalde periode.
-            Op de kaart kan een polygoon geselecteerd worden. Met behulp van de tijdslider kan een periode geselecteerd worden.
-          </v-alert>
-        </div>
-        <div v-for="(type, index) in datatypes" :key="index">
-          <v-echarts
-            :ref="index"
-            :datatype="type.datatype"
-            :polygon="polygon"
-            :dateBegin="dateBegin"
-            :dateEnd="dateEnd"
-            :zonalType="type.zonalType"
-            :timeMode="timeMode"
-            @loaded="loading = $event"
-          ></v-echarts>
-        </div>
-        <v-timeseries
-          v-if="$route.name === 'voorspel'"
-          :options="voorspelOptions"
-        >
-        </v-timeseries>
-      </v-flex>
-      <v-flex xs1>
-        <v-layout
-          fill-height
-          justify-space-around
-          align-space-around
-          class="px-auto py-4"
-        >
-          <v-btn
-            v-on:click.native="closeSelectMode()"
-            v-if="selectedProperty !== ''"
-            outlined
-            color="indigo"
-            >Verwijder
-            <v-icon right>close</v-icon>
-          </v-btn>
-          <v-btn
-            :disabled="loading"
-            v-on:click.native="downloadSelection()"
-            v-if="selectedProperty !== ''"
-            outlined
-            color="indigo"
-            >Download
-            <v-icon right>file_download</v-icon>
-          </v-btn>
+<div id="analyse">
+  <v-layout column fill-height>
+    <v-flex xs3>
+      <h1 class="pa-4">
+        Analyse
+      </h1>
+      <p class="px-4"> Selecteer de laag om polygonen te gebruiken </p>
+      <v-radio-group v-model="selectedLayer">
+        <v-layout id="cardlayout" align-center v-for="layer in layers" :key="layer.name" class="px-4">
+          <v-flex xs2>
+            <v-radio :value="layer"></v-radio>
+          </v-flex>
+          <v-flex xs2>
+            <v-img contain max-height="100%" class="ma-1" :src="layer.icon" />
+          </v-flex>
+          <v-flex xs7>
+            {{ layer.name }}
+          </v-flex>
         </v-layout>
-      </v-flex>
-    </v-layout>
-  </div>
+      </v-radio-group>
+      <div id="analysistable">
+        <information-table :properties="properties"> </information-table>
+      </div>
+    </v-flex>
+    <v-flex id="piediv" xs8 align-stretch>
+      <div class="pa-4">
+        <v-alert outlined type="info" v-if="selectedProperty === ''">
+          <p>
+            Voor analyse: <br>
+            Selecteer een polygoon door op de kaart te klikken. <br>
+            Selecteer het jaar via de tijdsbalk.
+          </p>
+        </v-alert>
+      </div>
+      <div v-for="(type, index) in datatypes" :key="index">
+        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode" @loaded="loading = $event"></v-echarts>
+      </div>
+      <v-timeseries v-if="$route.name === 'voorspel'" :options="voorspelOptions">
+      </v-timeseries>
+    </v-flex>
+    <v-flex xs1>
+      <v-layout fill-height justify-space-around align-space-around class="px-auto py-4">
+        <v-btn v-on:click.native="closeSelectMode()" v-if="selectedProperty !== ''" outlined color="indigo">Verwijder
+          <v-icon right>close</v-icon>
+        </v-btn>
+        <v-btn :disabled="loading" v-on:click.native="downloadSelection()" v-if="selectedProperty !== ''" outlined color="indigo">Download
+          <v-icon right>file_download</v-icon>
+        </v-btn>
+      </v-layout>
+    </v-flex>
+  </v-layout>
+</div>
 </template>
 
 <script>
@@ -89,6 +58,7 @@ import VEcharts from './VEcharts'
 import InformationTable from './InformationTable'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import moment from 'moment'
 
 export default {
   name: 'v-analysis-control',
@@ -113,9 +83,9 @@ export default {
   watch: {
     selectedLayer: {
       handler(newValue, oldValue) {
-        if(newValue){
+        if (newValue) {
           this.layers.forEach(layer => {
-            if(layer.name === newValue.name) {
+            if (layer.name === newValue.name) {
               layer.active = true
             } else {
               layer.active = false
@@ -124,7 +94,7 @@ export default {
           })
           this.addEventListenersToMap(newValue)
         }
-        if(oldValue){
+        if (oldValue) {
           this.removeEventListenersFromMap(oldValue)
         }
       }
@@ -275,7 +245,9 @@ export default {
       doc.autoTable(['Label', 'legger klassen [%]'], table, {
         startY: 0.35 * H,
         tableWidth: 0.4 * W,
-        margin: { left: 0.05 * W }
+        margin: {
+          left: 0.05 * W
+        }
       })
       table = []
       this.landuseLabels.forEach((label, i) => {
@@ -284,7 +256,9 @@ export default {
       doc.autoTable(['Label', 'landuse klassen [%]'], table, {
         startY: 0.35 * H,
         tableWidth: 0.4 * W,
-        margin: { left: W * 0.55 }
+        margin: {
+          left: W * 0.55
+        }
       })
       this.takeScreenshot(this.map).then(data => {
         var canvas = this.map.getCanvas()
@@ -299,7 +273,8 @@ export default {
           0.9 * W,
           ((0.9 * W) / mapw) * maph
         )
-        doc.save(`${this.perceelnumber}_${this.dateEnd}_${this.dateBegin}.pdf`)
+        const perceelnumber = this.properties.find(prop => prop.name === 'Perceel nummer').data
+        doc.save(`${perceelnumber}polygoon_${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}_${this.timeMode.name.toLowerCase()}kaart_${this.perceelnumber}.pdf`)
       })
     },
 
