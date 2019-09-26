@@ -24,8 +24,8 @@
         ref="timeslider"
         :layers="timesliderLayers"
         :modes="modes"
+        @update:time-mode="$emit('update:time-mode', $event)"
         @update-timeslider="updateTimeslider($event)"
-        @update:time-mode="timeMode = $event"
       >
       </time-slider>
     </v-card>
@@ -55,13 +55,15 @@ export default {
     },
     modes: {
       type: Array
+    },
+    timeMode: {
+      type: Object
     }
   },
   data: function() {
     return {
       center: [5.2, 51.8],
       map: null,
-      timeMode: {},
       layerTypes: ['imageLayers', 'mapboxLayers'],
       region: {
         coordinates: [
@@ -81,26 +83,9 @@ export default {
     }
   },
   computed: {
-    mapLayers: {
-      get() {
-        return this.layers
-      },
-      set(mapLayers) {
-        this.$emit('update:layers', mapLayers)
-      }
-    },
-    extent: {
-      get() {
-        return [this.dateBegin, this.dateEnd]
-      },
-      set(extent) {
-        this.$emit('update:dateBegin', extent[0])
-        this.$emit('update:dateEnd', extent[1])
-      }
-    },
     timesliderLayers() {
-      if (!this.mapLayers) return
-      return this.mapLayers.filter(layer => layer.timeslider && layer.active)
+      if (!this.layers) return
+      return this.layers.filter(layer => layer.timeslider && layer.active)
     }
   },
   mounted() {
@@ -112,7 +97,8 @@ export default {
       this.fetchDates()
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
-      this.updateTimeslider()
+      this.updateTimedLayers([this.beginDate, this.endDate])
+
     })
   },
   provide() {
@@ -129,14 +115,15 @@ export default {
         event.beginDate,
         event.endDate
       ]
+      this.$emit('update:dateBegin', extent[0])
+      this.$emit('update:dateEnd', extent[1])
 
-      this.extent = extent
       this.timing = event.timing
       this.dragging = event.dragging
       this.updateTimedLayers(extent)
     },
     addMapboxLayers() {
-      this.mapLayers.forEach(layer => {
+      this.layers.forEach(layer => {
         layer.mapboxLayers.forEach(maplayer => {
           if (!maplayer.id) return
           if (!this.map.getSource(maplayer)) {
@@ -146,7 +133,7 @@ export default {
       })
     },
     updateTimedLayers(extent) {
-      this.mapLayers.forEach(layer => {
+      this.layers.forEach(layer => {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
@@ -267,13 +254,14 @@ export default {
           })
           .then(dates => {
             layer.dates = dates
-            this.mapLayers = this.mapLayers.map(l => {
+            const layers = this.layers.map(l => {
               if (l.name === layer.name) {
                 return layer
               } else {
                 return l
               }
             })
+            this.$emit('update:layers', layers)
           })
       })
     },

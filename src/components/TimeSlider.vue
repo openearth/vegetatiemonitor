@@ -130,7 +130,7 @@ export default {
   data() {
     return {
       state: 'PAUSED',
-      step: moment().subtract(1, 'year'),
+      step: moment().subtract(1, 'year').startOf('year'),
       dataLanes: null,
       loop: true,
       labelWidth: 150,
@@ -215,6 +215,7 @@ export default {
       this.redraw();
     });
     this.$emit('update:time-mode', timeMode)
+    this.updateImages()
   },
   methods: {
     changeSpeed() {
@@ -617,7 +618,6 @@ export default {
     },
 
     updateImages() {
-      console.log( moment(this.step).format('YYYY-MM-DD'))
       this.$emit("update-timeslider", {
         dragging: this.dragging,
         beginDate: moment(this.step).format('YYYY-MM-DD'),

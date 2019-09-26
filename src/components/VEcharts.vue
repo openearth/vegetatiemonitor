@@ -76,6 +76,9 @@ export default {
     },
     dateEnd: {
       type: String
+    },
+    timeMode: {
+      type: Object
     }
   },
   data() {
@@ -90,9 +93,11 @@ export default {
   },
   methods: {
     fetchZonalData() {
+      console.log('this.timemode in echarts before sending requests', this.timeMode)
       const body = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
+        assetType: this.timeMode.interval,
         region: {
           type: 'FeatureCollection',
           features: [

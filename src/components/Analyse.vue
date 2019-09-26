@@ -10,7 +10,7 @@
             <v-layout
               id="cardlayout"
               align-center
-              v-for="layer in dataLayers"
+              v-for="layer in layers"
               :key="layer.name"
               class="px-4"
             >
@@ -44,6 +44,7 @@
             :dateBegin="dateBegin"
             :dateEnd="dateEnd"
             :zonalType="type.zonalType"
+            :timeMode="timeMode"
             @loaded="loading = $event"
           ></v-echarts>
         </div>
@@ -104,22 +105,14 @@ export default {
     },
     dateEnd: {
       type: String
-    }
-  },
-  computed: {
-    dataLayers: {
-      get() {
-        return this.layers
-      },
-      set(layers) {
-        this.$emit('update:layers', layers)
-      }
+    },
+    timeMode: {
+      type: Object
     }
   },
   watch: {
     selectedLayer: {
       handler(newValue, oldValue) {
-        console.log(oldValue, newValue)
         if(newValue){
           this.layers.forEach(layer => {
             if(layer.name === newValue.name) {

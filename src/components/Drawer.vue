@@ -35,11 +35,11 @@
       <map-layers
         id="menuOpen"
         v-show="menu === 'Kaartlagen' && menuOpen"
-        v-bind:layers.sync="layers"
         @setLayer="$emit('setLayer', $event)"
         @setLayerOrder="$emit('setLayerOrder', $event)"
-        v-bind:dateBegin.sync="dateBegin"
-        v-bind:dateEnd.sync="dateEnd"
+        :layers.sync="layers"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
         :modes="modes"
         :map="map"
       />
@@ -49,17 +49,17 @@
         :layers="analyseLayers"
         @setLayer="$emit('setLayer', $event)"
         :map="map"
-        v-bind:dateBegin.sync="dateBegin"
-        v-bind:dateEnd.sync="dateEnd"
-        :modes="modes"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :timeMode.sync='timeMode'
       />
       <download
         id="menuOpen"
         v-if="menu === 'Download' && menuOpen"
         :map="map"
         :layers="downloadableLayers"
-        v-bind:dateBegin.sync="dateBegin"
-        v-bind:dateEnd.sync="dateEnd"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
       />
       <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
@@ -91,6 +91,9 @@ export default {
     },
     modes: {
       type: Array
+    },
+    timeMode: {
+      type: Object
     }
   },
   data() {
@@ -122,25 +125,11 @@ export default {
   watch: {
     mini: {
       handler() {
-        this.$emit('openDrawer', this.menuOpen)
+        this.$emit('open-drawer', this.menuOpen)
       }
     }
   },
   computed: {
-    mapLayers: {
-      get() {
-        return this.layers
-      },
-      set(mapLayers) {
-        this.$emit('update:layers', mapLayers)
-      }
-    },
-    filteredItems() {
-      const mapLayersItems = this.modes.find(
-        mode => mode.name === this.$route.name
-      ).mapLayersItems
-      return this.items.filter(item => mapLayersItems.includes(item.title))
-    },
     drawer: {
       get() {
         return this.drawerstate
@@ -148,6 +137,12 @@ export default {
       set(drawerstate) {
         this.$emit('setDrawerstate', drawerstate)
       }
+    },
+    filteredItems() {
+      const mapLayersItems = this.modes.find(
+        mode => mode.name === this.$route.name
+      ).mapLayersItems
+      return this.items.filter(item => mapLayersItems.includes(item.title))
     },
     downloadableLayers() {
       return this.layers.filter(layer => layer.download)

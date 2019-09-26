@@ -12,24 +12,28 @@
       <drawer
         :drawerstate="drawerstate"
         :layers="layers"
+        :menu.sync="menu"
         @setDrawerstate="drawerstate = $event"
         @setLayer="updateLayer($event)"
         @setLayerOrder="updateLayerOrder($event)"
         @openDrawer="openDrawer = $event "
         :map="map"
-        v-bind:dateBegin.sync="dateBegin"
-        v-bind:dateEnd.sync="dateEnd"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :timeMode.sync="timeMode"
         class="navdrawer"
         :modes="modes"
       />
 
       <map-component
         :openDrawer="openDrawer"
-        v-bind:layers.sync="layers"
-        v-bind:map.sync="map"
-        v-bind:dateBegin.sync="dateBegin"
-        v-bind:dateEnd.sync="dateEnd"
+        :layers.sync="layers"
+        :map.sync="map"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :menu.sync="menu"
         :modes="modes"
+        :timeMode.sync="timeMode"
       />
     </v-content>
   </div>
@@ -54,25 +58,9 @@ export default {
       layers: mapLayers,
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28',
-      openDrawer: false
-    }
-  },
-  watch: {
-    map(val) {
-      this.map = val
-    },
-    layers(val) {
-      this.layers = val
-    },
-    dateBegin(val) {
-      this.dateBegin = val
-    },
-    dateEnd(val) {
-      this.dateEnd = val
-    },
-    openDrawer(val) {
-      console.log(val)
-      this.openDrawer = val
+      openDrawer: false,
+      menu: '',
+      timeMode: null
     }
   },
   methods: {
