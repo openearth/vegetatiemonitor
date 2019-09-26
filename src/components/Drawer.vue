@@ -77,7 +77,7 @@ export default {
     layers: {
       type: Array
     },
-    drawerstate: {
+    drawerState: {
       type: Boolean
     },
     map: {
@@ -101,7 +101,7 @@ export default {
       menu: '',
       mini: true,
       right: null,
-      menuOpen: false,
+      menuOpen: true,
       items: [
         {
           icon: 'fa-layer-group',
@@ -124,18 +124,18 @@ export default {
   },
   watch: {
     mini: {
-      handler() {
-        this.$emit('open-drawer', this.menuOpen)
+      handler(val) {
+        this.$emit('update:open-drawer', this.menuOpen)
       }
     }
   },
   computed: {
     drawer: {
       get() {
-        return this.drawerstate
+        return this.drawerState
       },
-      set(drawerstate) {
-        this.$emit('setDrawerstate', drawerstate)
+      set(drawerState) {
+        this.$emit('update:drawer-state', drawerState)
       }
     },
     filteredItems() {
@@ -155,6 +155,7 @@ export default {
     window.onkeyup = event => {
       if (event.key === 'Escape') {
         this.menuOpen = false
+        this.$emit('update:open-drawer', this.menuOpen)
         this.menu = ''
         this.mini = true
       }

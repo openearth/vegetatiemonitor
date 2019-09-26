@@ -2,21 +2,18 @@
   <div class="viewer">
     <v-disclaimer></v-disclaimer>
     <toolbar
-      :drawerstate="drawerstate"
-      @setDrawerstate="drawerstate = $event"
+      :drawerState.sync="drawerState"
       :modes="modes"
       id="toolbar-comp"
     />
 
     <v-content id="content">
       <drawer
-        :drawerstate="drawerstate"
+        :drawerState.sync="drawerState"
         :layers="layers"
-        :menu.sync="menu"
-        @setDrawerstate="drawerstate = $event"
+        :openDrawer.sync="openDrawer"
         @setLayer="updateLayer($event)"
         @setLayerOrder="updateLayerOrder($event)"
-        @openDrawer="openDrawer = $event "
         :map="map"
         :dateBegin.sync="dateBegin"
         :dateEnd.sync="dateEnd"
@@ -26,12 +23,11 @@
       />
 
       <map-component
-        :openDrawer="openDrawer"
+        :openDrawer.sync="openDrawer"
         :layers.sync="layers"
         :map.sync="map"
         :dateBegin.sync="dateBegin"
         :dateEnd.sync="dateEnd"
-        :menu.sync="menu"
         :modes="modes"
         :timeMode.sync="timeMode"
       />
@@ -52,14 +48,13 @@ export default {
   name: 'viewer',
   data: function() {
     return {
-      drawerstate: true,
+      drawerState: true,
       modes: modes,
       map: {},
       layers: mapLayers,
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28',
       openDrawer: false,
-      menu: '',
       timeMode: null
     }
   },

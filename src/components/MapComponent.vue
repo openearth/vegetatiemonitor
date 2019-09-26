@@ -97,8 +97,6 @@ export default {
       this.fetchDates()
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
-      this.updateTimedLayers([this.beginDate, this.endDate])
-
     })
   },
   provide() {
@@ -120,7 +118,9 @@ export default {
 
       this.timing = event.timing
       this.dragging = event.dragging
-      this.updateTimedLayers(extent)
+      if(this.map) {
+        this.updateTimedLayers(extent)
+      }
     },
     addMapboxLayers() {
       this.layers.forEach(layer => {
@@ -168,7 +168,6 @@ export default {
 
       t = Math.max(0, t)
       t = Math.min(layer.source.durationSec, t)
-
       let player = this.map.getSource(layer.id).player
       player.setCurrentTime(t)
     },
