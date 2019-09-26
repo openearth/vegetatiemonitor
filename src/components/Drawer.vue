@@ -42,6 +42,7 @@
         :dateEnd.sync="dateEnd"
         :modes="modes"
         :map="map"
+        :loadingLayers="loadingLayers"
       />
       <analyse
         id="menuOpen"
@@ -94,6 +95,9 @@ export default {
     },
     timeMode: {
       type: Object
+    },
+    loadingLayers: {
+      type: Array
     }
   },
   data() {

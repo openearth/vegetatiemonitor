@@ -91,6 +91,11 @@ export default {
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
+      // disable map rotation using right click + drag
+      this.map.dragRotate.disable()
+
+      // disable map rotation using touch rotation gesture
+      this.map.touchZoomRotate.disableRotation()
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
@@ -211,6 +216,7 @@ export default {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
       }
+      this.$emit('loading-layer', layer.name)
       fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
         body: JSON.stringify(json_body),
@@ -226,6 +232,7 @@ export default {
           mapJson.source['tiles'] = [mapUrl['url']]
           this.map.addLayer(mapJson)
           layer.imageLayers[0] = mapJson
+          this.$emit('done-loading-layer', layer.name)
         })
     },
     fetchDates() {

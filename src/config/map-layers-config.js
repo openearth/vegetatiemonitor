@@ -180,7 +180,7 @@ const mapLayers = [
           tiles: [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
           ],
-          tileSize: 512,
+          tileSize: 256,
           durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
@@ -233,7 +233,7 @@ const mapLayers = [
           tiles: [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm'
           ],
-          tileSize: 512,
+          tileSize: 256,
           durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',

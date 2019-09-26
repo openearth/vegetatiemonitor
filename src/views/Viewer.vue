@@ -20,6 +20,7 @@
         :timeMode.sync="timeMode"
         class="navdrawer"
         :modes="modes"
+        :loadingLayers="loadingLayers"
       />
 
       <map-component
@@ -30,6 +31,9 @@
         :dateEnd.sync="dateEnd"
         :modes="modes"
         :timeMode.sync="timeMode"
+        :loadingLayers.sync="loadingLayers"
+        @loading-layer="loadingLayers.push($event)"
+        @done-loading-layer="loadingLayers.pop($event)"
       />
     </v-content>
   </div>
@@ -55,7 +59,8 @@ export default {
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28',
       openDrawer: false,
-      timeMode: null
+      timeMode: null,
+      loadingLayers: []
     }
   },
   methods: {
