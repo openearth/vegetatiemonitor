@@ -200,10 +200,6 @@ export default {
     // Create the svg OBJECTID
     this.svg = d3.select("#slider svg")
 
-    // this.svg
-    //   .attr("width", this.sliderWidth + this.labelWidth)
-    //   .attr("height", this.sliderHeight);
-
     this.createLaneGroup();
     this.updateLaneGroup();
     this.createSlider();
