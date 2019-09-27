@@ -30,5 +30,13 @@ npm run lint
 npm run test:unit
 ```
 
+### Deploy
+```
+npm install
+netlify link
+npm run build
+netlify install
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
