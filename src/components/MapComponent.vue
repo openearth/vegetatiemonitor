@@ -60,6 +60,14 @@ export default {
       type: Object
     }
   },
+  watch: {
+    layers: {
+      deep: true,
+      handler() {
+        this.fetchDates()
+      }
+    }
+  },
   data: function() {
     return {
       center: [5.2, 51.8],
