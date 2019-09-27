@@ -1,11 +1,11 @@
 <template>
-<v-container>
+<v-container class="container">
   <!-- hide on small devices smaller than 600px -->
-  <v-row no-gutters class="hidden-xs-only">
+  <v-row no-gutters class="hidden-xs-only" v-show="timeMode && timeMode.showLanes">
     <v-col cols="12">
       <v-card flat color="transparent">
         <div id="slider">
-          <svg></svg>
+          <svg :height="sliderHeight" :width="sliderWidth + labelWidth"></svg>
         </div>
       </v-card>
     </v-col>
@@ -19,7 +19,7 @@
     <v-col cols="auto"  v-if="timeMode">
       <v-btn
         text
-        v-show="timeMode.name === 'JAAR'"
+        v-show="timeMode.showPlayer"
         @click="play()"
         v-if="state === 'PAUSED'"
         >
@@ -27,7 +27,7 @@
       </v-btn>
       <v-btn
         text
-        v-show="timeMode.name === 'JAAR'"
+        v-show="timeMode.showPlayer"
         v-if="state === 'PLAYING'"
         @click="pause()"
         >
@@ -50,13 +50,16 @@
 
       <v-btn
         text
-        v-show="timeMode.name === 'JAAR'"
+        v-show="timeMode.showPlayer"
         v-model="loop"
         @click="loop = !loop"
         >
         <v-icon>fa-redo-alt</v-icon>
       </v-btn>
-      <v-btn text @click="changeSpeed" v-if="speed" v-show="timeMode.name === 'JAAR'">
+      <v-btn text
+             @click="changeSpeed"
+             v-show="timeMode.showPlayer"
+             v-if="speed" >
         {{ speed.name }}
       </v-btn>
     </v-col>
@@ -150,6 +153,9 @@ export default {
     },
     timeModes: {
       handler (timeModes) {
+        if (!timeModes.length) {
+          return
+        }
         let timeMode = timeModes[0]
         this.timeMode = timeMode
         this.redraw()
@@ -185,16 +191,18 @@ export default {
 
     // Update the margins and scale
     if (this.timeMode) {
-      this.changeMargin();
-      this.updateScale();
+      this.$nextTick(() => {
+        this.changeMargin();
+        this.updateScale();
+      })
     }
 
     // Create the svg OBJECTID
     this.svg = d3.select("#slider svg")
 
-    this.svg
-      .attr("width", this.sliderWidth + this.labelWidth)
-      .attr("height", this.sliderHeight);
+    // this.svg
+    //   .attr("width", this.sliderWidth + this.labelWidth)
+    //   .attr("height", this.sliderHeight);
 
     this.createLaneGroup();
     this.updateLaneGroup();
@@ -206,6 +214,8 @@ export default {
     });
     this.$emit('update:time-mode', timeMode)
     this.updateImages()
+
+
   },
   methods: {
     changeSpeed() {
@@ -237,7 +247,7 @@ export default {
     },
     changeMargin() {
       var nLanes = this.layers.length;
-      this.svgWidth = document.querySelector("div#slider").clientWidth;
+      this.svgWidth = this.$el.clientWidth - 20;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
       this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight + this.margin
