@@ -420,40 +420,6 @@ const mapLayers = [
     dates: []
   },
   {
-    name: 'Satelliet - valse kleur',
-    icon: './images/legend-rgb.png',
-    info:
-      'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
-    download: true,
-    opacity: 100,
-    active: true,
-    dataset: 'satellite', // important! this argument is needed to call the service
-    activeLayerType: 'mapboxLayers',
-    mapboxLayers: [
-      {
-        id: 'satellite-false-video',
-        type: 'raster',
-        source: {
-          type: 'video-tiled',
-          tiles: [
-            'https://storage.googleapis.com/vegetatiemonitor/satellite-false-video/{z}/{x}/{y}.webm'
-          ],
-          tileSize: 512,
-          durationSec: 1.8,
-          dateBegin: '2000-01-01',
-          dateEnd: '2018-01-01',
-          maxzoom: 14,
-          minzoom: 9,
-          scheme: 'xyz',
-          geometry: []
-        }
-      }
-    ],
-    imageLayers: [{}],
-    timeslider: true,
-    dates: []
-  },
-  {
     name: 'Satelliet beelden',
     icon: './images/legend-rgb.png',
     info:
@@ -484,14 +450,12 @@ const mapLayers = [
       }
     ],
     imageLayers: [{}],
-    vis: pseudoColors[0].vis,
-    settings: [
-      {
-        type: 'select',
-        items: pseudoColors,
-        selected: 'Natural colors'
-      }
-    ],
+    vis: {
+      bands: ['red', 'green', 'blue'],
+      min: 0.05,
+      max: [0.35, 0.35, 0.45],
+      gamma: 1.4
+    },
     timeslider: true,
     dates: []
   },
@@ -514,7 +478,7 @@ const mapLayers = [
         source: {
           type: 'raster',
           tiles: [
-            'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?SERVICE=WMS&&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=Actueel_ortho25&STYLES=default&CRS=EPSG%3A3857&WIDTH=256&HEIGHT=256&bbox={bbox-epsg-3857}'
+            'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?SERVICE=WMS&&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=2019_ortho25&STYLES=default&CRS=EPSG%3A3857&WIDTH=256&HEIGHT=256&bbox={bbox-epsg-3857}'
           ],
           tilesize: 256
         }

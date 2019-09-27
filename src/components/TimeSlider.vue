@@ -196,15 +196,14 @@ export default {
     let speed = this.speeds[2]
     this.speed = speed
 
-    // Create the svg OBJECTID
-
-    this.svg = d3.select("#slider svg")
-
     // Update the margins and scale
     if (this.timeMode) {
       this.changeMargin();
       this.updateScale();
     }
+
+    // Create the svg OBJECTID
+    this.svg = d3.select("#slider svg")
 
     this.svg
       .attr("width", this.sliderWidth + this.labelWidth)
@@ -254,7 +253,7 @@ export default {
       this.svgWidth = document.querySelector("div#slider").clientWidth;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
-      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight
+      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight + this.margin
       const nt = parseInt(this.sliderWidth / 60)
       this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt
     },

@@ -14,7 +14,7 @@ const modes = [
     timeModes: [
       {
         mode: 'JAAR',
-        type: 'video'
+        type: ''
       }
     ]
   },
@@ -48,7 +48,6 @@ const modes = [
       'Vegetatielegger',
       'Vegetatie (NDVI)',
       'Satelliet beelden',
-      'Satelliet - valse kleur',
       'Luchtfoto'
     ],
     timeModes: [

@@ -142,7 +142,7 @@ export default {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
-          if (this.timing === 'DAG' && this.dragging === false) {
+          if (this.timing === 'DAG' && this.dragging === false && this.map.getZoom() >= 9) {
             this.updateImageLayer(layer, extent)
             layer.activeLayerType = 'imageLayers'
           } else if (this.timing === 'JAAR') {
@@ -236,14 +236,26 @@ export default {
         })
     },
     fetchDates() {
-      const region = this.getRegion()
-      const body = JSON.stringify({
-        region: region
-      })
-      this.timesliderLayers.map(layer => {
-        if (!layer.active) return
+      const layers = this.timesliderLayers.filter(layer => layer.active)
+
+      // If there is no active timeslider layers, do nothing
+      if (layers.length === 0) {
+        return
+      }
+
+      // If not zoomed in enough, do nothing
+      if (this.map.getZoom() < 9) {
+        layers.forEach(layer => {
+          layer.dates = []
+          this.$emit('set-layer', layer)
+        })
+      } else {
+        const region = this.getRegion()
+        const body = JSON.stringify({
+          region: region
+        })
         fetch(
-          `${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/${
+          `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${
             this.timeMode.timing
           }`,
           {
@@ -255,21 +267,16 @@ export default {
             }
           }
         )
-          .then(res => {
-            return res.json()
-          })
-          .then(dates => {
+        .then(res => {
+          return res.json()
+        })
+        .then(dates => {
+          layers.forEach(layer => {
             layer.dates = dates
-            const layers = this.layers.map(l => {
-              if (l.name === layer.name) {
-                return layer
-              } else {
-                return l
-              }
-            })
-            this.$emit('update:layers', layers)
+            this.$emit('set-layer', layer)
           })
-      })
+        })
+      }
     },
     getRegion() {
       var N = this.map.getBounds().getNorth()
