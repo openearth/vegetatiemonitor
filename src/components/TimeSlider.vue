@@ -285,6 +285,7 @@ export default {
           this.updateHandle()
         })
         .on("end", () => {
+          this.dragging = false
           this.updateImages()
           this.lanePeriod.classed('dragging', false)
           this.handle.classed('dragging', false)
@@ -639,14 +640,6 @@ export default {
       }
 
       this.step = snapCandidate
-
-
-
-
-
-
-
-
 
     },
     updateHandle() {
