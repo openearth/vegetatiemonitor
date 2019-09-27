@@ -24,6 +24,7 @@
         ref="timeslider"
         :layers="timesliderLayers"
         :timeModes="timeModes"
+        :dates="dates"
         @update:time-mode="$emit('update:time-mode', $event)"
         @update-timeslider="updateTimeslider($event)"
       >
@@ -87,7 +88,8 @@ export default {
         type: 'Polygon'
       },
       polygons: [],
-      scale: 10
+      scale: 10,
+      dates: []
     }
   },
   computed: {
@@ -143,7 +145,7 @@ export default {
       this.layers.forEach(layer => {
         layer.mapboxLayers.forEach(maplayer => {
           if (!maplayer.id) return
-          if (!this.map.getSource(maplayer)) {
+          if (!this.map.getSource(maplayer.id)) {
             this.map.addLayer(maplayer)
           }
         })
@@ -257,15 +259,13 @@ export default {
 
       // If not zoomed in enough, do nothing
       if (this.map.getZoom() < 9) {
-        layers.forEach(layer => {
-          layer.dates = []
-          this.$emit('set-layer', layer)
-        })
+        this.dates = []
       } else {
         const region = this.getRegion()
         const body = JSON.stringify({
           region: region
         })
+
         fetch(
           `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${
             this.timeMode.timing
@@ -283,10 +283,7 @@ export default {
           return res.json()
         })
         .then(dates => {
-          layers.forEach(layer => {
-            layer.dates = dates
-            this.$emit('set-layer', layer)
-          })
+          this.dates = dates
         })
       }
     },

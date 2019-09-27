@@ -78,6 +78,9 @@ const mapLayers = [
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
         },
+        layout: {
+          'visibility': 'none'
+        },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
           'fill-color': 'rgba(32, 32, 32, 0.3)',
@@ -90,6 +93,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -107,6 +113,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -175,11 +184,17 @@ const mapLayers = [
       {
         id: 'classificatie-vs-legger-video',
         type: 'raster',
+        layout: {
+          'visibility': 'none'
+        },
         source: {
           type: 'video-tiled',
           tiles: [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
           ],
+          layout: {
+            'visibility': 'none'
+          },
           tileSize: 256,
           durationSec: 1.8,
           dateBegin: '2000-01-01',
@@ -229,6 +244,12 @@ const mapLayers = [
       {
         id: 'classificatie-video',
         type: 'raster',
+        paint: {
+          'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
+        },
         source: {
           type: 'video-tiled',
           tiles: [
@@ -296,6 +317,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.87a2u39q'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'vegetatie-vlakken-596nr3',
         paint: {
@@ -367,7 +391,7 @@ const mapLayers = [
     icon: './images/legend-ndvi.png',
     info:
       'Deze kaart toont de groenwaarde van het betreffende satellietbeeld, uitgedrukt in de ‘Normalized Difference Vegetation Index’. Hoe groener de waarde, hoe groener de vegetatie.',
-    opacity: 100,
+    opacity: 0,
     active: false,
     download: true,
     dataset: 'ndvi', // important! this argument is needed to call the service
@@ -399,6 +423,9 @@ const mapLayers = [
       {
         id: 'ndvi-video',
         type: 'raster',
+        layout: {
+          'visibility': 'none'
+        },
         source: {
           type: 'video-tiled',
           tiles: [
@@ -426,7 +453,7 @@ const mapLayers = [
     info:
       'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
-    opacity: 100,
+    opacity: 0,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
@@ -434,6 +461,12 @@ const mapLayers = [
       {
         id: 'satellite-natural-video',
         type: 'raster',
+        paint: {
+          'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
+        },
         source: {
           type: 'video-tiled',
           tiles: [
@@ -466,7 +499,7 @@ const mapLayers = [
     info:
       'Deze kaart toont de meest recente luchtfoto voor visuele vergelijking met de classificatieresultaten.',
     download: false,
-    opacity: 100,
+    opacity: 0,
     active: false,
     activeLayerType: 'mapboxLayers',
     mapboxLayers: [
@@ -475,6 +508,9 @@ const mapLayers = [
         type: 'raster',
         paint: {
           'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
         },
         source: {
           type: 'raster',

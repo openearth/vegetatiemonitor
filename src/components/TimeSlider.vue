@@ -35,14 +35,14 @@
       </v-btn>
       <v-btn
         text
-        v-if="state === 'PAUSED'"
+        v-if="state === 'PAUSED' && timeMode.showBackForward"
         @click="backward()"
         >
         <v-icon  small>fa-step-backward</v-icon>
       </v-btn>
       <v-btn
         text
-        v-if="state === 'PAUSED'"
+        v-if="state === 'PAUSED' && timeMode.showBackForward"
         @click="forward()"
         >
         <v-icon  small>fa-step-forward</v-icon>
@@ -103,6 +103,9 @@ export default {
     timeModes: {
       type: Array,
       required: true
+    },
+    dates: {
+      type: Array
     }
   },
   data() {
@@ -140,6 +143,11 @@ export default {
         this.redraw();
       },
       deep: true
+    },
+    dates: {
+      handler() {
+        this.redraw()
+      }
     },
     timeMode: {
       handler: function (timeMode) {
@@ -438,7 +446,7 @@ export default {
 
 
         if (this.timeMode.name === "JAAR") {
-          let yearData = data.dates.filter(
+          let yearData = this.dates.filter(
             x =>
               x.type === "interval" &&
               moment(x.dateStart) >= this.timeMode.extent[0] &&
@@ -501,7 +509,7 @@ export default {
             });
         }
         if (this.timeMode.name === "DAG") {
-          let instanceDates = data.dates.filter(
+          let instanceDates = this.dates.filter(
             x =>
               x.type === "instance" &&
               moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&

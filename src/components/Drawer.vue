@@ -8,6 +8,7 @@
     width="400px"
     absolute
     floating
+    stateless
     fixed
     hide-overlay
     clipped
