@@ -285,8 +285,7 @@ export default {
           this.updateHandle()
         })
         .on("end", () => {
-          this.dragging = false;
-          this.updateImages();
+          this.updateImages()
           this.lanePeriod.classed('dragging', false)
           this.handle.classed('dragging', false)
         })
