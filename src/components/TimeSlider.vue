@@ -56,38 +56,6 @@ import * as d3 from "d3";
 
 import {force} from './collision'
 
-const timeModes = [
-  {
-    name: "JAAR",
-    format: "%Y",
-    interval: "year",
-    timing: "yearly",
-    momentFormat: "YYYY",
-    extent: [
-      moment()
-        .startOf("year")
-        .subtract(19, "year"),
-      moment()
-        .startOf("year")
-    ],
-    ticks: 19
-  },
-  {
-    name: "DAG",
-    format: "%-m-%Y",
-    interval: "day",
-    timing: "daily",
-    momentFormat: "DD-MM-YYYY",
-    extent: [
-      moment()
-        .startOf("day")
-        .subtract(1, "year"),
-      moment().startOf("day")
-    ],
-    ticks: 12
-  }
-]
-
 const speeds = [
   {
     value: 50000,
@@ -112,19 +80,9 @@ export default {
         return [];
       }
     },
-    timeModesEnabled: {
-      default: () => {
-        return {
-          JAAR: true,
-          DAG: true
-        }
-      }
-    },
-    modes: {
+    timeModes: {
       type: Array,
-      default: () => {
-        return [];
-      }
+      required: true
     }
   },
   data() {
@@ -137,7 +95,6 @@ export default {
       laneHeight: 20,
       laneSpacing: 0,
       margin: {},
-      timeModes: timeModes,
       timeMode: null,
       periodHeight: 20,
       svg: null,
@@ -181,16 +138,11 @@ export default {
       }
       let message = `Huidige beeld: ${time}kaart ${from}`
       return message;
-    },
-    enabledTimeModes() {
-      // check if modes are enabled
-      let enabledModes = this.timeModes.filter(mode => this.timeModesEnabled[mode.name])
-      return enabledModes
     }
   },
   mounted() {
     // Set the current mode (yearly or daily according to the selected route)
-    let timeMode = this.enabledTimeModes[0]
+    let timeMode = this.timeModes[0]
     this.timeMode = timeMode
 
     let speed = this.speeds[2]
@@ -229,7 +181,7 @@ export default {
     },
     changeMode() {
       this.timeMode = this.getNextElementInArray(
-        this.enabledTimeModes,
+        this.timeModes,
         this.timeMode
       )
       this.$emit('update:time-mode', this.timeMode)
@@ -501,7 +453,7 @@ export default {
               this.step = moment(x.dateStart, x.dateFormat);
               // this.$emit('select:interval', x)
               this.updateImages()
-              this.redraw();
+              this.redraw()
             });
         }
         if (this.timeMode.name === "DAG") {

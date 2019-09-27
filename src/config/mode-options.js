@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const modes = [
   {
     name: 'Veld',
@@ -13,8 +15,38 @@ const modes = [
     ],
     timeModes: [
       {
-        mode: 'JAAR',
-        type: ''
+        name: "JAAR",
+        format: "%Y",
+        interval: "year",
+        timing: "yearly",
+        momentFormat: "YYYY",
+        extent: [
+          moment()
+            .startOf("year")
+            .subtract(1, "year"),
+          moment().startOf("year")
+        ],
+        ticks: 2,
+        showLanes: false,
+        showPlayer: false,
+        showSlider: false
+      },
+      {
+        name: "DAG",
+        format: "%d-%m-%Y",
+        interval: "day",
+        timing: "daily",
+        momentFormat: "DD-MM-YYYY",
+        extent: [
+          moment()
+            .startOf("day")
+            .subtract(6, "weeks"),
+          moment().startOf("day")
+        ],
+        ticks: 6,
+        showLanes: false,
+        showPlayer: false,
+        showSlider: true
       }
     ]
   },
@@ -32,8 +64,39 @@ const modes = [
     ],
     timeModes: [
       {
-        mode: 'JAAR',
-        type: 'video'
+        name: "JAAR",
+        format: "%Y",
+        interval: "year",
+        timing: "yearly",
+        momentFormat: "YYYY",
+        extent: [
+          moment()
+            .startOf("year")
+            .subtract(19, "year"),
+          moment()
+            .startOf("year")
+        ],
+        ticks: 19,
+        showLanes: true,
+        showPlayer: true,
+        showSlider: true
+      },
+      {
+        name: "DAG",
+        format: "%-m-%Y",
+        interval: "day",
+        timing: "daily",
+        momentFormat: "DD-MM-YYYY",
+        extent: [
+          moment()
+            .startOf("day")
+            .subtract(1, "year"),
+          moment().startOf("day")
+        ],
+        ticks: 12,
+        showLanes: true,
+        showPlayer: true,
+        showSlider: true
       }
     ]
   },
@@ -52,12 +115,42 @@ const modes = [
     ],
     timeModes: [
       {
-        mode: 'JAAR',
-        type: 'video'
+        name: 'JAAR',
+        type: 'video',
+        format: '%Y',
+        interval: 'year',
+        intervalType: 'interval',
+        timing: 'yearly',
+        momentFormat: 'YYYY',
+        extent: [
+          moment()
+            .startOf('year')
+            .subtract(19, 'year'),
+          moment().startOf('year')
+        ],
+        ticks: 19,
+        showLanes: true,
+        showPlayer: true,
+        showSlider: true
       },
       {
-        mode: 'DAG',
-        type: 'image'
+        name: 'DAG',
+        type: 'image',
+        format: '%-m-%Y',
+        interval: 'day',
+        timing: 'daily',
+        intervalType: 'instance',
+        momentFormat: 'DD-MM-YYYY',
+        extent: [
+          moment()
+            .startOf('day')
+            .subtract(1, 'year'),
+          moment().startOf('day')
+        ],
+        ticks: 12,
+        showLanes: true,
+        showPlayer: true,
+        showSlider: true
       }
     ]
   }

@@ -23,7 +23,7 @@
       <time-slider
         ref="timeslider"
         :layers="timesliderLayers"
-        :modes="modes"
+        :timeModes="timeModes"
         @update:time-mode="$emit('update:time-mode', $event)"
         @update-timeslider="updateTimeslider($event)"
       >
@@ -83,6 +83,10 @@ export default {
     }
   },
   computed: {
+    timeModes() {
+      const currentMode = this.modes.find(mode => mode.name === this.$route.name)
+      return currentMode.timeModes
+    },
     timesliderLayers() {
       if (!this.layers) return
       return this.layers.filter(layer => layer.timeslider && layer.active)
