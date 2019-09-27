@@ -16,9 +16,10 @@
         {{ timeMode.name }}
       </v-btn>
     </v-col>
-    <v-col cols="auto" v-show="timeMode.name === 'JAAR'" v-if="timeMode">
+    <v-col cols="auto"  v-if="timeMode">
       <v-btn
         text
+        v-show="timeMode.name === 'JAAR'"
         @click="play()"
         v-if="state === 'PAUSED'"
         >
@@ -26,20 +27,36 @@
       </v-btn>
       <v-btn
         text
+        v-show="timeMode.name === 'JAAR'"
         v-if="state === 'PLAYING'"
         @click="pause()"
         >
         <v-icon  small>fa-pause</v-icon>
       </v-btn>
+      <v-btn
+        text
+        v-if="state === 'PAUSED'"
+        @click="backward()"
+        >
+        <v-icon  small>fa-step-backward</v-icon>
+      </v-btn>
+      <v-btn
+        text
+        v-if="state === 'PAUSED'"
+        @click="forward()"
+        >
+        <v-icon  small>fa-step-forward</v-icon>
+      </v-btn>
 
       <v-btn
         text
+        v-show="timeMode.name === 'JAAR'"
         v-model="loop"
         @click="loop = !loop"
         >
         <v-icon>fa-redo-alt</v-icon>
       </v-btn>
-      <v-btn text @click="changeSpeed" v-if="speed">
+      <v-btn text @click="changeSpeed" v-if="speed" v-show="timeMode.name === 'JAAR'">
         {{ speed.name }}
       </v-btn>
     </v-col>
@@ -89,6 +106,8 @@ export default {
     return {
       state: 'PAUSED',
       step: moment().subtract(1, 'year').startOf('year'),
+      // set in updateLaneGroup
+      timeGrid: [],
       dataLanes: null,
       loop: true,
       labelWidth: 150,
@@ -106,7 +125,6 @@ export default {
       sliderHeight: 0,
       svgWidth: 0,
       trackHeight: 90,
-      currentTime: "01-01-2009",
       dragging: false,
       speeds: speeds,
       speed: null
@@ -119,7 +137,18 @@ export default {
         this.redraw();
       },
       deep: true
+    },
+    timeMode: {
+      handler: function (timeMode) {
+        // if current time is outside of current extent
+        let outside = (this.step <= timeMode.extent[0]) || (this.step >= timeMode.extent[1])
+        if (outside) {
+          this.step = timeMode.extent[1].clone().add(-1, this.timeMode.interval)
+        }
+        this.redraw()
+      }
     }
+
   },
   computed: {
     currentTimeMessage() {
@@ -230,6 +259,7 @@ export default {
 
       let drag = d3
           .drag()
+
       drag
         .on("start.interrupt", () => {
           this.slider.interrupt()
@@ -344,6 +374,11 @@ export default {
       this.laneGroup = this.svg.append("g").attr("z-index", 0);
     },
     updateLaneGroup() {
+
+      // reset the timeGrid
+      // TODO: move this out of this function
+      this.timeGrid = []
+
       this.laneGroup
         .attr("height", this.trackHeight)
         .attr("width", this.sliderWidth)
@@ -390,9 +425,6 @@ export default {
           .attr("stroke", "rgb(21,66,115)");
 
 
-        let click = () => {
-          console.log('click', d3.event)
-        }
         if (this.timeMode.name === "JAAR") {
           let yearData = data.dates.filter(
             x =>
@@ -460,13 +492,21 @@ export default {
           let instanceDates = data.dates.filter(
             x =>
               x.type === "instance" &&
-                  moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&
-                  moment(x.date, x.dateFormat) <= this.timeMode.extent[1]
-              )
-
+              moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&
+              moment(x.date, x.dateFormat) <= this.timeMode.extent[1]
+          )
           if (instanceDates.length === 0) {
             return
           }
+
+          // store instanceDates so we can use them to  snap
+          // remember the last one
+          // TODO: move this out of the timeSlider
+          this.timeGrid = instanceDates.map((d) => {
+            let t = moment(d.date, d.dateFormat)
+            return t
+          })
+
           dataLane
             .append("g")
             .selectAll(".dataInstances")
@@ -541,12 +581,76 @@ export default {
     pause() {
       this.state = 'PAUSED'
     },
-    updateHandle() {
-      if (this.currentTimeMode === "JAAR") {
-        this.handle.style("visibility", "hidden");
+    backward () {
+      // step back  in time
+      const nextStep = moment(this.step).add(-1, this.timeMode.interval);
+      if (nextStep < this.timeMode.extent[0]) {
+        return
       } else {
-        this.handle.style("visibility", "visible");
+        this.step = nextStep
       }
+      this.snap(false)
+
+      this.redraw()
+      this.updateImages()
+    },
+    forward () {
+      // step forward in time
+      const nextStep = moment(this.step).add(1, this.timeMode.interval);
+      if (nextStep >= this.timeMode.extent[1]) {
+        return
+      } else {
+        this.step = nextStep
+      }
+      this.snap(true)
+      this.redraw()
+      this.updateImages()
+    },
+    snap(forward) {
+      if (!this.timeGrid.length) {
+        return
+      }
+      let snapCandidates = this.timeGrid.filter(
+
+        t => {
+          if (!forward) {
+            return t.isSameOrBefore(this.step)
+          } else {
+            return t.isAfter(this.step)
+          }
+        }
+      )
+      if (!snapCandidates.length) {
+        return
+      }
+      // sort in place
+      snapCandidates.sort((a, b) => a.isSameOrBefore(b) ? -1 : 1)
+
+      if (forward) {
+        snapCandidates.reverse()
+      }
+
+      // get the last
+      let snapCandidate = snapCandidates[snapCandidates.length - 1]
+
+
+      // if it's outside the extent never mind
+      if (snapCandidate.isBefore(this.timeMode.extent[0]) || snapCandidate.isAfter(this.timeMode.extent[1])) {
+        return
+      }
+
+      this.step = snapCandidate
+
+
+
+
+
+
+
+
+
+    },
+    updateHandle() {
       this.handleLocationRounded = this.xScale(
         moment(this.step).startOf(this.timeMode.interval)
       );
@@ -563,13 +667,13 @@ export default {
       if (!this.timeMode) {
         return;
       }
-      this.changeMargin();
-      this.updateScale();
+      this.changeMargin()
+      this.updateScale()
 
-      this.svg.attr("width", this.svgWidth);
-      this.updateLaneGroup();
-      this.updateSlider();
-      this.updateHandle();
+      this.svg.attr("width", this.svgWidth)
+      this.updateLaneGroup()
+      this.updateSlider()
+      this.updateHandle()
     },
 
     updateImages() {
