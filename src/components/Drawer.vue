@@ -61,6 +61,7 @@
         :layers="downloadableLayers"
         :dateBegin.sync="dateBegin"
         :dateEnd.sync="dateEnd"
+        :timeMode.sync='timeMode'
       />
       <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
@@ -149,7 +150,14 @@ export default {
       return this.items.filter(item => mapLayersItems.includes(item.title))
     },
     downloadableLayers() {
-      return this.layers.filter(layer => layer.download)
+      const layerNames = this.modes.find(
+        mode => mode.name === this.$route.name
+      ).mapLayersNames
+
+      const layers = this.layers.filter(layer =>
+        layerNames.includes(layer.name)
+      )
+      return layers.filter(layer => layer.download)
     },
     analyseLayers() {
       return this.layers.filter(layer => layer.hoverFilter)

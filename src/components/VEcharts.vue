@@ -9,7 +9,7 @@
       {{`Er is iets mis gegaan!
       De analyse voor ${datatype} kan niet worden geladen.`}}
     </v-alert>
-    <e-charts :ref="datatype" :options="options"> </e-charts>
+    <e-charts :ref="datatype" class="chart" :options="options"> </e-charts>
   </div>
 </template>
 
@@ -271,5 +271,9 @@ export default {
 .echarts {
   width: 100%;
   height: 100%;
+}
+
+.chart canvas {
+  background-color: #fff;
 }
 </style>
