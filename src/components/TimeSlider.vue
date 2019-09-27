@@ -147,8 +147,14 @@ export default {
         }
         this.redraw()
       }
+    },
+    timeModes: {
+      handler (timeModes) {
+        let timeMode = timeModes[0]
+        this.timeMode = timeMode
+        this.redraw()
+      }
     }
-
   },
   computed: {
     currentTimeMessage() {
