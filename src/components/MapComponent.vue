@@ -35,6 +35,7 @@
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
+import { degreesToTiles, range } from '../utils'
 
 export default {
   name: 'map-component',
@@ -262,10 +263,23 @@ export default {
           this.$emit('set-layer', layer)
         })
       } else {
+        // HACK: avoid fetching yearly dates
+        if(this.timeMode.timing === 'yearly' && this.cachedYearlyDates) {
+          console.log('Re-using yearly dates instead of fetching')
+          layers.forEach(layer => {
+            layer.dates = this.cachedYearlyDates
+            this.$emit('set-layer', layer)
+          })
+
+          return
+        }
+
+        // fetch dates for layer
         const region = this.getRegion()
         const body = JSON.stringify({
           region: region
         })
+
         fetch(
           `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${
             this.timeMode.timing
@@ -279,10 +293,10 @@ export default {
             }
           }
         )
-        .then(res => {
-          return res.json()
-        })
+        .then(res => res.json())
         .then(dates => {
+          this.cachedYearlyDates = dates
+
           layers.forEach(layer => {
             layer.dates = dates
             this.$emit('set-layer', layer)
@@ -299,6 +313,18 @@ export default {
         type: 'Polygon',
         geodesic: true,
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
+      }
+    },
+    getTiles() {
+      let region = this.getRegion()
+
+      let zoom = 10
+      let tilesSW = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)
+      let tilesNE = degreesToTiles(region.coordinates[0][3][0], region.coordinates[0][3][1], zoom)
+
+      return {
+        tilesMin: tilesSW,
+        tilesMax: tilesNE
       }
     }
   },
