@@ -269,15 +269,17 @@ export default {
           return
         }
 
-        // fetch dates for layer
-
-        // for timeMode.timing === 'daily'
-        const region = this.getRegion()
-        const body = JSON.stringify({
-          region: region
-        })
-
+        let region = this.getRegion()
+        let body = JSON.stringify({ region: region })
+        
         let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
+
+        // ... testing querying times by tiles
+        if(this.timeMode.timing === 'daily') {
+          url = `${this.$store.state.SERVER_URL}/get_times_by_tiles/`
+          body = JSON.stringify(this.getTiles())
+        }
+
         fetch(url, {
             method: 'POST',
             body: body,
@@ -313,12 +315,12 @@ export default {
       let region = this.getRegion()
 
       let zoom = 10
-      let tilesSW = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)
-      let tilesNE = degreesToTiles(region.coordinates[0][3][0], region.coordinates[0][3][1], zoom)
+      let tilesMax = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)
+      let tilesMin = degreesToTiles(region.coordinates[0][3][0], region.coordinates[0][3][1], zoom)
 
       return {
-        tilesMin: tilesSW,
-        tilesMax: tilesNE
+        tilesMin: { tx: tilesMax[0], ty: tilesMin[1] },
+        tilesMax: { tx: tilesMin[0], ty: tilesMax[1] }
       }
     }
   },
