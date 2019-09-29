@@ -29,7 +29,8 @@ const modes = [
         ticks: 2,
         showLanes: false,
         showPlayer: false,
-        showSlider: false
+        showSlider: false,
+        showBackForward: false
       },
       {
         name: "DAG",
@@ -46,7 +47,8 @@ const modes = [
         ticks: 6,
         showLanes: false,
         showPlayer: false,
-        showSlider: true
+        showSlider: true,
+        showBackForward: true
       }
     ]
   },
@@ -79,7 +81,8 @@ const modes = [
         ticks: 19,
         showLanes: true,
         showPlayer: true,
-        showSlider: true
+        showSlider: true,
+        showBackForward: true
       },
       {
         name: "DAG",
@@ -96,7 +99,8 @@ const modes = [
         ticks: 12,
         showLanes: true,
         showPlayer: true,
-        showSlider: true
+        showSlider: true,
+        showBackForward: true
       }
     ]
   },
@@ -131,7 +135,8 @@ const modes = [
         ticks: 19,
         showLanes: true,
         showPlayer: true,
-        showSlider: true
+        showSlider: true,
+        showBackForward: true
       },
       {
         name: 'DAG',
@@ -150,7 +155,8 @@ const modes = [
         ticks: 12,
         showLanes: true,
         showPlayer: true,
-        showSlider: true
+        showSlider: true,
+        showBackForward: true
       }
     ]
   }

@@ -10,8 +10,9 @@
           align-center
           justify-space-end
           fill-height
-          v-for="layer in dataLayers"
+          v-for="layer in layers"
           :key="layer.name"
+          class="pa-4"
         >
           <v-flex xs1>
             <v-checkbox :key="layer.name" v-model="layer.active"></v-checkbox>
@@ -29,61 +30,65 @@
         <h1 class="pa-4">
           Tijdselectie
         </h1>
-        <p class="px-4">Datum: {{this.dateBegin}}</p>
+        <p class="px-4">{{timeSelectionText}}</p>
       </v-flex>
       <v-flex grow>
         <div class="pa-4">
+          <v-alert outlined type="info" v-if="!downloading && map.getZoom() > 9">
+            <p>
+              Voor Download:
+              Selecteer de lagen om te downloaden onder het kopje download.
+              Selecteer de tijd met behulp van de tijdslider.
+              Om een polygoon te tekenen, gebruik de tekenknoppen rechts op de kaart.
+              Download vervolgens met een van de knoppen hier onder.
+            </p>
+          </v-alert>
           <v-alert outlined type="info" v-if="bbox.coordinates">
             Een polygoon is geselecteerd en kan gedownload worden!
           </v-alert>
           <v-alert outlined type="info" v-if="downloading">
-            {{
-              `Lagen: ${selectedLayers()} voor de periode: ${
-                this.dateBegin
-              } tot ${
-                this.dateEnd
-              } worden gedownload. Een klein momentje geduld aub.`
-            }}
+            {{downloadText}}
           </v-alert>
           <v-alert outlined type="warning" v-if="map.getZoom() < 9">
             Zoom in op de kaart om het te downloaden gebied te verkleinen.
+          </v-alert>
+          <v-alert outlined type="error" v-if="error != ''">
+            {{error}}
           </v-alert>
         </div>
       </v-flex>
       <v-flex shrink>
         <div class="pa-4">
-          <v-layout row wrap>
-            <v-btn
-              class="mb-1"
-              :disabled="downloading"
-              block
-              outlined
-              color="btncolor"
-              @click="downloadCurrentView()"
-            >
-              Download huidige viewerbeeld
-            </v-btn>
-            <v-btn
-              class="mb-1"
-              :disabled="downloading || bbox.coordinates || map.getZoom() > 9"
-              block
-              outlined
-              color="btncolor"
-              @click="downloadGeotiff(bbox)"
-            >
-              Download geselecteerd polygoon
-            </v-btn>
-            <v-btn
-              class="mb-1"
-              :disabled="downloading"
-              block
-              outlined
-              color="btncolor"
-              @click="downloadYearMap()"
-            >
-              Volledige beheergebied jaarkaart
-            </v-btn>
-          </v-layout>
+          <v-btn
+            class="mb-1"
+            :disabled="downloading || map.getZoom() < 9"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadCurrentView()"
+          >
+            Download huidige viewerbeeld
+          </v-btn>
+          <v-btn
+            class="mb-1"
+            :disabled="downloading || bbox.coordinates || map.getZoom() < 9"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadGeotiff(bbox)"
+          >
+            Download getekende polygoon
+          </v-btn>
+          <v-btn
+            class="mb-1"
+            :disabled="downloading"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadYearMap()"
+          >
+            Hele beheergebied jaarkaart
+          </v-btn>
         </div>
       </v-flex>
     </v-layout>
@@ -110,20 +115,27 @@ export default {
     },
     dateEnd: {
       type: String
+    },
+    timeMode: {
+      type: Object
     }
   },
   computed: {
-    dataLayers: {
-      get() {
-        return this.layers
-      }
+    downloadText() {
+      const selectedLayers = this.layers.filter(x => x.active)
+      const layernames = selectedLayers.map(layer => layer.name)
+      return `Lagen: ${layernames.join(', ')} voor de ${this.timeMode.name.toLowerCase()}kaart ${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)} worden gedownload. Een moment geduld aub.`
+    },
+    timeSelectionText() {
+      return `${this.timeMode.name.toLowerCase()}kaart ${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}`
     }
   },
   data() {
     return {
       bbox: '',
       draw: {},
-      downloading: false
+      downloading: false,
+      error: ''
     }
   },
   components: { SelectPeriod },
@@ -165,6 +177,7 @@ export default {
       this.downloadGeotiff(bbox)
     },
     getBbox() {
+      // Get bounding box of the current view
       var N = this.map.getBounds().getNorth()
       var E = this.map.getBounds().getEast()
       var S = this.map.getBounds().getSouth()
@@ -174,19 +187,16 @@ export default {
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
       }
     },
-    selectedLayers() {
-      const selectedLayers = this.dataLayers.filter(x => x.active)
-      const layernames = selectedLayers.map(layer => layer.name)
-      return layernames.join(', ')
-    },
     downloadGeotiff(bbox) {
       this.downloading = true
-      var selectedLayers = this.dataLayers.filter(x => x.active)
+      this.error = ''
+      var selectedLayers = this.layers.filter(x => x.active)
       selectedLayers.forEach(layer => {
         var json_body = {
           region: bbox,
           dateBegin: this.dateBegin,
           dateEnd: this.dateEnd,
+          assetType: this.timeMode.interval,
           vis: layer.vis,
           scale: 10
         }
@@ -204,6 +214,9 @@ export default {
           .then(mapUrl => {
             window.open(mapUrl['url'])
             this.downloading = false
+          })
+          .catch(error => {
+            this.error = "Er is iets mis gegaan bij het downloaden. Excuses voor het ongemak."
           })
       })
     },

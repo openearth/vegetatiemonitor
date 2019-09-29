@@ -34,7 +34,7 @@
         </v-alert>
       </div>
       <div v-for="(type, index) in datatypes" :key="index">
-        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode" @loaded="loading = $event"></v-echarts>
+        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode" @loaded="loading = $event" @add-graph="graphs.push($event)"></v-echarts>
       </div>
       <v-timeseries v-if="$route.name === 'voorspel'" :options="voorspelOptions">
       </v-timeseries>
@@ -58,6 +58,7 @@ import VEcharts from './VEcharts'
 import InformationTable from './InformationTable'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import html2canvas from 'html2canvas'
 import moment from 'moment'
 
 export default {
@@ -110,7 +111,8 @@ export default {
       loading: true,
       landuseLabels: [],
       selectedLayer: {},
-      leggerLabels: []
+      leggerLabels: [],
+      graphs: []
     }
   },
   mounted() {
@@ -227,38 +229,31 @@ export default {
       var doc = new jsPDF()
       var W = doc.internal.pageSize.getWidth()
       var H = doc.internal.pageSize.getHeight()
-      // var res = doc.autoTableHtmlToJson()
-      doc.autoTable(document.getElementsByClassName('v-data-table')[0])
-      if (this.$refs['legger']) {
-        var imgData = this.$refs['legger'][0].$el.innerHTML
-        doc.fromHTML(imgData, W * 0.1, H * 0.2)
-      }
-      if (this.$refs['landuse']) {
-        imgData = this.$refs['landuse'][0].$el.innerHTML
-        doc.fromHTML(imgData, W * 0.5, H * 0.2)
-      }
 
-      var table = []
-      this.leggerLabels.forEach((label, i) => {
-        table.push([label, this.leggerData[i]])
+      const graphW = [W * 0.5, W * 0.05, W * 0.5]
+      const graphH = [H * 0.05, H * 0.3, H * 0.3]
+      let chartCanvas = document.querySelectorAll(".chart canvas")
+      const graphs = [...chartCanvas]
+      graphs.forEach((graph, i) => {
+        var gw = graph.width
+        var gh = graph.height
+        const data = graph.toDataURL()
+        doc.addImage(
+          data,
+          'PNG',
+          graphW[i],
+          graphH[i],
+          0.25 * W,
+          ((0.25 * W) / gw) * gh
+        )
       })
-      doc.autoTable(['Label', 'legger klassen [%]'], table, {
-        startY: 0.35 * H,
+      const table = []
+      this.properties.forEach(prop => {
+        table.push([prop.name, prop.data])
+      })
+      doc.autoTable(['Eigenschappen polygoon', ''], table, {
+        startY: 0.05 * H,
         tableWidth: 0.4 * W,
-        margin: {
-          left: 0.05 * W
-        }
-      })
-      table = []
-      this.landuseLabels.forEach((label, i) => {
-        table.push([label, this.landuseData[i]])
-      })
-      doc.autoTable(['Label', 'landuse klassen [%]'], table, {
-        startY: 0.35 * H,
-        tableWidth: 0.4 * W,
-        margin: {
-          left: W * 0.55
-        }
       })
       this.takeScreenshot(this.map).then(data => {
         var canvas = this.map.getCanvas()
@@ -269,13 +264,19 @@ export default {
           data,
           'JPEG',
           W * 0.05,
-          0.6 * H,
+          0.5 * H,
           0.9 * W,
           ((0.9 * W) / mapw) * maph
         )
-        const perceelnumber = this.properties.find(prop => prop.name === 'Perceel nummer').data
-        doc.save(`${perceelnumber}polygoon_${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}_${this.timeMode.name.toLowerCase()}kaart_${this.perceelnumber}.pdf`)
+        const perceelnumber = this.properties.find(prop => prop.name === 'Perceel nummer')
+        if (perceelnumber) {
+          doc.save(`${perceelnumber.data}_${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}_${this.timeMode.name.toLowerCase()}kaart_${this.perceelnumber}.pdf`)
+        } else  {
+          doc.save(`Leggerpolygoon_${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}_${this.timeMode.name.toLowerCase()}kaart_${this.perceelnumber}.pdf`)
+        }
       })
+
+
     },
 
     // Note: Normally the preserveDrawerBuffer in the mapbox options is used. However This
