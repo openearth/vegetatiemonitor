@@ -70,7 +70,6 @@ export default {
         if (this.extent.length) {
           this.updateTimedLayers(this.extent)
         }
-        console.log('map', this.map)
       }
     }
   },
