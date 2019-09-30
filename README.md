@@ -1,5 +1,7 @@
 # vegetatiemonitor2.0
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/2813cfd6-11db-44db-9351-4eec9f0179ff/deploy-status)](https://app.netlify.com/sites/vegetatiemonitor/deploys)
+
 ## Project setup
 ```
 npm install
