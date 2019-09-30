@@ -391,7 +391,7 @@ const mapLayers = [
     icon: './images/legend-ndvi.png',
     info:
       'Deze kaart toont de groenwaarde van het betreffende satellietbeeld, uitgedrukt in de ‘Normalized Difference Vegetation Index’. Hoe groener de waarde, hoe groener de vegetatie.',
-    opacity: 0,
+    opacity: 100,
     active: false,
     download: true,
     dataset: 'ndvi', // important! this argument is needed to call the service
@@ -453,7 +453,7 @@ const mapLayers = [
     info:
       'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
-    opacity: 0,
+    opacity: 100,
     active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
@@ -499,7 +499,7 @@ const mapLayers = [
     info:
       'Deze kaart toont de meest recente luchtfoto voor visuele vergelijking met de classificatieresultaten.',
     download: false,
-    opacity: 0,
+    opacity: 100,
     active: false,
     activeLayerType: 'mapboxLayers',
     mapboxLayers: [
