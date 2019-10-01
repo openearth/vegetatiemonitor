@@ -66,6 +66,10 @@ export default {
       deep: true,
       handler() {
         this.fetchDates()
+        // if we already received an extent update the timed layers
+        if (this.extent.length) {
+          this.updateTimedLayers(this.extent)
+        }
       }
     }
   },
@@ -89,7 +93,8 @@ export default {
       },
       polygons: [],
       scale: 10,
-      dates: []
+      dates: [],
+      extent: []
     }
   },
   computed: {
@@ -132,6 +137,7 @@ export default {
         event.beginDate,
         event.endDate
       ]
+      this.extent = extent
       this.$emit('update:dateBegin', extent[0])
       this.$emit('update:dateEnd', extent[1])
 
