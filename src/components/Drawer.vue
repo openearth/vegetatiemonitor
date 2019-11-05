@@ -33,8 +33,8 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <map-layers
-        id="menuOpen"
+      <v-map-layers
+        id="menu-open"
         v-show="menu === 'Kaartlagen' && menuOpen"
         @setLayer="$emit('setLayer', $event)"
         @setLayerOrder="$emit('setLayerOrder', $event)"
@@ -45,8 +45,8 @@
         :map="map"
         :loadingLayers="loadingLayers"
       />
-      <analyse
-        id="menuOpen"
+      <v-analyse
+        id="menu-open"
         v-if="menu === 'Analyse' && menuOpen"
         :layers="analyseLayers"
         @setLayer="$emit('setLayer', $event)"
@@ -55,7 +55,7 @@
         :dateEnd.sync="dateEnd"
         :timeMode.sync='timeMode'
       />
-      <download
+      <v-download
         id="menuOpen"
         v-if="menu === 'Download' && menuOpen"
         :map="map"
@@ -64,7 +64,7 @@
         :dateEnd.sync="dateEnd"
         :timeMode.sync='timeMode'
       />
-      <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
+      <v-colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -175,10 +175,10 @@ export default {
     }
   },
   components: {
-    MapLayers,
-    Analyse,
-    Download,
-    Colofon
+    "v-map-layers": MapLayers,
+    "v-analyse": Analyse,
+    "v-download": Download,
+    "v-colofon": Colofon
   },
   methods: {
     menuButton(title) {
@@ -199,7 +199,7 @@ export default {
 </script>
 
 <style>
-#menuOpen {
+#menu-open {
   width: 90%;
   height: calc(100vh - 48px);
   overflow-y: hidden;

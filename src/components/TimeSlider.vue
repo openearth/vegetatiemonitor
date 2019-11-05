@@ -216,7 +216,7 @@ export default {
     window.addEventListener("resize", () => {
       this.redraw();
     });
-    this.$emit('update:time-mode', timeMode)
+    this.$emit('update-time-mode', timeMode)
     this.updateImages()
 
 
@@ -233,7 +233,7 @@ export default {
         this.timeModes,
         this.timeMode
       )
-      this.$emit('update:time-mode', this.timeMode)
+      this.$emit('update-time-mode', this.timeMode)
       this.redraw()
       this.updateImages()
     },

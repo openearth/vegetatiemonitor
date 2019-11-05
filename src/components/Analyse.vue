@@ -40,11 +40,12 @@
       </v-timeseries>
     </v-flex>
     <v-flex xs1>
+      <!-- Add buttons to bottom of the menu -->
       <v-layout fill-height justify-space-around align-space-around class="px-auto py-4">
-        <v-btn v-on:click.native="closeSelectMode()" v-if="selectedProperty !== ''" outlined color="indigo">Verwijder
+        <v-btn @click="closeSelectMode()" v-if="selectedProperty !== ''" outlined color="indigo">Verwijder
           <v-icon right>close</v-icon>
         </v-btn>
-        <v-btn :disabled="loading" v-on:click.native="downloadSelection()" v-if="selectedProperty !== ''" outlined color="indigo">Download
+        <v-btn :disabled="loading" @click="downloadSelection()" v-if="selectedProperty !== ''" outlined color="indigo">Download
           <v-icon right>file_download</v-icon>
         </v-btn>
       </v-layout>

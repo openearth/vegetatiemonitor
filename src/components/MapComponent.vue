@@ -25,7 +25,7 @@
         :layers="timesliderLayers"
         :timeModes="timeModes"
         :dates="dates"
-        @update:time-mode="$emit('update:time-mode', $event)"
+        @update-time-mode="$emit('update:time-mode', $event)"
         @update-timeslider="updateTimeslider($event)"
       >
       </time-slider>
@@ -67,10 +67,6 @@ export default {
       deep: true,
       handler() {
         this.fetchDates()
-        // if we already received an extent update the timed layers
-        if (this.extent.length) {
-          this.updateTimedLayers(this.extent)
-        }
       }
     }
   },
@@ -94,8 +90,7 @@ export default {
       },
       polygons: [],
       scale: 10,
-      dates: [],
-      extent: []
+      dates: []
     }
   },
   computed: {
@@ -138,7 +133,6 @@ export default {
         event.beginDate,
         event.endDate
       ]
-      this.extent = extent
       this.$emit('update:dateBegin', extent[0])
       this.$emit('update:dateEnd', extent[1])
 
@@ -226,7 +220,7 @@ export default {
       }
 
       const region = this.getRegion()
-      var json_body = {
+      var jsonBody = {
         dateBegin: extent[0],
         dateEnd: extent[1],
         region: region,
@@ -240,7 +234,7 @@ export default {
       this.$emit('loading-layer', layer.name)
       fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
-        body: JSON.stringify(json_body),
+        body: JSON.stringify(jsonBody),
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json'
@@ -257,6 +251,9 @@ export default {
         })
     },
     fetchDates() {
+      // After each interaction with the map, fetch the new dates belonging to
+      // the timed layers
+
       const layers = this.timesliderLayers.filter(layer => layer.active)
 
       // If there is no active timeslider layers, do nothing
@@ -270,14 +267,13 @@ export default {
       } else {
         // avoid fetching yearly dates, take them from cache
         if(this.timeMode.timing === 'yearly' && this.cachedYearlyDates) {
-          console.log('Re-using yearly dates instead of fetching')
           this.dates = this.cachedYearlyDates
           return
         }
 
         let region = this.getRegion()
         let body = JSON.stringify({ region: region })
-        
+
         let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
 
         // ... testing querying times by tiles

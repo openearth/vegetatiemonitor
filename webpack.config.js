@@ -22,11 +22,6 @@ module.exports = {
           'css-loader',
           {
             loader: 'sass-loader',
-            options: {
-              implementation: require('sass'),
-              fiber: require('fibers'),
-              indentedSyntax: true // optional
-            }
           }
         ]
       }

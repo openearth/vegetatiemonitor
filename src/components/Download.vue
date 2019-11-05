@@ -1,18 +1,17 @@
 <template>
-  <div id="download">
+  <div class="download">
     <v-layout column fill-height>
       <v-flex xs4 align-stretch>
         <h1 class="pa-4">
           Download
         </h1>
         <v-layout
-          id="cardlayout"
+          class="cardlayout pa-4"
           align-center
           justify-space-end
           fill-height
           v-for="layer in layers"
           :key="layer.name"
-          class="pa-4"
         >
           <v-flex xs1>
             <v-checkbox :key="layer.name" v-model="layer.active"></v-checkbox>
@@ -192,7 +191,7 @@ export default {
       this.error = ''
       var selectedLayers = this.layers.filter(x => x.active)
       selectedLayers.forEach(layer => {
-        var json_body = {
+        var jsonBody = {
           region: bbox,
           dateBegin: this.dateBegin,
           dateEnd: this.dateEnd,
@@ -202,7 +201,7 @@ export default {
         }
         fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/export/`, {
           method: 'POST',
-          body: JSON.stringify(json_body),
+          body: JSON.stringify(jsonBody),
           mode: 'cors',
           headers: {
             'Content-Type': 'application/json'
@@ -238,16 +237,12 @@ export default {
   margin: auto;
 }
 
-.carddiv {
-  max-height: 40vh;
-  overflow-y: auto;
-}
-#cardlayout {
+.cardlayout {
   width: 100%;
   height: 48px;
 }
 
-#download {
+.download {
   max-height: 100%;
   height: 100%;
   width: 100%;
