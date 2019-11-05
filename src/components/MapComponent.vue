@@ -36,6 +36,7 @@
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
+import { degreesToTiles, range } from '../utils'
 
 export default {
   name: 'map-component',
@@ -267,16 +268,25 @@ export default {
       if (this.map.getZoom() < 9) {
         this.dates = []
       } else {
-        const region = this.getRegion()
-        const body = JSON.stringify({
-          region: region
-        })
+        // avoid fetching yearly dates, take them from cache
+        if(this.timeMode.timing === 'yearly' && this.cachedYearlyDates) {
+          console.log('Re-using yearly dates instead of fetching')
+          this.dates = this.cachedYearlyDates
+          return
+        }
 
-        fetch(
-          `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${
-            this.timeMode.timing
-          }`,
-          {
+        let region = this.getRegion()
+        let body = JSON.stringify({ region: region })
+        
+        let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
+
+        // ... testing querying times by tiles
+        if(this.timeMode.timing === 'daily') {
+          url = `${this.$store.state.SERVER_URL}/get_times_by_tiles/`
+          body = JSON.stringify(this.getTiles())
+        }
+
+        fetch(url, {
             method: 'POST',
             body: body,
             mode: 'cors',
@@ -285,10 +295,13 @@ export default {
             }
           }
         )
-        .then(res => {
-          return res.json()
-        })
+        .then(res => res.json())
         .then(dates => {
+          // cache yearly dates
+          if(this.timeMode.timing === 'yearly') {
+            this.cachedYearlyDates = dates
+          }
+
           this.dates = dates
         })
       }
@@ -302,6 +315,18 @@ export default {
         type: 'Polygon',
         geodesic: true,
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
+      }
+    },
+    getTiles() {
+      let region = this.getRegion()
+
+      let zoom = 10
+      let tilesMax = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)
+      let tilesMin = degreesToTiles(region.coordinates[0][3][0], region.coordinates[0][3][1], zoom)
+
+      return {
+        tilesMin: { tx: tilesMax[0], ty: tilesMin[1] },
+        tilesMax: { tx: tilesMin[0], ty: tilesMax[1] }
       }
     }
   },
