@@ -2,10 +2,14 @@
   <div class="component-wrapper">
     <v-progress-circular
       class="ma-6"
-      v-if="loading"
+      v-if="loading && !error"
       indeterminate
     ></v-progress-circular>
-    <e-charts :ref="datatype" :options="options" :autoresize="true"> </e-charts>
+    <v-alert outlined type="error" v-if="error" class="py-auto">
+      {{`Er is iets mis gegaan!
+      De analyse voor ${datatype} kan niet worden geladen.`}}
+    </v-alert>
+    <e-charts :ref="datatype" class="chart" :options="options"> </e-charts>
   </div>
 </template>
 
@@ -72,12 +76,16 @@ export default {
     },
     dateEnd: {
       type: String
+    },
+    timeMode: {
+      type: Object
     }
   },
   data() {
     return {
       loading: true,
-      options: {}
+      options: {},
+      error: false
     }
   },
   mounted() {
@@ -85,9 +93,11 @@ export default {
   },
   methods: {
     fetchZonalData() {
+      console.log('this.timemode in echarts before sending requests', this.timeMode)
       const body = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
+        assetType: this.timeMode.interval,
         region: {
           type: 'FeatureCollection',
           features: [
@@ -145,14 +155,15 @@ export default {
             this.createLineChart(chartData[0])
           }
         })
+      .catch(error => {
+        this.error = true
+      })
     },
     createLineChart(data) {
-      console.log(data.series)
       const options = {
         id: this.datatype,
         title: {
           text: `Tijdseries van ${this.datatype}`,
-          subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
           x: 'center',
           textStyle: {
             fontFamily: 'Helvetica',
@@ -169,9 +180,15 @@ export default {
             return `${a.name}: ${a.value.toFixed(2)}m&sup2)`
           }
         },
+        grid: {
+          x: 70,
+          x2: 50,
+          y: 30,
+          y2: 150,
+        },
         legend: {
           bottom: 'bottom',
-          padding: [32, 0],
+          padding: 20,
           textStyle: {
             fontFamily: 'Helvetica',
             fontSize: 14
@@ -187,7 +204,7 @@ export default {
         id: this.datatype,
         title: {
           text: `Verdeling van ${this.datatype} klassen`,
-          subtext: `From: ${this.dateBegin} To: ${this.dateEnd}`,
+          subtext: this.dataype === 'legger'? `Van: ${this.dateBegin} Tot: ${this.dateEnd}` : '',
           x: 'center',
           textStyle: {
             fontFamily: 'Helvetica',
@@ -211,6 +228,10 @@ export default {
             fontFamily: 'Helvetica',
             fontSize: 14
           }
+        },
+        grid: {
+          y: 60,
+          y2: 150,
         },
         series: [
           {
@@ -244,11 +265,15 @@ export default {
 
 <style>
 .component-wrapper {
-  height: 450px;
+  height: 400px;
   width: 100%;
 }
 .echarts {
   width: 100%;
   height: 100%;
+}
+
+.chart canvas {
+  background-color: #fff;
 }
 </style>

@@ -4,8 +4,6 @@
       v-model="disclaimer"
       persistent
       scrollable
-      width="50vw"
-      max-width="40vw"
     >
       <v-card light>
         <v-card-title>
@@ -65,5 +63,7 @@ export default {
 .v-dialog,
 v-dialog {
   min-width: 300px !important;
+  width: 50vw;
+  max-width: 40vw;
 }
 </style>

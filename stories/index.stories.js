@@ -20,17 +20,43 @@ import layers from './layers.json'
 // Vue.use(Vuetify)
 
 
-storiesOf("TimeSlider", module).add("default", () => ({
+storiesOf("TimeSlider Veld", module).add("default", () => ({
   components: { TimeSlider },
   data () {
     return {
-      modes,
+      timeModes: modes[0].timeModes,
       layers
 
     }
   },
-  template: `<time-slider :modes="modes" :layers="[]"></time-slider>`
+  template: `<time-slider :time-modes="timeModes" :layers="layers"></time-slider>`
 }))
+
+
+storiesOf("TimeSlider Verken", module).add("default", () => ({
+  components: { TimeSlider },
+  data () {
+    return {
+      timeModes: modes[1].timeModes,
+      layers
+
+    }
+  },
+  template: `<time-slider :time-modes="timeModes" :layers="layers"></time-slider>`
+}))
+
+storiesOf("TimeSlider Voorspel", module).add("default", () => ({
+  components: { TimeSlider },
+  data () {
+    return {
+      timeModes: modes[2].timeModes,
+      layers
+
+    }
+  },
+  template: `<time-slider :time-modes="timeModes" :layers="layers"></time-slider>`
+}))
+
 
 storiesOf("SvgTimeSlider", module)
   .add("default", () => ({

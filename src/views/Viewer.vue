@@ -2,36 +2,38 @@
   <div class="viewer">
     <v-disclaimer></v-disclaimer>
     <toolbar
-      :drawerstate="drawerstate"
-      @setDrawerstate="drawerstate = $event"
+      :drawerState.sync="drawerState"
       :modes="modes"
       id="toolbar-comp"
     />
 
     <v-content id="content">
       <drawer
-        :drawerstate="drawerstate"
+        :drawerState.sync="drawerState"
         :layers="layers"
-        @setDrawerstate="drawerstate = $event"
+        :openDrawer.sync="openDrawer"
         @setLayer="updateLayer($event)"
         @setLayerOrder="updateLayerOrder($event)"
         :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :timeMode.sync="timeMode"
         class="navdrawer"
         :modes="modes"
+        :loadingLayers="loadingLayers"
       />
 
       <map-component
-        :layers="layers"
-        :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        :openDrawer.sync="openDrawer"
+        :layers.sync="layers"
+        :map.sync="map"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
         :modes="modes"
-        @setMap="map = $event"
-        @setLayer="setLayer($event)"
-        @setDateBegin="dateBegin = $event"
-        @setDateEnd="dateEnd = $event"
+        :timeMode.sync="timeMode"
+        :loadingLayers.sync="loadingLayers"
+        @loading-layer="loadingLayers.push($event)"
+        @done-loading-layer="loadingLayers.pop($event)"
       />
     </v-content>
   </div>
@@ -50,26 +52,15 @@ export default {
   name: 'viewer',
   data: function() {
     return {
-      drawerstate: true,
+      drawerState: true,
       modes: modes,
       map: {},
       layers: mapLayers,
       dateBegin: '2018-07-25',
-      dateEnd: '2018-07-28'
-    }
-  },
-  watch: {
-    map(val) {
-      this.map = val
-    },
-    layers(val) {
-      this.layers = val
-    },
-    dateBegin(val) {
-      this.dateBegin = val
-    },
-    dateEnd(val) {
-      this.dateEnd = val
+      dateEnd: '2018-07-28',
+      openDrawer: false,
+      timeMode: null,
+      loadingLayers: []
     }
   },
   methods: {

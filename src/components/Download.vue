@@ -1,16 +1,16 @@
 <template>
-  <div id="download">
+  <div class="download">
     <v-layout column fill-height>
       <v-flex xs4 align-stretch>
         <h1 class="pa-4">
           Download
         </h1>
         <v-layout
-          id="cardlayout"
+          class="cardlayout pa-4"
           align-center
           justify-space-end
           fill-height
-          v-for="layer in dataLayers"
+          v-for="layer in layers"
           :key="layer.name"
         >
           <v-flex xs1>
@@ -24,41 +24,71 @@
           </v-flex>
         </v-layout>
       </v-flex>
+
       <v-flex shrink>
         <h1 class="pa-4">
-          Settings
+          Tijdselectie
         </h1>
-        <v-card small flat class="py">
-          <v-card-text>
-            <v-layout row wrap>
-              <v-flex xs12>
-                <v-text-field
-                  dense
-                  v-model="resolution"
-                  label="Resolutie"
-                  clearable
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <p>Geselecteerd gebied: {{ bbox }}</p>
-              </v-flex>
-              <v-flex>
-                <v-layout justify-center align-start>
-                  <v-btn outlined color="btncolor" @click="getBbox()">
-                    Polygoon van huidig beeld
-                  </v-btn>
-                </v-layout>
-              </v-flex>
-            </v-layout>
-          </v-card-text>
-        </v-card>
+        <p class="px-4">{{timeSelectionText}}</p>
+      </v-flex>
+      <v-flex grow>
+        <div class="pa-4">
+          <v-alert outlined type="info" v-if="!downloading && map.getZoom() > 9">
+            <p>
+              Voor Download:
+              Selecteer de lagen om te downloaden onder het kopje download.
+              Selecteer de tijd met behulp van de tijdslider.
+              Om een polygoon te tekenen, gebruik de tekenknoppen rechts op de kaart.
+              Download vervolgens met een van de knoppen hier onder.
+            </p>
+          </v-alert>
+          <v-alert outlined type="info" v-if="bbox.coordinates">
+            Een polygoon is geselecteerd en kan gedownload worden!
+          </v-alert>
+          <v-alert outlined type="info" v-if="downloading">
+            {{downloadText}}
+          </v-alert>
+          <v-alert outlined type="warning" v-if="map.getZoom() < 9">
+            Zoom in op de kaart om het te downloaden gebied te verkleinen.
+          </v-alert>
+          <v-alert outlined type="error" v-if="error != ''">
+            {{error}}
+          </v-alert>
+        </div>
       </v-flex>
       <v-flex shrink>
-        <v-layout justify-center align-start>
-          <v-btn outlined color="btncolor" @click="downloadGeotiff()">
-            download
+        <div class="pa-4">
+          <v-btn
+            class="mb-1"
+            :disabled="downloading || map.getZoom() < 9"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadCurrentView()"
+          >
+            Download huidige viewerbeeld
           </v-btn>
-        </v-layout>
+          <v-btn
+            class="mb-1"
+            :disabled="downloading || bbox.coordinates || map.getZoom() < 9"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadGeotiff(bbox)"
+          >
+            Download getekende polygoon
+          </v-btn>
+          <v-btn
+            class="mb-1"
+            :disabled="downloading"
+            block
+            outlined
+            color="btncolor"
+            @click="downloadYearMap()"
+          >
+            Hele beheergebied jaarkaart
+          </v-btn>
+        </div>
       </v-flex>
     </v-layout>
   </div>
@@ -66,6 +96,8 @@
 
 <script>
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
+import SelectPeriod from '../components/SelectPeriod'
+import moment from 'moment'
 
 export default {
   props: {
@@ -82,23 +114,30 @@ export default {
     },
     dateEnd: {
       type: String
+    },
+    timeMode: {
+      type: Object
     }
   },
   computed: {
-    dataLayers: {
-      get() {
-        return this.layers
-      }
+    downloadText() {
+      const selectedLayers = this.layers.filter(x => x.active)
+      const layernames = selectedLayers.map(layer => layer.name)
+      return `Lagen: ${layernames.join(', ')} voor de ${this.timeMode.name.toLowerCase()}kaart ${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)} worden gedownload. Een moment geduld aub.`
+    },
+    timeSelectionText() {
+      return `${this.timeMode.name.toLowerCase()}kaart ${moment(this.dateBegin).startOf(this.timeMode.interval).format(this.timeMode.momentFormat)}`
     }
   },
   data() {
     return {
-      resolution: 100,
       bbox: '',
-      draw: {}
+      draw: {},
+      downloading: false,
+      error: ''
     }
   },
-  components: {},
+  components: { SelectPeriod },
   mounted() {
     this.draw = new MapboxDraw({
       displayControlsDefault: false,
@@ -120,37 +159,49 @@ export default {
     this.map.on('draw.update', () => {
       this.bbox = this.draw.getAll().features[0].geometry
     })
+
+    this.map.on('draw.delete', () => {
+      this.bbox = {}
+    })
   },
   beforeDestroy() {
     this.map.removeControl(this.draw)
+    this.map.off('draw.create')
+    this.map.off('draw.update')
+    this.map.off('draw.delete')
   },
   methods: {
+    downloadCurrentView() {
+      const bbox = this.getBbox()
+      this.downloadGeotiff(bbox)
+    },
     getBbox() {
+      // Get bounding box of the current view
       var N = this.map.getBounds().getNorth()
       var E = this.map.getBounds().getEast()
       var S = this.map.getBounds().getSouth()
       var W = this.map.getBounds().getWest()
-      this.bbox = {
+      return {
         type: 'Polygon',
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
       }
     },
-    downloadGeotiff() {
-      var selectedLayers = this.dataLayers.filter(x => x.active)
+    downloadGeotiff(bbox) {
+      this.downloading = true
+      this.error = ''
+      var selectedLayers = this.layers.filter(x => x.active)
       selectedLayers.forEach(layer => {
-        if (this.bbox === '') {
-          this.getBbox()
-        }
-        var json_body = {
-          region: this.bbox,
+        var jsonBody = {
+          region: bbox,
           dateBegin: this.dateBegin,
           dateEnd: this.dateEnd,
+          assetType: this.timeMode.interval,
           vis: layer.vis,
-          scale: this.resolution
+          scale: 10
         }
         fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/export/`, {
           method: 'POST',
-          body: JSON.stringify(json_body),
+          body: JSON.stringify(jsonBody),
           mode: 'cors',
           headers: {
             'Content-Type': 'application/json'
@@ -161,8 +212,20 @@ export default {
           })
           .then(mapUrl => {
             window.open(mapUrl['url'])
+            this.downloading = false
+          })
+          .catch(error => {
+            this.error = "Er is iets mis gegaan bij het downloaden. Excuses voor het ongemak."
           })
       })
+    },
+
+    downloadYearMap() {
+      // Downlaod the seasonal map for latest year, entire netherlands
+      // TODO: URL doesn't give the correct tiff back yet.
+      window.open(
+        `https://storage.cloud.google.com/vegetatiemonitor/yearly-classified-geotiffs/classified-image-2019.tif`
+      )
     }
   }
 }
@@ -174,16 +237,12 @@ export default {
   margin: auto;
 }
 
-.carddiv {
-  max-height: 40vh;
-  overflow-y: auto;
-}
-#cardlayout {
+.cardlayout {
   width: 100%;
   height: 48px;
 }
 
-#download {
+.download {
   max-height: 100%;
   height: 100%;
   width: 100%;

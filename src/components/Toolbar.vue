@@ -2,7 +2,7 @@
   <v-app-bar floating :clipped-left="true" app dense color="secondary">
     <!-- <v-toolbar dense fixed color="secondary" prominent class="pa-0"> -->
 
-    <v-app-bar-nav-icon @click="drawer = true">
+    <v-app-bar-nav-icon @click="$emit('update:drawer-state', !drawerState)">
       <v-icon>
         fa-bars
       </v-icon>
@@ -43,21 +43,11 @@
 export default {
   name: 'toolbar',
   props: {
-    drawerstate: {
+    drawerState: {
       type: Boolean
     },
     modes: {
       type: Array
-    }
-  },
-  computed: {
-    drawer: {
-      get() {
-        return this.drawerstate
-      },
-      set(drawerstate) {
-        this.$emit('setDrawerstate', drawerstate)
-      }
     }
   }
 }

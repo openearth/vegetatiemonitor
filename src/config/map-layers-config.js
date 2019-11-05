@@ -67,8 +67,9 @@ const mapLayers = [
     selectFilter: 'KadasterSelect',
     selectProperty: 'ADMINPERCE',
     datatypes: ['landuse', 'legger'],
+    activeLayerType: 'mapboxLayers',
     info:
-      'Dit is een superduper awesome laag. Ik heb even opvulling nodig voor het informatie stukje bladiebladieblad',
+      'Deze kaart toont de kadasterpercelen in het gebied en kan worden gebruikt om een analyse per perceel op uit te voeren.',
     mapboxLayers: [
       {
         id: 'Kadaster',
@@ -76,6 +77,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -89,6 +93,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -106,6 +113,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -139,6 +149,9 @@ const mapLayers = [
     icon: './images/legend-stroombaan.png',
     opacity: 100,
     active: true,
+    info:
+      'De stroombanenkaart toont de hoofdstroombanen tijdens hoog water over de uiterwaarden.',
+    activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'Streamlines',
@@ -159,12 +172,40 @@ const mapLayers = [
   {
     name: 'Classificatie vs Legger',
     icon: './images/legend-classified.png',
+    info:
+      'Deze kaart vergelijkt de huidige classificatie met de legger in een kleurenschaal van groen (vegetatie is gladder dan de toegestane klasse) naar rood (vegetatie is ruwer dan de toegestane klasse).',
     opacity: 100,
     active: false,
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
+    activeLayerType: 'mapboxLayers',
     imageLayers: [{}],
-    mapboxLayers: [{}],
+    mapboxLayers: [
+      {
+        id: 'classificatie-vs-legger-video',
+        type: 'raster',
+        layout: {
+          'visibility': 'none'
+        },
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
+          ],
+          layout: {
+            'visibility': 'none'
+          },
+          tileSize: 256,
+          durationSec: 1.8,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
     download: true,
     vis: {},
     timeslider: true,
@@ -174,10 +215,13 @@ const mapLayers = [
   {
     name: 'Classificatie',
     icon: './images/legend-classified.png',
+    info:
+      'Deze kaart toont de classificatie van het gekozen enkele satellietbeeld of jaargemiddelde beeld.',
     download: true,
     opacity: 100,
-    active: true,
+    active: false,
     dataset: 'landuse', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
     legend: {
       colors: [
         '#bdeeff',
@@ -200,13 +244,19 @@ const mapLayers = [
       {
         id: 'classificatie-video',
         type: 'raster',
+        paint: {
+          'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
+        },
         source: {
           type: 'video-tiled',
           tiles: [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm'
           ],
-          tileSize: 512,
-          durationSec: 18,
+          tileSize: 256,
+          durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
           maxzoom: 14,
@@ -225,9 +275,12 @@ const mapLayers = [
   {
     name: 'Vegetatielegger',
     icon: './images/legend-legger.png',
+    info:
+      'De vegetatielegger toont welke vegetatie formeel op een gegeven locatie mag voorkomen.',
     opacity: 100,
-    active: true,
+    active: false,
     datatypes: ['landuse'],
+    activeLayerType: 'mapboxLayers',
     type: 'group',
     legend: {
       colors: [
@@ -264,6 +317,9 @@ const mapLayers = [
         source: {
           type: 'vector',
           url: 'mapbox://ellispenning.87a2u39q'
+        },
+        layout: {
+          'visibility': 'none'
         },
         'source-layer': 'vegetatie-vlakken-596nr3',
         paint: {
@@ -333,10 +389,13 @@ const mapLayers = [
   {
     name: 'Vegetatie (NDVI)',
     icon: './images/legend-ndvi.png',
+    info:
+      'Deze kaart toont de groenwaarde van het betreffende satellietbeeld, uitgedrukt in de ‘Normalized Difference Vegetation Index’. Hoe groener de waarde, hoe groener de vegetatie.',
     opacity: 100,
     active: false,
     download: true,
     dataset: 'ndvi', // important! this argument is needed to call the service
+    activeLayerType: 'mapboxLayers',
     legend: {
       colors: [
         '#000000',
@@ -360,7 +419,29 @@ const mapLayers = [
       ],
       range: '-1 1'
     },
-    mapboxLayers: [{}],
+    mapboxLayers: [
+      {
+        id: 'ndvi-video',
+        type: 'raster',
+        layout: {
+          'visibility': 'none'
+        },
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/ndvi-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 1.8,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
     imageLayers: [{}],
     vis: {},
     timeslider: true,
@@ -369,35 +450,67 @@ const mapLayers = [
   {
     name: 'Satelliet beelden',
     icon: './images/legend-rgb.png',
+    info:
+      'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
     opacity: 100,
-    active: true,
+    active: false,
     dataset: 'satellite', // important! this argument is needed to call the service
-    mapboxLayers: [{}],
-    imageLayers: [{}],
-    vis: pseudoColors[0].vis,
-    settings: [
+    activeLayerType: 'mapboxLayers',
+    mapboxLayers: [
       {
-        type: 'select',
-        items: pseudoColors,
-        selected: 'Natural colors'
+        id: 'satellite-natural-video',
+        type: 'raster',
+        paint: {
+          'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
+        },
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/satellite-natural-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 1.8,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
       }
     ],
+    imageLayers: [{}],
+    vis: {
+      bands: ['red', 'green', 'blue'],
+      min: 0.05,
+      max: [0.35, 0.35, 0.45],
+      gamma: 1.4
+    },
     timeslider: true,
     dates: []
   },
   {
     name: 'Luchtfoto',
     icon: './images/legend-rgb.png',
+    info:
+      'Deze kaart toont de meest recente luchtfoto voor visuele vergelijking met de classificatieresultaten.',
     download: false,
-    opacity: 0,
+    opacity: 100,
     active: false,
+    activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'Luchtfoto',
         type: 'raster',
         paint: {
           'raster-opacity': 0
+        },
+        layout: {
+          'visibility': 'none'
         },
         source: {
           type: 'raster',

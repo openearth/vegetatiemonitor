@@ -4,7 +4,7 @@
       access-token="pk.eyJ1Ijoic2lnZ3lmIiwiYSI6Il8xOGdYdlEifQ.3-JZpqwUa3hydjAJFXIlMA"
       map-style="mapbox://styles/mapbox/light-v9"
       :center="center"
-      :zoom="7.88"
+      :zoom="9"
       :pitch="0"
       :bearing="0"
       :min-zoom="5"
@@ -16,13 +16,17 @@
       <v-mapbox-navigation-control></v-mapbox-navigation-control>
       <v-mapbox-geolocate-control></v-mapbox-geolocate-control>
     </v-mapbox>
-    <v-card id="t-slider" color="secondary">
+    <v-card
+      class="t-slider"
+      :id="[openDrawer ? 'small-slider' : 'big-slider']"
+      color="secondary">
       <time-slider
         ref="timeslider"
         :layers="timesliderLayers"
-        :modes="modes"
+        :timeModes="timeModes"
+        :dates="dates"
+        @update-time-mode="$emit('update:time-mode', $event)"
         @update-timeslider="updateTimeslider($event)"
-        @update:time-mode="timeMode = $event"
       >
       </time-slider>
     </v-card>
@@ -32,10 +36,14 @@
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
+import { degreesToTiles, range } from '../utils'
 
 export default {
   name: 'map-component',
   props: {
+    openDrawer: {
+      type: Boolean
+    },
     layers: {
       type: Array
     },
@@ -49,13 +57,23 @@ export default {
     },
     modes: {
       type: Array
+    },
+    timeMode: {
+      type: Object
+    }
+  },
+  watch: {
+    layers: {
+      deep: true,
+      handler() {
+        this.fetchDates()
+      }
     }
   },
   data: function() {
     return {
-      center: [5.673272, 52.079502],
+      center: [5.2, 51.8],
       map: null,
-      timeMode: {},
       layerTypes: ['imageLayers', 'mapboxLayers'],
       region: {
         coordinates: [
@@ -71,36 +89,29 @@ export default {
         type: 'Polygon'
       },
       polygons: [],
-      scale: 10
+      scale: 10,
+      dates: []
     }
   },
   computed: {
-    mapLayers: {
-      get() {
-        return this.layers
-      },
-      set(mapLayers) {
-        this.$emit('setLayers', mapLayers)
-      }
-    },
-    extent: {
-      get() {
-        return [this.dateBegin, this.dateEnd]
-      },
-      set(extent) {
-        this.$emit('setDateBegin', extent[0])
-        this.$emit('setDateEnd', extent[1])
-      }
+    timeModes() {
+      const currentMode = this.modes.find(mode => mode.name === this.$route.name)
+      return currentMode.timeModes
     },
     timesliderLayers() {
-      if (!this.mapLayers) return
-      return this.mapLayers.filter(layer => layer.timeslider && layer.active)
+      if (!this.layers) return
+      return this.layers.filter(layer => layer.timeslider && layer.active)
     }
   },
   mounted() {
     this.map = this.$refs.map.map
     this.map.on('load', () => {
-      this.$emit('setMap', this.map)
+      // disable map rotation using right click + drag
+      this.map.dragRotate.disable()
+
+      // disable map rotation using touch rotation gesture
+      this.map.touchZoomRotate.disableRotation()
+      this.$emit('update:map', this.map)
       this.addMapboxLayers()
       // this.updateGEELayers()
       this.fetchDates()
@@ -118,34 +129,37 @@ export default {
   methods: {
     deferredMountedTo() {},
     updateTimeslider(event) {
-      this.extent = [
-        event.beginDate.format('YYYY-MM-DD'),
-        event.endDate.format('YYYY-MM-DD')
+      const extent = [
+        event.beginDate,
+        event.endDate
       ]
+      this.$emit('update:dateBegin', extent[0])
+      this.$emit('update:dateEnd', extent[1])
+
       this.timing = event.timing
       this.dragging = event.dragging
-      this.updateTimedLayers()
-
-      // this.updateVideoLayers(this.extent[0])
+      if(this.map) {
+        this.updateTimedLayers(extent)
+      }
     },
     addMapboxLayers() {
-      this.mapLayers.forEach(layer => {
+      this.layers.forEach(layer => {
         layer.mapboxLayers.forEach(maplayer => {
           if (!maplayer.id) return
-          if (!this.map.getSource(maplayer)) {
+          if (!this.map.getSource(maplayer.id)) {
             this.map.addLayer(maplayer)
           }
         })
       })
     },
-    updateTimedLayers() {
-      console.log(this.timing, this.dragging)
-      this.mapLayers.forEach(layer => {
+    updateTimedLayers(extent) {
+      this.layers.forEach(layer => {
         if (layer.timeslider) {
           // If layer is not active, return
           if (!layer.active) return
-          if (this.timing === 'DAG' && this.dragging === false) {
-            this.updateImageLayer(layer)
+          if (this.timing === 'DAG' && this.dragging === false && this.map.getZoom() >= 9) {
+            this.updateImageLayer(layer, extent)
+            layer.activeLayerType = 'imageLayers'
           } else if (this.timing === 'JAAR') {
             const videoLayer = layer.mapboxLayers.find(d => {
               if (!d.source) {
@@ -155,8 +169,9 @@ export default {
               }
             })
             if (videoLayer) {
-              this.updateVideoLayerTime(videoLayer, this.extent[0])
+              this.updateVideoLayerTime(videoLayer, extent[0])
             }
+            layer.activeLayerType = 'mapboxLayers'
           }
         }
       })
@@ -168,88 +183,106 @@ export default {
       let end = moment(layer.source.dateEnd)
       let durationTotal = moment.duration(end.diff(begin)).asDays()
       let durationCurrent = moment.duration(time.diff(begin)).asDays()
-
       let fraction = durationCurrent / durationTotal
       let t = layer.source.durationSec * fraction
 
       t = Math.max(0, t)
       t = Math.min(layer.source.durationSec, t)
-
       let player = this.map.getSource(layer.id).player
-
       player.setCurrentTime(t)
     },
-    updateImageLayer(layer) {
+    updateImageLayer(layer, extent) {
       const imageLayers = layer.imageLayers[0]
 
       // If existing gee layer on already has the correct dates and dataset, return
-      if (layer.imageLayers.length > 0 && imageLayers.extent == this.extent) {
+      if (layer.imageLayers.length > 0 && imageLayers.extent == extent) {
         return
-        //
-      } else {
-        var mapId = `${layer.dataset}_${this.extent.join('_')}`
-        var mapJson = {
-          id: mapId,
+      }
+
+      var mapId = `${layer.dataset}_${extent.join('_')}`
+      var mapJson = {
+        id: mapId,
+        type: 'raster',
+        extent: extent,
+        source: {
           type: 'raster',
-          extent: this.extent,
-          source: {
-            type: 'raster',
-            tiles: [],
-            tileSize: 256
-          }
+          tiles: [],
+          tileSize: 256
         }
+      }
 
-        if (imageLayers && imageLayers.extent) {
-          const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-          if (this.map.getSource(oldMapId)) {
-            this.map.removeLayer(oldMapId)
-            this.map.removeSource(oldMapId)
-          }
+      if (imageLayers && imageLayers.extent) {
+        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
+        if (this.map.getSource(oldMapId)) {
+          this.map.removeLayer(oldMapId)
+          this.map.removeSource(oldMapId)
         }
+      }
 
-        const region = this.getRegion()
-        var json_body = {
-          dateBegin: this.extent[0],
-          dateEnd: this.extent[1],
-          region: region,
-          vis: layer.vis
-        }
+      const region = this.getRegion()
+      var jsonBody = {
+        dateBegin: extent[0],
+        dateEnd: extent[1],
+        region: region,
+        vis: layer.vis
       }
 
       if (this.map.getSource(mapId)) {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
-      } else {
-        fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
-          method: 'POST',
-          body: JSON.stringify(json_body),
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-          .then(res => {
-            return res.json()
-          })
-          .then(mapUrl => {
-            mapJson.source['tiles'] = [mapUrl['url']]
-            this.map.addLayer(mapJson)
-            layer.imageLayers[0] = mapJson
-          })
       }
+      this.$emit('loading-layer', layer.name)
+      fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
+        method: 'POST',
+        body: JSON.stringify(jsonBody),
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(res => {
+          return res.json()
+        })
+        .then(mapUrl => {
+          mapJson.source['tiles'] = [mapUrl['url']]
+          this.map.addLayer(mapJson)
+          layer.imageLayers[0] = mapJson
+          this.$emit('done-loading-layer', layer.name)
+        })
     },
     fetchDates() {
-      const region = this.getRegion()
-      const body = JSON.stringify({
-        region: region
-      })
-      this.timesliderLayers.map(layer => {
-        if (!layer.active) return
-        fetch(
-          `${this.$store.state.SERVER_URL}/map/${layer.dataset}/times/${
-            this.timeMode.timing
-          }`,
-          {
+      // After each interaction with the map, fetch the new dates belonging to
+      // the timed layers
+
+      const layers = this.timesliderLayers.filter(layer => layer.active)
+
+      // If there is no active timeslider layers, do nothing
+      if (layers.length === 0) {
+        return
+      }
+
+      // If not zoomed in enough, do nothing
+      if (this.map.getZoom() < 9) {
+        this.dates = []
+      } else {
+        // avoid fetching yearly dates, take them from cache
+        if(this.timeMode.timing === 'yearly' && this.cachedYearlyDates) {
+          this.dates = this.cachedYearlyDates
+          return
+        }
+
+        let region = this.getRegion()
+        let body = JSON.stringify({ region: region })
+
+        let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
+
+        // ... testing querying times by tiles
+        if(this.timeMode.timing === 'daily') {
+          url = `${this.$store.state.SERVER_URL}/get_times_by_tiles/`
+          body = JSON.stringify(this.getTiles())
+        }
+
+        fetch(url, {
             method: 'POST',
             body: body,
             mode: 'cors',
@@ -258,20 +291,16 @@ export default {
             }
           }
         )
-          .then(res => {
-            return res.json()
-          })
-          .then(dates => {
-            layer.dates = dates
-            this.mapLayers = this.mapLayers.map(l => {
-              if (l.name === layer.name) {
-                return layer
-              } else {
-                return l
-              }
-            })
-          })
-      })
+        .then(res => res.json())
+        .then(dates => {
+          // cache yearly dates
+          if(this.timeMode.timing === 'yearly') {
+            this.cachedYearlyDates = dates
+          }
+
+          this.dates = dates
+        })
+      }
     },
     getRegion() {
       var N = this.map.getBounds().getNorth()
@@ -282,6 +311,18 @@ export default {
         type: 'Polygon',
         geodesic: true,
         coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
+      }
+    },
+    getTiles() {
+      let region = this.getRegion()
+
+      let zoom = 10
+      let tilesMax = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)
+      let tilesMin = degreesToTiles(region.coordinates[0][3][0], region.coordinates[0][3][1], zoom)
+
+      return {
+        tilesMin: { tx: tilesMax[0], ty: tilesMin[1] },
+        tilesMax: { tx: tilesMin[0], ty: tilesMax[1] }
       }
     }
   },
@@ -297,12 +338,20 @@ export default {
   height: 100%;
 }
 
-#t-slider {
+.t-slider {
   position: absolute;
-  left: 10vw;
-  bottom: 5vh;
-  width: 80vw;
-  right: 90vw;
+  bottom: 0px;
+  /* right: 90vw; */
+  margin: 20px;
   z-index: 2;
+}
+
+.t-slider#big-slider {
+  left: 50px;
+  width: calc(100% - 90px);
+}
+.t-slider#small-slider {
+  left: 400px;
+  width: calc(100% - 440px);
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-<v-container>
+<v-container class="container">
   <!-- hide on small devices smaller than 600px -->
-  <v-row no-gutters class="hidden-xs-only">
+  <v-row no-gutters class="hidden-xs-only" v-show="timeMode && timeMode.showLanes">
     <v-col cols="12">
       <v-card flat color="transparent">
         <div id="slider">
-          <svg></svg>
+          <svg :height="sliderHeight" :width="sliderWidth + labelWidth"></svg>
         </div>
       </v-card>
     </v-col>
@@ -16,9 +16,10 @@
         {{ timeMode.name }}
       </v-btn>
     </v-col>
-    <v-col cols="auto" v-show="timeMode.name === 'JAAR'" v-if="timeMode">
+    <v-col cols="auto"  v-if="timeMode">
       <v-btn
         text
+        v-show="timeMode.showPlayer"
         @click="play()"
         v-if="state === 'PAUSED'"
         >
@@ -26,20 +27,39 @@
       </v-btn>
       <v-btn
         text
+        v-show="timeMode.showPlayer"
         v-if="state === 'PLAYING'"
         @click="pause()"
         >
         <v-icon  small>fa-pause</v-icon>
       </v-btn>
+      <v-btn
+        text
+        v-if="state === 'PAUSED' && timeMode.showBackForward"
+        @click="backward()"
+        >
+        <v-icon  small>fa-step-backward</v-icon>
+      </v-btn>
+      <v-btn
+        text
+        v-if="state === 'PAUSED' && timeMode.showBackForward"
+        @click="forward()"
+        >
+        <v-icon  small>fa-step-forward</v-icon>
+      </v-btn>
 
       <v-btn
         text
+        v-show="timeMode.showPlayer"
         v-model="loop"
         @click="loop = !loop"
         >
         <v-icon>fa-redo-alt</v-icon>
       </v-btn>
-      <v-btn text @click="changeSpeed" v-if="speed">
+      <v-btn text
+             @click="changeSpeed"
+             v-show="timeMode.showPlayer"
+             v-if="speed" >
         {{ speed.name }}
       </v-btn>
     </v-col>
@@ -55,39 +75,6 @@ import moment from "moment";
 import * as d3 from "d3";
 
 import {force} from './collision'
-
-const timeModes = [
-  {
-    name: "JAAR",
-    format: "%Y",
-    interval: "year",
-    timing: "yearly",
-    momentFormat: "YYYY",
-    extent: [
-      moment()
-        .startOf("year")
-        .subtract(20, "year"),
-      moment()
-        .add(1, "year")
-        .startOf("year")
-    ],
-    ticks: 19
-  },
-  {
-    name: "DAG",
-    format: "%-m-%Y",
-    interval: "day",
-    timing: "daily",
-    momentFormat: "DD-MM-YYYY",
-    extent: [
-      moment()
-        .startOf("day")
-        .subtract(1, "year"),
-      moment().startOf("day")
-    ],
-    ticks: 12
-  }
-]
 
 const speeds = [
   {
@@ -113,32 +100,26 @@ export default {
         return [];
       }
     },
-    timeModesEnabled: {
-      default: () => {
-        return {
-          JAAR: true,
-          DAG: true
-        }
-      }
-    },
-    modes: {
+    timeModes: {
       type: Array,
-      default: () => {
-        return [];
-      }
+      required: true
+    },
+    dates: {
+      type: Array
     }
   },
   data() {
     return {
       state: 'PAUSED',
-      step: moment(),
+      step: moment().subtract(1, 'year').startOf('year'),
+      // set in updateLaneGroup
+      timeGrid: [],
       dataLanes: null,
-      loop: false,
+      loop: true,
       labelWidth: 150,
       laneHeight: 20,
       laneSpacing: 0,
       margin: {},
-      timeModes: timeModes,
       timeMode: null,
       periodHeight: 20,
       svg: null,
@@ -150,7 +131,6 @@ export default {
       sliderHeight: 0,
       svgWidth: 0,
       trackHeight: 90,
-      currentTime: "01-01-2009",
       dragging: false,
       speeds: speeds,
       speed: null
@@ -163,6 +143,31 @@ export default {
         this.redraw();
       },
       deep: true
+    },
+    dates: {
+      handler() {
+        this.redraw()
+      }
+    },
+    timeMode: {
+      handler: function (timeMode) {
+        // if current time is outside of current extent
+        let outside = (this.step <= timeMode.extent[0]) || (this.step >= timeMode.extent[1])
+        if (outside) {
+          this.step = timeMode.extent[1].clone().add(-1, this.timeMode.interval)
+        }
+        this.redraw()
+      }
+    },
+    timeModes: {
+      handler (timeModes) {
+        if (!timeModes.length) {
+          return
+        }
+        let timeMode = timeModes[0]
+        this.timeMode = timeMode
+        this.redraw()
+      }
     }
   },
   computed: {
@@ -176,36 +181,32 @@ export default {
           .format(this.timeMode.momentFormat);
       }
 
-      let message = `Huidig beeld: van ${from} tot ${to}`;
+      let time = ''
+      if(this.timeMode) {
+        time = this.timeMode.name.toLowerCase()
+      }
+      let message = `Huidige beeld: ${time}kaart ${from}`
       return message;
-    },
-    enabledTimeModes() {
-      // check if modes are enabled
-      let enabledModes = this.timeModes.filter(mode => this.timeModesEnabled[mode.name])
-      return enabledModes
     }
   },
   mounted() {
     // Set the current mode (yearly or daily according to the selected route)
-    let timeMode = this.enabledTimeModes[0]
+    let timeMode = this.timeModes[0]
     this.timeMode = timeMode
 
-    let speed = this.speeds[1]
+    let speed = this.speeds[2]
     this.speed = speed
-
-    // Create the svg OBJECTID
-
-    this.svg = d3.select("#slider svg")
 
     // Update the margins and scale
     if (this.timeMode) {
-      this.changeMargin();
-      this.updateScale();
+      this.$nextTick(() => {
+        this.changeMargin();
+        this.updateScale();
+      })
     }
 
-    this.svg
-      .attr("width", this.sliderWidth + this.labelWidth)
-      .attr("height", this.sliderHeight);
+    // Create the svg OBJECTID
+    this.svg = d3.select("#slider svg")
 
     this.createLaneGroup();
     this.updateLaneGroup();
@@ -215,7 +216,10 @@ export default {
     window.addEventListener("resize", () => {
       this.redraw();
     });
-    this.$emit('update:time-mode', timeMode)
+    this.$emit('update-time-mode', timeMode)
+    this.updateImages()
+
+
   },
   methods: {
     changeSpeed() {
@@ -226,10 +230,10 @@ export default {
     },
     changeMode() {
       this.timeMode = this.getNextElementInArray(
-        this.enabledTimeModes,
+        this.timeModes,
         this.timeMode
       )
-      this.$emit('update:time-mode', this.timeMode)
+      this.$emit('update-time-mode', this.timeMode)
       this.redraw()
       this.updateImages()
     },
@@ -247,10 +251,10 @@ export default {
     },
     changeMargin() {
       var nLanes = this.layers.length;
-      this.svgWidth = document.querySelector("div#slider").clientWidth;
+      this.svgWidth = this.$el.clientWidth - 20;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
-      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight
+      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight + this.margin
       const nt = parseInt(this.sliderWidth / 60)
       this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt
     },
@@ -275,6 +279,7 @@ export default {
 
       let drag = d3
           .drag()
+
       drag
         .on("start.interrupt", () => {
           this.slider.interrupt()
@@ -300,8 +305,8 @@ export default {
           this.updateHandle()
         })
         .on("end", () => {
-          this.dragging = false;
-          this.updateImages();
+          this.dragging = false
+          this.updateImages()
           this.lanePeriod.classed('dragging', false)
           this.handle.classed('dragging', false)
         })
@@ -389,6 +394,11 @@ export default {
       this.laneGroup = this.svg.append("g").attr("z-index", 0);
     },
     updateLaneGroup() {
+
+      // reset the timeGrid
+      // TODO: move this out of this function
+      this.timeGrid = []
+
       this.laneGroup
         .attr("height", this.trackHeight)
         .attr("width", this.sliderWidth)
@@ -435,11 +445,8 @@ export default {
           .attr("stroke", "rgb(21,66,115)");
 
 
-        let click = () => {
-          console.log('click', d3.event)
-        }
         if (this.timeMode.name === "JAAR") {
-          let yearData = data.dates.filter(
+          let yearData = this.dates.filter(
             x =>
               x.type === "interval" &&
               moment(x.dateStart) >= this.timeMode.extent[0] &&
@@ -496,21 +503,30 @@ export default {
             .style('transform-origin', d => d.transformOrigin)
             .on("click", x => {
               this.step = moment(x.dateStart, x.dateFormat);
-              this.$emit('select:interval', x)
-              this.redraw();
+              // this.$emit('select:interval', x)
+              this.updateImages()
+              this.redraw()
             });
         }
         if (this.timeMode.name === "DAG") {
-          let instanceDates = data.dates.filter(
+          let instanceDates = this.dates.filter(
             x =>
               x.type === "instance" &&
-                  moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&
-                  moment(x.date, x.dateFormat) <= this.timeMode.extent[1]
-              )
-
+              moment(x.date, x.dateFormat) >= this.timeMode.extent[0] &&
+              moment(x.date, x.dateFormat) <= this.timeMode.extent[1]
+          )
           if (instanceDates.length === 0) {
             return
           }
+
+          // store instanceDates so we can use them to  snap
+          // remember the last one
+          // TODO: move this out of the timeSlider
+          this.timeGrid = instanceDates.map((d) => {
+            let t = moment(d.date, d.dateFormat)
+            return t
+          })
+
           dataLane
             .append("g")
             .selectAll(".dataInstances")
@@ -530,7 +546,8 @@ export default {
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
               this.step = moment(x.date, x.dateFormat);
-              this.$emit('select:instance', x)
+              // this.$emit('select:instance', x)
+              this.updateImages()
               this.redraw();
             });
         }
@@ -584,12 +601,68 @@ export default {
     pause() {
       this.state = 'PAUSED'
     },
-    updateHandle() {
-      if (this.currentTimeMode === "JAAR") {
-        this.handle.style("visibility", "hidden");
+    backward () {
+      // step back  in time
+      const nextStep = moment(this.step).add(-1, this.timeMode.interval);
+      if (nextStep < this.timeMode.extent[0]) {
+        return
       } else {
-        this.handle.style("visibility", "visible");
+        this.step = nextStep
       }
+      this.snap(false)
+
+      this.redraw()
+      this.updateImages()
+    },
+    forward () {
+      // step forward in time
+      const nextStep = moment(this.step).add(1, this.timeMode.interval);
+      if (nextStep >= this.timeMode.extent[1]) {
+        return
+      } else {
+        this.step = nextStep
+      }
+      this.snap(true)
+      this.redraw()
+      this.updateImages()
+    },
+    snap(forward) {
+      if (!this.timeGrid.length) {
+        return
+      }
+      let snapCandidates = this.timeGrid.filter(
+
+        t => {
+          if (!forward) {
+            return t.isSameOrBefore(this.step)
+          } else {
+            return t.isAfter(this.step)
+          }
+        }
+      )
+      if (!snapCandidates.length) {
+        return
+      }
+      // sort in place
+      snapCandidates.sort((a, b) => a.isSameOrBefore(b) ? -1 : 1)
+
+      if (forward) {
+        snapCandidates.reverse()
+      }
+
+      // get the last
+      let snapCandidate = snapCandidates[snapCandidates.length - 1]
+
+
+      // if it's outside the extent never mind
+      if (snapCandidate.isBefore(this.timeMode.extent[0]) || snapCandidate.isAfter(this.timeMode.extent[1])) {
+        return
+      }
+
+      this.step = snapCandidate
+
+    },
+    updateHandle() {
       this.handleLocationRounded = this.xScale(
         moment(this.step).startOf(this.timeMode.interval)
       );
@@ -606,21 +679,21 @@ export default {
       if (!this.timeMode) {
         return;
       }
-      this.changeMargin();
-      this.updateScale();
+      this.changeMargin()
+      this.updateScale()
 
-      this.svg.attr("width", this.svgWidth);
-      this.updateLaneGroup();
-      this.updateSlider();
-      this.updateHandle();
+      this.svg.attr("width", this.svgWidth)
+      this.updateLaneGroup()
+      this.updateSlider()
+      this.updateHandle()
     },
 
     updateImages() {
       this.$emit("update-timeslider", {
         dragging: this.dragging,
-        beginDate: moment(this.step),
-        endDate: moment(this.step).add(1, this.timeMode.interval),
-        timing: this.timeMode
+        beginDate: moment(this.step).format('YYYY-MM-DD'),
+        endDate: moment(this.step).add(1, this.timeMode.interval).format('YYYY-MM-DD'),
+        timing: this.timeMode.name
       });
     }
   }

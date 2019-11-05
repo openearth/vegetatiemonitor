@@ -5,9 +5,10 @@
     @transitionend="transitionEnd()"
     :mini-variant="mini"
     mini-variant-width="48px"
-    width="500px"
+    width="400px"
     absolute
     floating
+    stateless
     fixed
     hide-overlay
     clipped
@@ -32,34 +33,38 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <map-layers
-        id="menuOpen"
-        v-if="menu === 'Kaartlagen' && menuOpen"
-        :layers="layers"
+      <v-map-layers
+        id="menu-open"
+        v-show="menu === 'Kaartlagen' && menuOpen"
         @setLayer="$emit('setLayer', $event)"
         @setLayerOrder="$emit('setLayerOrder', $event)"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        :layers.sync="layers"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
         :modes="modes"
         :map="map"
+        :loadingLayers="loadingLayers"
       />
-      <analyse
-        id="menuOpen"
-        v-show="menu === 'Analyse' && menuOpen"
-        :layers="layers"
+      <v-analyse
+        id="menu-open"
+        v-if="menu === 'Analyse' && menuOpen"
+        :layers="analyseLayers"
+        @setLayer="$emit('setLayer', $event)"
         :map="map"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :timeMode.sync='timeMode'
       />
-      <download
+      <v-download
         id="menuOpen"
         v-if="menu === 'Download' && menuOpen"
         :map="map"
         :layers="downloadableLayers"
-        :dateBegin="dateBegin"
-        :dateEnd="dateEnd"
+        :dateBegin.sync="dateBegin"
+        :dateEnd.sync="dateEnd"
+        :timeMode.sync='timeMode'
       />
-      <colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
+      <v-colofon id="menuOpen" v-if="menu === 'Colofon' && menuOpen" />
     </v-layout>
   </v-navigation-drawer>
 </template>
@@ -75,7 +80,7 @@ export default {
     layers: {
       type: Array
     },
-    drawerstate: {
+    drawerState: {
       type: Boolean
     },
     map: {
@@ -89,6 +94,12 @@ export default {
     },
     modes: {
       type: Array
+    },
+    timeMode: {
+      type: Object
+    },
+    loadingLayers: {
+      type: Array
     }
   },
   data() {
@@ -96,7 +107,7 @@ export default {
       menu: '',
       mini: true,
       right: null,
-      menuOpen: false,
+      menuOpen: true,
       items: [
         {
           icon: 'fa-layer-group',
@@ -117,13 +128,20 @@ export default {
       ]
     }
   },
+  watch: {
+    mini: {
+      handler(val) {
+        this.$emit('update:open-drawer', this.menuOpen)
+      }
+    }
+  },
   computed: {
-    mapLayers: {
+    drawer: {
       get() {
-        return this.layers
+        return this.drawerState
       },
-      set(mapLayers) {
-        this.$emit('setLayers', mapLayers)
+      set(drawerState) {
+        this.$emit('update:drawer-state', drawerState)
       }
     },
     filteredItems() {
@@ -132,32 +150,35 @@ export default {
       ).mapLayersItems
       return this.items.filter(item => mapLayersItems.includes(item.title))
     },
-    drawer: {
-      get() {
-        return this.drawerstate
-      },
-      set(drawerstate) {
-        this.$emit('setDrawerstate', drawerstate)
-      }
-    },
     downloadableLayers() {
-      return this.layers.filter(layer => layer.download)
+      const layerNames = this.modes.find(
+        mode => mode.name === this.$route.name
+      ).mapLayersNames
+
+      const layers = this.layers.filter(layer =>
+        layerNames.includes(layer.name)
+      )
+      return layers.filter(layer => layer.download)
+    },
+    analyseLayers() {
+      return this.layers.filter(layer => layer.hoverFilter)
     }
   },
   mounted() {
     window.onkeyup = event => {
       if (event.key === 'Escape') {
         this.menuOpen = false
+        this.$emit('update:open-drawer', this.menuOpen)
         this.menu = ''
         this.mini = true
       }
     }
   },
   components: {
-    MapLayers,
-    Analyse,
-    Download,
-    Colofon
+    "v-map-layers": MapLayers,
+    "v-analyse": Analyse,
+    "v-download": Download,
+    "v-colofon": Colofon
   },
   methods: {
     menuButton(title) {
@@ -178,7 +199,7 @@ export default {
 </script>
 
 <style>
-#menuOpen {
+#menu-open {
   width: 90%;
   height: calc(100vh - 48px);
   overflow-y: hidden;
