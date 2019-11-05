@@ -1,0 +1,110 @@
+[
+  {
+    "dateEnd": "2001-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2000-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2002-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2001-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2003-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2002-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2004-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2003-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2005-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2004-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2006-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2005-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2007-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2006-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2008-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2007-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2009-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2008-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2010-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2009-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2011-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2010-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2012-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2011-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2014-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2013-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2015-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2014-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2016-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2015-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2017-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2016-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2018-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2017-01-01",
+    "type": "interval"
+  },
+  {
+    "dateEnd": "2019-01-01",
+    "dateFormat": "YYYY-MM-DD",
+    "dateStart": "2018-01-01",
+    "type": "interval"
+  }
+]

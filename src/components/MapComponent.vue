@@ -22,7 +22,7 @@
         :layers="timesliderLayers"
         :modes="modes"
         @update-timeslider="updateTimeslider($event)"
-        @setTimeMode="timeMode = $event"
+        @update:time-mode="timeMode = $event"
       >
       </time-slider>
     </v-card>
