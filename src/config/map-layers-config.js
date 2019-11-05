@@ -58,15 +58,18 @@ const pseudoColors = [
 
 const mapLayers = [
   {
-    layertype: 'mapbox-layer',
     name: 'Kadaster',
     icon: './images/legend-kadaster.png',
     opacity: 100,
     active: false,
+    baseLayer: 'Kadaster',
     hoverFilter: 'Kadasterlijnen',
     selectFilter: 'KadasterSelect',
     selectProperty: 'ADMINPERCE',
-    data: [
+    datatypes: ['landuse', 'legger'],
+    info:
+      'Dit is een superduper awesome laag. Ik heb even opvulling nodig voor het informatie stukje bladiebladieblad',
+    mapboxLayers: [
       {
         id: 'Kadaster',
         type: 'fill',
@@ -115,7 +118,7 @@ const mapLayers = [
         filter: ['==', 'ADMINPERCE', '']
       }
     ],
-    tableproperties: [
+    tableProperties: [
       {
         name: 'Perceel nummer',
         key: 'ADMINPERCE'
@@ -132,12 +135,11 @@ const mapLayers = [
   },
 
   {
-    layertype: 'mapbox-layer',
     name: 'Stroombanen',
     icon: './images/legend-stroombaan.png',
     opacity: 100,
     active: true,
-    data: [
+    mapboxLayers: [
       {
         id: 'Streamlines',
         type: 'fill',
@@ -155,24 +157,26 @@ const mapLayers = [
   },
 
   {
-    layertype: 'gee-layer',
     name: 'Classificatie vs Legger',
     icon: './images/legend-classified.png',
     opacity: 100,
     active: false,
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
-    data: [],
-    vis: {}
+    imageLayers: [{}],
+    mapboxLayers: [{}],
+    download: true,
+    vis: {},
+    timeslider: true,
+    dates: []
   },
 
   {
-    layertype: 'gee-layer',
     name: 'Classificatie',
     icon: './images/legend-classified.png',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'landuse', // important! this argument is needed to call the service
     legend: {
       colors: [
@@ -192,16 +196,38 @@ const mapLayers = [
         'struweel'
       ]
     },
-    data: [],
-    vis: {}
+    mapboxLayers: [
+      {
+        id: 'classificatie-video',
+        type: 'raster',
+        source: {
+          type: 'video-tiled',
+          tiles: [
+            'https://storage.googleapis.com/vegetatiemonitor/classificatie-video/{z}/{x}/{y}.webm'
+          ],
+          tileSize: 512,
+          durationSec: 18,
+          dateBegin: '2000-01-01',
+          dateEnd: '2018-01-01',
+          maxzoom: 14,
+          minzoom: 9,
+          scheme: 'xyz',
+          geometry: []
+        }
+      }
+    ],
+    imageLayers: [{}],
+    vis: {},
+    timeslider: true,
+    dates: []
   },
 
   {
-    layertype: 'mapbox-layer',
     name: 'Vegetatielegger',
     icon: './images/legend-legger.png',
     opacity: 100,
     active: true,
+    datatypes: ['landuse'],
     type: 'group',
     legend: {
       colors: [
@@ -227,10 +253,11 @@ const mapLayers = [
         'mengklasse 50/50'
       ]
     },
+    baseLayer: 'Vegetatielegger',
     hoverFilter: 'Vegetatielijnen',
     selectFilter: 'VegetatieSelect',
     selectProperty: 'OBJECTID',
-    data: [
+    mapboxLayers: [
       {
         id: 'Vegetatielegger',
         type: 'fill',
@@ -288,7 +315,7 @@ const mapLayers = [
         filter: ['==', 'OBJECTID', '']
       }
     ],
-    tableproperties: [
+    tableProperties: [
       {
         name: 'Vegetatieklasse',
         key: 'VL_KLASSE'
@@ -304,7 +331,6 @@ const mapLayers = [
     ]
   },
   {
-    layertype: 'gee-layer',
     name: 'Vegetatie (NDVI)',
     icon: './images/legend-ndvi.png',
     opacity: 100,
@@ -334,20 +360,54 @@ const mapLayers = [
       ],
       range: '-1 1'
     },
-    data: [],
-    vis: {}
+    mapboxLayers: [{}],
+    imageLayers: [{}],
+    vis: {},
+    timeslider: true,
+    dates: []
   },
   {
-    layertype: 'gee-layer',
     name: 'Satelliet beelden',
     icon: './images/legend-rgb.png',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
-    data: [],
+    mapboxLayers: [{}],
+    imageLayers: [{}],
     vis: pseudoColors[0].vis,
-    visualisations: pseudoColors
+    settings: [
+      {
+        type: 'select',
+        items: pseudoColors,
+        selected: 'Natural colors'
+      }
+    ],
+    timeslider: true,
+    dates: []
+  },
+  {
+    name: 'Luchtfoto',
+    icon: './images/legend-rgb.png',
+    download: false,
+    opacity: 0,
+    active: false,
+    mapboxLayers: [
+      {
+        id: 'Luchtfoto',
+        type: 'raster',
+        paint: {
+          'raster-opacity': 0
+        },
+        source: {
+          type: 'raster',
+          tiles: [
+            'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?SERVICE=WMS&&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=Actueel_ortho25&STYLES=default&CRS=EPSG%3A3857&WIDTH=256&HEIGHT=256&bbox={bbox-epsg-3857}'
+          ],
+          tilesize: 256
+        }
+      }
+    ]
   }
 ]
 

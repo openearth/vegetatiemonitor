@@ -1,119 +1,294 @@
 <template>
   <div id="analyse">
-    <v-card small flat>
-      <v-card-title>
-        <h1>
+    <v-layout column fill-height>
+      <v-flex xs3 align-stretch>
+        <h1 class="pa-4">
           Analyse
         </h1>
-      </v-card-title>
-    </v-card>
-    <v-card id="analysistable" flat>
-      <v-data-table
-        id="data-table"
-        :headers="headers"
-        rows-per-page-text=""
-        :rowsPerPageItems="[10]"
-        :items="polygons"
-        :pagination.sync="pagination"
-      >
-        <template slot="items" slot-scope="props">
-          <td class="text-xs6-left">{{ props.item.name }}</td>
-          <td class="text-xs6-left">{{ props.item.data }}</td>
-        </template>
-      </v-data-table>
-      <v-flex xs2 offset-xs5>
-        <v-progress-circular
-          v-if="workLoad > 0"
-          indeterminate
-        ></v-progress-circular>
+        <div id="analysistable">
+          <information-table :properties="properties"> </information-table>
+        </div>
       </v-flex>
-      <canvas ref="landuse-canvas"></canvas>
-      <canvas ref="legger-canvas"></canvas>
-      <v-btn
-        v-on:click.native="closeSelectMode()"
-        v-if="selectMode"
-        outline
-        color="indigo"
-        >Verwijder
-        <v-icon right>close</v-icon>
-      </v-btn>
-      <v-btn
-        :disabled="workLoad > 0"
-        v-on:click.native="downloadSelection()"
-        v-if="selectMode"
-        outline
-        color="indigo"
-        >Download
-        <v-icon right>file_download</v-icon>
-      </v-btn>
-    </v-card>
+      <v-flex id="piediv" xs8>
+        <div v-for="(type, index) in datatypes" :key="index">
+          <v-echarts
+            :ref="index"
+            :datatype="type.datatype"
+            :polygon="polygon"
+            :dateBegin="dateBegin"
+            :dateEnd="dateEnd"
+            :zonalType="type.zonalType"
+            @loaded="loading = $event"
+          ></v-echarts>
+        </div>
+        <v-timeseries
+          v-if="$route.name === 'voorspel'"
+          :options="voorspelOptions"
+        >
+        </v-timeseries>
+      </v-flex>
+      <v-flex xs1>
+        <v-layout
+          fill-height
+          justify-space-around
+          align-space-around
+          class="pa-auto"
+        >
+          <v-btn
+            v-on:click.native="closeSelectMode()"
+            v-if="selectedProperty !== ''"
+            outlined
+            color="indigo"
+            >Verwijder
+            <v-icon right>close</v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="loading"
+            v-on:click.native="downloadSelection()"
+            v-if="selectedProperty !== ''"
+            outlined
+            color="indigo"
+            >Download
+            <v-icon right>file_download</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
 <script>
-// import _ from 'lodash'
-// import mapboxgl from 'mapbox-gl'
-// import Chart from 'chart.js'
-// import jsPDF from 'jspdf'
+import VEcharts from './VEcharts'
+import InformationTable from './InformationTable'
+import jsPDF from 'jspdf'
 // import autoTable from 'jspdf-autotable'
 
 export default {
   name: 'v-analysis-control',
   props: {
-    map: {
-      type: Object
+    layers: {
+      type: Array
     },
-    selection: {
-      type: Object
+    map: {
+      type: Object,
+      required: true
+    },
+    dateBegin: {
+      type: String
+    },
+    dateEnd: {
+      type: String
     }
   },
-  computed: {
-    layers: {
-      get() {
-        return this.$store.state.layers
-      },
-      set(layers) {
-        this.$store.commit('setMapLayers', layers)
-      }
+  watch: {
+    map() {
+      if (!this.layers) return
+      this.watchMapForAnalysis()
+    },
+
+    loading() {
+      console.log(this.loading)
     }
   },
   data() {
     return {
-      perceelnumber: null,
-      canvas: {},
-      chart: {},
-      workLoad: 0,
-      leggerLabels: [],
-      leggerData: [],
-      landuseLabels: [],
-      landuseData: [],
-      headers: [
-        {
-          text: 'Eigenschap',
-          align: 'left',
-          sortable: false,
-          value: 'name',
-          width: '40%'
-        },
-        {
-          text: 'Kwantiteit',
-          value: 'data',
-          align: 'left',
-          sortable: false,
-          width: '60%'
-        }
-      ],
-      polygons: [],
-      polygonSelected: false,
-      pagination: {
-        rowsPerPage: 4
-      },
       selectMode: false,
-      selectLayer: ''
+      datatypes: [],
+      polygon: [],
+      properties: [],
+      selectedProperty: '',
+      selectedLayer: '',
+      loading: true,
+      landuseLabels: [],
+      leggerLabels: []
     }
   },
-  watch: {}
+
+  mounted() {},
+  methods: {
+    watchMapForAnalysis() {
+      this.layers.forEach(layer => {
+        // Creaet a hover effect and fill in the data in the datatable when
+        // hovering over a layer which has a hoverFilter
+        if (layer.hoverFilter) {
+          this.map.on('mousemove', layer.baseLayer, e => {
+            // if layer not active, no action
+            if (!layer.active) return
+            this.map.getCanvas().style.cursor = 'pointer'
+            const filter = e.features[0].properties[layer.selectProperty]
+            this.map.setFilter(layer.hoverFilter, [
+              '==',
+              layer.selectProperty,
+              filter
+            ])
+            if (this.selectedProperty === '') {
+              this.properties = []
+              layer.tableProperties.forEach(prop => {
+                this.properties.push({
+                  value: false,
+                  name: prop.name,
+                  data: e.features[0].properties[prop.key]
+                })
+              })
+            }
+          })
+          this.map.on('mouseleave', layer.baseLayer, () => {
+            this.map.getCanvas().style.cursor = ''
+            this.map.setFilter(layer.hoverFilter, [
+              '==',
+              layer.selectProperty,
+              ''
+            ])
+          })
+        }
+        // When clicking on a layer which has a selctFilter create Piecharts
+        if (layer.selectFilter) {
+          this.map.on('click', layer.baseLayer, e => {
+            // if layer not active, no action
+            if (!layer.active) return
+            let filter = ''
+
+            // if clicked on the already selected property, remove selection
+            if (
+              this.datatypes.length > 0 &&
+              this.selectedProperty === layer.selectProperty
+            ) {
+              console.log('remove selcet mode', layer.name, layer)
+              this.datatypes = []
+              this.closeSelectMode()
+            } else {
+              this.datatypes = []
+              console.log('new calc', layer.name)
+              this.selectedProperty = layer.selectProperty
+              this.selectedLayer = layer.name
+              const feature = this.map.queryRenderedFeatures(e.point, {
+                layers: [layer.baseLayer]
+              })[0]
+              // this.datatypes = layer.datatypes
+              const datatypes = []
+              layer.datatypes.forEach(type => {
+                // TODO: use modes (and adjust mode options config) to make this if statement...
+                if (this.$route.name === 'Voorspel' && type === 'landuse') {
+                  datatypes.push({
+                    datatype: type,
+                    zonalType: 'zonal-timeseries'
+                  })
+                }
+                datatypes.push({
+                  datatype: type,
+                  zonalType: 'zonal-info'
+                })
+              })
+              this.datatypes = datatypes
+
+              this.polygon = feature.geometry
+              filter = e.features[0].properties[layer.selectProperty]
+              this.loading = true
+            }
+            this.map.setFilter(layer.selectFilter, [
+              '==',
+              layer.selectProperty,
+              filter
+            ])
+          })
+        }
+      })
+    },
+
+    closeSelectMode() {
+      this.selectedProperty = ''
+      this.properties = []
+      this.datatypes = []
+      this.layers.forEach(layer => {
+        if (layer.selectFilter) {
+          this.map.setFilter(layer.selectFilter, [
+            '==',
+            layer.selectProperty,
+            ''
+          ])
+        }
+      })
+      this.loading = true
+    },
+    // Build pdf with table, two piecharts and snapshot of mapbox
+    downloadSelection() {
+      var doc = new jsPDF()
+      var W = doc.internal.pageSize.getWidth()
+      var H = doc.internal.pageSize.getHeight()
+      // var res = doc.autoTableHtmlToJson()
+      doc.autoTable(document.getElementsByClassName('v-data-table')[0])
+      if (this.$refs['legger']) {
+        var imgData = this.$refs['legger'][0].$el.innerHTML
+        doc.fromHTML(imgData, W * 0.1, H * 0.2)
+      }
+      if (this.$refs['landuse']) {
+        imgData = this.$refs['landuse'][0].$el.innerHTML
+        doc.fromHTML(imgData, W * 0.5, H * 0.2)
+      }
+
+      var table = []
+      this.leggerLabels.forEach((label, i) => {
+        table.push([label, this.leggerData[i]])
+      })
+      doc.autoTable(['Label', 'legger klassen [%]'], table, {
+        startY: 0.35 * H,
+        tableWidth: 0.4 * W,
+        margin: { left: 0.05 * W }
+      })
+      table = []
+      this.landuseLabels.forEach((label, i) => {
+        table.push([label, this.landuseData[i]])
+      })
+      doc.autoTable(['Label', 'landuse klassen [%]'], table, {
+        startY: 0.35 * H,
+        tableWidth: 0.4 * W,
+        margin: { left: W * 0.55 }
+      })
+      this.takeScreenshot(this.map).then(data => {
+        var canvas = this.map.getCanvas()
+        var mapw = canvas.width
+        var maph = canvas.height
+
+        doc.addImage(
+          data,
+          'JPEG',
+          W * 0.05,
+          0.6 * H,
+          0.9 * W,
+          ((0.9 * W) / mapw) * maph
+        )
+        doc.save(`${this.perceelnumber}_${this.dateEnd}_${this.dateBegin}.pdf`)
+      })
+    },
+
+    // Note: Normally the preserveDrawerBuffer in the mapbox options is used. However This
+    // is not yet build in vue2mapbox-gl and using this function the rendering of the image
+    // will not reduce the performance of the mapbox components.
+    takeScreenshot(map) {
+      return new Promise(function(resolve) {
+        map.once('render', function() {
+          resolve(map.getCanvas().toDataURL())
+        })
+        /* trigger render */
+        map.setBearing(map.getBearing())
+      })
+    }
+  },
+  components: {
+    VEcharts,
+    InformationTable
+  }
 }
 </script>
 
-<style></style>
+<style>
+#analyse,
+#analyse-card {
+  height: 100%;
+  width: 100%;
+}
+
+#piediv {
+  overflow: auto;
+}
+</style>

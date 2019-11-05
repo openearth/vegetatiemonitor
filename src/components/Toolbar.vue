@@ -1,14 +1,20 @@
 <template>
-  <v-toolbar dense color="secondary" prominent fixed app>
-    <v-toolbar-side-icon @click.native="changeDrawer()"> </v-toolbar-side-icon>
+  <v-app-bar floating :clipped-left="true" app dense color="secondary">
+    <!-- <v-toolbar dense fixed color="secondary" prominent class="pa-0"> -->
+
+    <v-app-bar-nav-icon @click="drawer = true">
+      <v-icon>
+        fa-bars
+      </v-icon>
+    </v-app-bar-nav-icon>
     <v-toolbar-title class="hidden-sm-and-down"
-      >Vegetatie Monitor</v-toolbar-title
+      ><h3>Vegetatie Monitor</h3></v-toolbar-title
     >
     <v-spacer />
     <v-flex xs-6>
-      <v-tabs color="secondary" fixed-tabs>
-        <v-tab v-for="mode in modes" :key="mode">
-          {{ mode }}
+      <v-tabs background-color="transparent" fixed-tabs>
+        <v-tab v-for="mode in modes" :key="mode.name" :to="{ name: mode.name }">
+          {{ mode.name }}
         </v-tab>
       </v-tabs>
     </v-flex>
@@ -30,24 +36,36 @@
       class="hidden-sm-and-down logo"
       src="images/Rijkswaterstaat.svg"
     />
-  </v-toolbar>
+  </v-app-bar>
 </template>
 
 <script>
 export default {
   name: 'toolbar',
-  data: function() {
-    return {
-      modes: ['Veld', 'Verken', 'Voorspel']
+  props: {
+    drawerstate: {
+      type: Boolean
+    },
+    modes: {
+      type: Array
     }
   },
-  methods: {
-    changeDrawer() {
-      const newVal = this.$store.state.drawer ? false : true
-      this.$store.commit('setDrawer', newVal)
+  computed: {
+    drawer: {
+      get() {
+        return this.drawerstate
+      },
+      set(drawerstate) {
+        this.$emit('setDrawerstate', drawerstate)
+      }
     }
   }
 }
 </script>
 
-<style></style>
+<style>
+.v-toolbar__content,
+.v-toolbar__extension {
+  padding: 0 12px;
+}
+</style>
