@@ -25,8 +25,10 @@
         :layers="timesliderLayers"
         :timeModes="timeModes"
         :dates="dates"
-        @update-time-mode="$emit('update:time-mode', $event)"
+        :step.sync="step"
+        @update-time-mode="$emit('update:time-mode', $event); fetchDates()"
         @update-timeslider="updateTimeslider($event)"
+        @update:step="updateStep($event)"
       >
       </time-slider>
     </v-card>
@@ -62,14 +64,6 @@ export default {
       type: Object
     }
   },
-  watch: {
-    layers: {
-      deep: true,
-      handler() {
-        this.fetchDates()
-      }
-    }
-  },
   data: function() {
     return {
       center: [5.2, 51.8],
@@ -90,7 +84,8 @@ export default {
       },
       polygons: [],
       scale: 10,
-      dates: []
+      dates: [],
+      step: moment().subtract(1, 'year').startOf('year')
     }
   },
   computed: {
@@ -128,6 +123,38 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
+    updateStep(step) {
+      step = step.format("YYYY-MM-DD")
+      if (this.timeMode.timing === 'daily') {
+        const dates = this.dates.map(t => t.date)
+        if (dates.length === 0){
+          return
+        } else if (dates.includes(step)) {
+          this.step = moment(step)
+          return
+        } else {
+          let diff = 365
+          let ind = dates.length - 1
+          // Find the nearest available date
+          dates.forEach((d, i) => {
+            const localDiff = Math.abs(moment(d).diff( moment(step), 'days'))
+            if(localDiff < diff) {
+              diff = localDiff
+              ind = i
+            }
+          })
+          this.step = moment(dates[ind])
+        }
+      } else if (this.timeMode.timing === 'yearly') {
+        const newStep = moment(step).startOf('year').format("YYYY-MM-DD")
+        const dates = this.cachedYearlyDates.map(t => t.date)
+        if (dates.includes(newStep)) {
+          this.step = newStep
+        } else {
+          this.step = dates[dates.length - 1]
+        }
+      }
+    },
     updateTimeslider(event) {
       const extent = [
         event.beginDate,
@@ -211,6 +238,7 @@ export default {
         }
       }
 
+      // Remove old layer from map
       if (imageLayers && imageLayers.extent) {
         const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
         if (this.map.getSource(oldMapId)) {
@@ -227,6 +255,7 @@ export default {
         vis: layer.vis
       }
 
+      // If mapId already exists, remove from map
       if (this.map.getSource(mapId)) {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
@@ -300,7 +329,6 @@ export default {
           if(this.timeMode.timing === 'yearly') {
             this.cachedYearlyDates = dates
           }
-
           this.dates = dates
         })
       }
