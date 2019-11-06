@@ -26,7 +26,7 @@
         :timeModes="timeModes"
         :dates="dates"
         :step.sync="step"
-        @update-time-mode="$emit('update:time-mode', $event); fetchDates()"
+        @update-time-mode="updateTimeMode($event)"
         @update-timeslider="updateTimeslider($event)"
         @update:step="updateStep($event)"
       >
@@ -123,6 +123,10 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
+    updateTimeMode(timeMode){
+      this.$emit('update:time-mode', timeMode)
+      this.fetchDates()
+    },
     updateStep(step) {
       step = step.format("YYYY-MM-DD")
       if (this.timeMode.timing === 'daily') {
@@ -331,6 +335,8 @@ export default {
           }
           this.dates = dates
         })
+
+        this.updateStep(this.step)
       }
     },
     getRegion() {
