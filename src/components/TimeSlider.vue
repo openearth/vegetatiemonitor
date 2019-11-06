@@ -94,12 +94,6 @@ const speeds = [
 export default {
   name: "time-slider",
   props: {
-    layers: {
-      type: Array,
-      default: () => {
-        return [];
-      }
-    },
     timeModes: {
       type: Array,
       required: true
@@ -132,20 +126,16 @@ export default {
       sliderWidth: 0,
       sliderHeight: 0,
       svgWidth: 0,
-      trackHeight: 90,
+      trackHeight: 30,
       dragging: false,
       speeds: speeds,
-      speed: null
+      speed: null,
+      layers: [{
+        name: 'Satelliet beelden'
+      }]
     }
   },
   watch: {
-    layers: {
-      handler: function () {
-        if (!this.layers) return;
-        this.redraw();
-      },
-      deep: true
-    },
     step: {
       handler() {
         this.redraw()
@@ -261,7 +251,7 @@ export default {
       this.svgWidth = this.$el.clientWidth - 20;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
-      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight + this.margin
+      this.sliderHeight = this.trackHeight + this.laneHeight + this.periodHeight + this.margin
       const nt = parseInt(this.sliderWidth / 60)
       this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt
     },
@@ -380,7 +370,7 @@ export default {
       this.lanePeriod = this.slider
         .insert("rect")
         .attr("class", "lane-rect")
-        .attr("y", -this.layers.length * (this.laneHeight + this.laneSpacing))
+        .attr("y", - this.layers.length * (this.laneHeight + this.laneSpacing))
         .attr(
           "height",
           this.layers.length * (this.laneHeight + this.laneSpacing)
@@ -711,7 +701,7 @@ export default {
 #slider {
   /* padding: 50px; */
   width: calc(100% - 20px);
-  height: 130px;
+  height: 70px;
 }
 /* scoped styles do not descent into d3, so use outer element */
 svg >>> .ticks {

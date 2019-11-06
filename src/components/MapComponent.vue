@@ -22,7 +22,6 @@
       color="secondary">
       <time-slider
         ref="timeslider"
-        :layers="timesliderLayers"
         :timeModes="timeModes"
         :dates="dates"
         :step.sync="step"
@@ -100,7 +99,9 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map
+
     this.map.on('load', () => {
+
       // disable map rotation using right click + drag
       this.map.dragRotate.disable()
 
@@ -108,8 +109,15 @@ export default {
       this.map.touchZoomRotate.disableRotation()
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
-      // this.updateGEELayers()
+
       this.fetchDates()
+
+      const event = {
+        beginDate: this.step[0],
+        endDate: this.step[1]
+      }
+      this.updateTimedLayers(event)
+
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
     })
@@ -151,11 +159,15 @@ export default {
         }
       } else if (this.timeMode.timing === 'yearly') {
         const newStep = moment(step).startOf('year').format("YYYY-MM-DD")
-        const dates = this.cachedYearlyDates.map(t => t.date)
-        if (dates.includes(newStep)) {
-          this.step = newStep
+        if(!this.cachedYearlyDates) {
+          return
         } else {
-          this.step = dates[dates.length - 1]
+          const dates = this.cachedYearlyDates.map(t => t.dateStart)
+          if (dates.includes(newStep)) {
+            this.step = moment(newStep)
+          } else {
+            this.step = moment(dates[dates.length - 1])
+          }
         }
       }
     },
@@ -289,14 +301,10 @@ export default {
     fetchDates() {
       // After each interaction with the map, fetch the new dates belonging to
       // the timed layers
-
-      const layers = this.timesliderLayers.filter(layer => layer.active)
-
-      // If there is no active timeslider layers, do nothing
-      if (layers.length === 0) {
+      const layer = this.layers.filter(layer => layer.name === 'Satelliet beelden')
+      if (!this.map) {
         return
       }
-
       // If not zoomed in enough, do nothing
       if (this.map.getZoom() < 9) {
         this.dates = []
@@ -310,7 +318,7 @@ export default {
         let region = this.getRegion()
         let body = JSON.stringify({ region: region })
 
-        let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
+        let url = `${this.$store.state.SERVER_URL}/map/${layer[0].dataset}/times/${this.timeMode.timing}`
 
         // ... testing querying times by tiles
         if(this.timeMode.timing === 'daily') {
