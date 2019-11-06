@@ -240,15 +240,18 @@ export default {
           'Content-Type': 'application/json'
         }
       })
-        .then(res => {
-          return res.json()
-        })
-        .then(mapUrl => {
-          mapJson.source['tiles'] = [mapUrl['url']]
-          this.map.addLayer(mapJson)
-          layer.imageLayers[0] = mapJson
-          this.$emit('done-loading-layer', layer.name)
-        })
+      .then(res => {
+        return res.json()
+      })
+      .then(mapUrl => {
+        mapJson.source['tiles'] = [mapUrl['url']]
+        this.map.addLayer(mapJson)
+        layer.imageLayers[0] = mapJson
+        this.$emit('done-loading-layer', layer.name)
+      })
+      .catch(() => {
+        this.$emit('done-loading-layer', layer.name)
+      }
     },
     fetchDates() {
       // After each interaction with the map, fetch the new dates belonging to
