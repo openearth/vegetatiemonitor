@@ -251,7 +251,7 @@ export default {
       })
       .catch(() => {
         this.$emit('done-loading-layer', layer.name)
-      }
+      })
     },
     fetchDates() {
       // After each interaction with the map, fetch the new dates belonging to
