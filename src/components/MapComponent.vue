@@ -91,6 +91,7 @@ export default {
     timeMode: {
       handler() {
         this.fetchDates()
+        this.updateStep(this.step)
       }
     }
   },
@@ -118,6 +119,7 @@ export default {
       this.addMapboxLayers()
 
       this.fetchDates()
+      this.updateStep(this.step)
 
       const event = {
         beginDate: this.step[0],
@@ -138,19 +140,12 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
-    updateTimeMode(timeMode){
-
-      this.fetchDates()
-    },
     updateStep(step) {
       step = step.format("YYYY-MM-DD")
       if (this.timeMode.timing === 'daily') {
         const dates = this.dates.map(t => t.date)
-        if (dates.length === 0){
-          return
-        } else if (dates.includes(step)) {
+        if (dates.includes(step)) {
           this.step = moment(step)
-          return
         } else {
           let diff = 365
           let ind = dates.length - 1
@@ -166,9 +161,7 @@ export default {
         }
       } else if (this.timeMode.timing === 'yearly') {
         const newStep = moment(step).startOf('year').format("YYYY-MM-DD")
-        if(!this.cachedYearlyDates) {
-          return
-        } else {
+        if(this.cachedYearlyDates) {
           const dates = this.cachedYearlyDates.map(t => t.dateStart)
           if (dates.includes(newStep)) {
             this.step = moment(newStep)
@@ -241,8 +234,10 @@ export default {
 
       t = Math.max(0, t)
       t = Math.min(layer.source.durationSec, t)
-      let player = this.map.getSource(layer.id).player
-      player.setCurrentTime(t)
+      if(this.map.getSource(layer.id)){
+        let player = this.map.getSource(layer.id).player
+        player.setCurrentTime(t)
+      }
     },
     updateImageLayer(layer, extent) {
       const imageLayers = layer.imageLayers[0]
@@ -263,6 +258,8 @@ export default {
           tileSize: 256
         }
       }
+
+
 
       // Remove old layer from map
       if (imageLayers && imageLayers.extent) {
@@ -352,8 +349,6 @@ export default {
             this.cachedYearlyDates = dates
           }
           this.dates = dates
-          this.updateStep(this.step)
-
         })
       }
     },
