@@ -27,7 +27,9 @@
         :step.sync="step"
         @update:time-mode="$emit('update:time-mode', $event)"
         @update:timeslider="updateTimeslider($event)"
-        @update:step="updateStep($event)"
+        @update:step="updateStep($event, 'nearest')"
+        @move-step-backward="updateStep($event, 'backward')"
+        @move-step-forward="updateStep($event, 'forward')"
       >
       </time-slider>
     </v-card>
@@ -90,10 +92,14 @@ export default {
   watch: {
     timeMode: {
       handler() {
-        console.log('timemode changed', this.timeMode.timing)
-        this.fetchDates()
+        this.fetchDates(true)
       }
-    }
+    },
+    layers: {
+      handler() {
+        this.updateTimedLayers([this.dateBegin, this.dateEnd])
+      }
+    },
   },
   computed: {
     timeModes() {
@@ -118,7 +124,7 @@ export default {
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
 
-      this.fetchDates()
+      this.fetchDates(true)
 
       const event = {
         beginDate: this.step[0],
@@ -139,37 +145,48 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
-    updateTimeMode(timeMode){
-
-      this.fetchDates()
-    },
-    updateStep(step) {
+    updateStep(step, place) {
       step = step.format("YYYY-MM-DD")
       if (this.timeMode.timing === 'daily') {
         const dates = this.dates.map(t => t.date)
-        if (dates.length === 0){
-          return
-        } else if (dates.includes(step)) {
+        if (dates.includes(step) && place === 'nearest') {
+          // don't snap to next/previous, use date itself
           this.step = moment(step)
-          return
         } else {
           let diff = 365
+          if(place === 'backward') {
+            diff = -365
+          }
+          // snap to nearest, or when place is filled
           let ind = dates.length - 1
           // Find the nearest available date
           dates.forEach((d, i) => {
-            const localDiff = Math.abs(moment(d).diff( moment(step), 'days'))
-            if(localDiff < diff) {
-              diff = localDiff
-              ind = i
+            const localDiff = moment(d).diff( moment(step), 'days')
+            if(place === 'nearest') {
+              // Find the actual date that is nearest to the given date
+              if(Math.abs(localDiff) < diff) {
+                diff = Math.abs(localDiff)
+                ind = i
+              }
+            } else if (place === 'backward'){
+              // Find the element that is closest before the date
+              if(localDiff < 0 && localDiff > diff ) {
+                diff = localDiff
+                ind = i
+              }
+            } else if (place === 'forward'){
+              // Find the element that is closest after the date
+              if(localDiff > 0 && localDiff < diff ) {
+                diff = localDiff
+                ind = i
+              }
             }
           })
           this.step = moment(dates[ind])
         }
       } else if (this.timeMode.timing === 'yearly') {
         const newStep = moment(step).startOf('year').format("YYYY-MM-DD")
-        if(!this.cachedYearlyDates) {
-          return
-        } else {
+        if(this.cachedYearlyDates) {
           const dates = this.cachedYearlyDates.map(t => t.dateStart)
           if (dates.includes(newStep)) {
             this.step = moment(newStep)
@@ -228,6 +245,9 @@ export default {
       })
     },
     updateVideoLayerTime(layer, time) {
+      if (!time){
+        time = moment()
+      }
       // compute time fraction
       time = moment(time)
       let begin = moment(layer.source.dateBegin)
@@ -239,18 +259,29 @@ export default {
 
       t = Math.max(0, t)
       t = Math.min(layer.source.durationSec, t)
-      let player = this.map.getSource(layer.id).player
-      player.setCurrentTime(t)
+      if(this.map.getSource(layer.id)){
+        let player = this.map.getSource(layer.id).player
+        player.setCurrentTime(t)
+      }
     },
     updateImageLayer(layer, extent) {
       const imageLayers = layer.imageLayers[0]
+      var mapId = `${layer.dataset}_${extent.join('_')}`
 
-      // If existing gee layer on already has the correct dates and dataset, return
-      if (layer.imageLayers.length > 0 && imageLayers.extent == extent) {
-        return
+      // Remove old layer from map
+      if (imageLayers && imageLayers.extent) {
+        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
+
+        // If existing gee layer on already has the correct dates and dataset, return
+        if (layer.imageLayers.length > 0 && oldMapId === mapId) {
+          return
+        }
+        if (this.map.getSource(oldMapId)) {
+          this.map.removeLayer(oldMapId)
+          this.map.removeSource(oldMapId)
+        }
       }
 
-      var mapId = `${layer.dataset}_${extent.join('_')}`
       var mapJson = {
         id: mapId,
         type: 'raster',
@@ -259,15 +290,6 @@ export default {
           type: 'raster',
           tiles: [],
           tileSize: 256
-        }
-      }
-
-      // Remove old layer from map
-      if (imageLayers && imageLayers.extent) {
-        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-        if (this.map.getSource(oldMapId)) {
-          this.map.removeLayer(oldMapId)
-          this.map.removeSource(oldMapId)
         }
       }
 
@@ -306,7 +328,7 @@ export default {
         this.$emit('done-loading-layer', layer.name)
       })
     },
-    fetchDates() {
+    fetchDates(updateStep) {
       // After each interaction with the map, fetch the new dates belonging to
       // the timed layers
       const layer = this.layers.filter(layer => layer.name === 'Satelliet beelden')
@@ -350,8 +372,9 @@ export default {
             this.cachedYearlyDates = dates
           }
           this.dates = dates
-          this.updateStep(this.step)
-
+          if(updateStep) {
+            this.updateStep(this.step, 'nearest')
+          }
         })
       }
     },

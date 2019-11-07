@@ -249,7 +249,8 @@ export default {
             thislayer < this.filteredLayers[i][data].length;
             ++thislayer
           ) {
-            if (this.filteredLayers[i][data][thislayer].id) {
+            const mapId = this.filteredLayers[i][data][thislayer].id
+            if (mapId && this.map.getSource(mapId)) {
               this.map.moveLayer(this.filteredLayers[i][data][thislayer].id)
             }
           }
