@@ -25,8 +25,8 @@
         :timeModes="timeModes"
         :dates="dates"
         :step.sync="step"
-        @update-time-mode="updateTimeMode($event)"
-        @update-timeslider="updateTimeslider($event)"
+        @update:time-mode="$emit('update:time-mode', $event)"
+        @update:timeslider="updateTimeslider($event)"
         @update:step="updateStep($event)"
       >
       </time-slider>
@@ -87,6 +87,14 @@ export default {
       step: moment().subtract(1, 'year').startOf('year')
     }
   },
+  watch: {
+    timeMode: {
+      handler() {
+        console.log('timemode changed', this.timeMode.timing)
+        this.fetchDates()
+      }
+    }
+  },
   computed: {
     timeModes() {
       const currentMode = this.modes.find(mode => mode.name === this.$route.name)
@@ -132,7 +140,7 @@ export default {
   methods: {
     deferredMountedTo() {},
     updateTimeMode(timeMode){
-      this.$emit('update:time-mode', timeMode)
+
       this.fetchDates()
     },
     updateStep(step) {
@@ -342,9 +350,9 @@ export default {
             this.cachedYearlyDates = dates
           }
           this.dates = dates
-        })
+          this.updateStep(this.step)
 
-        this.updateStep(this.step)
+        })
       }
     },
     getRegion() {

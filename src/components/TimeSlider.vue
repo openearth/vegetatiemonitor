@@ -213,7 +213,7 @@ export default {
     window.addEventListener("resize", () => {
       this.redraw();
     });
-    this.$emit('update-time-mode', timeMode)
+    this.$emit('update:time-mode', timeMode)
     this.updateImages()
 
 
@@ -230,7 +230,7 @@ export default {
         this.timeModes,
         this.timeMode
       )
-      this.$emit('update-time-mode', this.timeMode)
+      this.$emit('update:time-mode', this.timeMode)
       this.redraw()
       this.updateImages()
     },
@@ -686,7 +686,7 @@ export default {
     },
 
     updateImages() {
-      this.$emit("update-timeslider", {
+      this.$emit("update:timeslider", {
         dragging: this.dragging,
         beginDate: moment(this.step).format('YYYY-MM-DD'),
         endDate: moment(this.step).add(1, this.timeMode.interval).format('YYYY-MM-DD'),
