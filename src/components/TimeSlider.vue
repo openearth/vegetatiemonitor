@@ -139,6 +139,7 @@ export default {
     step: {
       handler() {
         this.redraw()
+        this.updateImages()
       }
     },
     dates: {
@@ -214,7 +215,7 @@ export default {
       this.redraw();
     });
     this.$emit('update:time-mode', timeMode)
-    this.updateImages()
+
 
 
   },
@@ -232,7 +233,7 @@ export default {
       )
       this.$emit('update:time-mode', this.timeMode)
       this.redraw()
-      this.updateImages()
+
     },
     getNextElementInArray(array, selected) {
       // return next element in array
@@ -303,7 +304,7 @@ export default {
         })
         .on("end", () => {
           this.dragging = false
-          this.updateImages()
+
           this.lanePeriod.classed('dragging', false)
           this.handle.classed('dragging', false)
         })
@@ -501,7 +502,7 @@ export default {
             .on("click", x => {
               this.$emit('update:step', moment(x.dateStart, x.dateFormat))
               // this.$emit('select:interval', x)
-              this.updateImages()
+
               this.redraw()
             });
         }
@@ -544,7 +545,7 @@ export default {
             .on("click", x => {
               this.$emit('update:step', moment(x.date, x.dateFormat))
               // this.$emit('select:instance', x)
-              this.updateImages()
+
               this.redraw();
             });
         }
@@ -590,7 +591,7 @@ export default {
         }
         this.updateHandle()
         this.last = now
-        this.updateImages()
+
       }
       playLoop()
 
@@ -609,7 +610,7 @@ export default {
       this.snap(false)
 
       this.redraw()
-      this.updateImages()
+
     },
     forward () {
       // step forward in time
@@ -621,7 +622,7 @@ export default {
       }
       this.snap(true)
       this.redraw()
-      this.updateImages()
+
     },
     snap(forward) {
       if (!this.timeGrid.length) {

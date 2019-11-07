@@ -90,7 +90,6 @@ export default {
   watch: {
     timeMode: {
       handler() {
-        console.log('timemode changed', this.timeMode.timing)
         this.fetchDates()
       }
     }
@@ -228,6 +227,9 @@ export default {
       })
     },
     updateVideoLayerTime(layer, time) {
+      if (!time){
+        time = moment()
+      }
       // compute time fraction
       time = moment(time)
       let begin = moment(layer.source.dateBegin)
