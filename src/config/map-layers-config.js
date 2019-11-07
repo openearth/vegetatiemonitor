@@ -461,9 +461,6 @@ const mapLayers = [
       {
         id: 'satellite-natural-video',
         type: 'raster',
-        // paint: {
-        //   'raster-opacity': 0
-        // },
         layout: {
           visibility: 'visible'
         },
