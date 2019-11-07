@@ -92,10 +92,14 @@ export default {
   watch: {
     timeMode: {
       handler() {
-        this.fetchDates()
-        this.updateStep(this.step, 'nearest')
+        this.fetchDates(true)
       }
-    }
+    },
+    layers: {
+      handler() {
+        this.updateTimedLayers([this.dateBegin, this.dateEnd])
+      }
+    },
   },
   computed: {
     timeModes() {
@@ -120,8 +124,7 @@ export default {
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
 
-      this.fetchDates()
-      this.updateStep(this.step, 'nearest')
+      this.fetchDates(true)
 
       const event = {
         beginDate: this.step[0],
@@ -263,13 +266,22 @@ export default {
     },
     updateImageLayer(layer, extent) {
       const imageLayers = layer.imageLayers[0]
+      var mapId = `${layer.dataset}_${extent.join('_')}`
 
-      // If existing gee layer on already has the correct dates and dataset, return
-      if (layer.imageLayers.length > 0 && imageLayers.extent == extent) {
-        return
+      // Remove old layer from map
+      if (imageLayers && imageLayers.extent) {
+        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
+
+        // If existing gee layer on already has the correct dates and dataset, return
+        if (layer.imageLayers.length > 0 && oldMapId === mapId) {
+          return
+        }
+        if (this.map.getSource(oldMapId)) {
+          this.map.removeLayer(oldMapId)
+          this.map.removeSource(oldMapId)
+        }
       }
 
-      var mapId = `${layer.dataset}_${extent.join('_')}`
       var mapJson = {
         id: mapId,
         type: 'raster',
@@ -278,17 +290,6 @@ export default {
           type: 'raster',
           tiles: [],
           tileSize: 256
-        }
-      }
-
-
-
-      // Remove old layer from map
-      if (imageLayers && imageLayers.extent) {
-        const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
-        if (this.map.getSource(oldMapId)) {
-          this.map.removeLayer(oldMapId)
-          this.map.removeSource(oldMapId)
         }
       }
 
@@ -327,7 +328,7 @@ export default {
         this.$emit('done-loading-layer', layer.name)
       })
     },
-    fetchDates() {
+    fetchDates(updateStep) {
       // After each interaction with the map, fetch the new dates belonging to
       // the timed layers
       const layer = this.layers.filter(layer => layer.name === 'Satelliet beelden')
@@ -371,6 +372,9 @@ export default {
             this.cachedYearlyDates = dates
           }
           this.dates = dates
+          if(updateStep) {
+            this.updateStep(this.step, 'nearest')
+          }
         })
       }
     },

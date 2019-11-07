@@ -140,6 +140,7 @@ export default {
   watch: {
     step: {
       handler() {
+        this.dragging = false
         this.redraw()
         this.updateImages()
       }
