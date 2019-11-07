@@ -36,14 +36,16 @@
       <v-btn
         text
         v-if="state === 'PAUSED' && timeMode.showBackForward"
-        @click="backward()"
+        @click="$emit('move-step-backward', step)"
+        @keyup.left="$emit('move-step-backward', step)"
         >
         <v-icon  small>fa-step-backward</v-icon>
       </v-btn>
       <v-btn
         text
         v-if="state === 'PAUSED' && timeMode.showBackForward"
-        @click="forward()"
+        @click="$emit('move-step-forward', step)"
+        @keyup.right="$emit('move-step-forward', step)"
         >
         <v-icon  small>fa-step-forward</v-icon>
       </v-btn>
@@ -598,31 +600,6 @@ export default {
     },
     pause() {
       this.state = 'PAUSED'
-    },
-    backward () {
-      // step back  in time
-      const nextStep = moment(this.step).add(-1, this.timeMode.interval);
-      if (nextStep < this.timeMode.extent[0]) {
-        return
-      } else {
-        this.$emit('update:step', nextStep)
-      }
-      this.snap(false)
-
-      this.redraw()
-
-    },
-    forward () {
-      // step forward in time
-      const nextStep = moment(this.step).add(1, this.timeMode.interval);
-      if (nextStep >= this.timeMode.extent[1]) {
-        return
-      } else {
-        this.$emit('update:step', nextStep)
-      }
-      this.snap(true)
-      this.redraw()
-
     },
     snap(forward) {
       if (!this.timeGrid.length) {

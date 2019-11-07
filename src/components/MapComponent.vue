@@ -27,7 +27,9 @@
         :step.sync="step"
         @update:time-mode="$emit('update:time-mode', $event)"
         @update:timeslider="updateTimeslider($event)"
-        @update:step="updateStep($event)"
+        @update:step="updateStep($event, 'nearest')"
+        @move-step-backward="updateStep($event, 'backward')"
+        @move-step-forward="updateStep($event, 'forward')"
       >
       </time-slider>
     </v-card>
@@ -91,7 +93,7 @@ export default {
     timeMode: {
       handler() {
         this.fetchDates()
-        this.updateStep(this.step)
+        this.updateStep(this.step, 'nearest')
       }
     }
   },
@@ -119,7 +121,7 @@ export default {
       this.addMapboxLayers()
 
       this.fetchDates()
-      this.updateStep(this.step)
+      this.updateStep(this.step, 'nearest')
 
       const event = {
         beginDate: this.step[0],
@@ -140,21 +142,41 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
-    updateStep(step) {
+    updateStep(step, place) {
       step = step.format("YYYY-MM-DD")
       if (this.timeMode.timing === 'daily') {
         const dates = this.dates.map(t => t.date)
-        if (dates.includes(step)) {
+        if (dates.includes(step) && place === 'nearest') {
+          // don't snap to next/previous, use date itself
           this.step = moment(step)
         } else {
           let diff = 365
+          if(place === 'backward') {
+            diff = -365
+          }
+          // snap to nearest, or when place is filled
           let ind = dates.length - 1
           // Find the nearest available date
           dates.forEach((d, i) => {
-            const localDiff = Math.abs(moment(d).diff( moment(step), 'days'))
-            if(localDiff < diff) {
-              diff = localDiff
-              ind = i
+            const localDiff = moment(d).diff( moment(step), 'days')
+            if(place === 'nearest') {
+              // Find the actual date that is nearest to the given date
+              if(Math.abs(localDiff) < diff) {
+                diff = Math.abs(localDiff)
+                ind = i
+              }
+            } else if (place === 'backward'){
+              // Find the element that is closest before the date
+              if(localDiff < 0 && localDiff > diff ) {
+                diff = localDiff
+                ind = i
+              }
+            } else if (place === 'forward'){
+              // Find the element that is closest after the date
+              if(localDiff > 0 && localDiff < diff ) {
+                diff = localDiff
+                ind = i
+              }
             }
           })
           this.step = moment(dates[ind])
