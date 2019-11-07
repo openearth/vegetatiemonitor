@@ -113,7 +113,6 @@ export default {
       this.map.touchZoomRotate.disableRotation()
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
-      // this.updateGEELayers()
       this.fetchDates()
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
