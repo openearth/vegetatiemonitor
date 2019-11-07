@@ -51,11 +51,11 @@
                       @change="$emit('setLayer', layer)"
                     />
                   </v-flex>
-                  <v-flex>
+                  <!-- <v-flex>
                     <v-icon class="ma-2" id="dragicon" title="Open details" small
                       >fa-caret-down</v-icon
                     >
-                  </v-flex>
+                  </v-flex> -->
                 </v-layout>
               </v-expansion-panel-header>
               <v-expansion-panel-content
