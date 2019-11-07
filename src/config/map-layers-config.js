@@ -79,7 +79,7 @@ const mapLayers = [
           url: 'mapbox://ellispenning.5tu1qjtk'
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -95,7 +95,7 @@ const mapLayers = [
           url: 'mapbox://ellispenning.5tu1qjtk'
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -115,7 +115,7 @@ const mapLayers = [
           url: 'mapbox://ellispenning.5tu1qjtk'
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         'source-layer': 'kadaster-vlakken-1i9erw',
         paint: {
@@ -148,7 +148,7 @@ const mapLayers = [
     name: 'Stroombanen',
     icon: './images/legend-stroombaan.png',
     opacity: 100,
-    active: true,
+    active: false,
     info:
       'De stroombanenkaart toont de hoofdstroombanen tijdens hoog water over de uiterwaarden.',
     activeLayerType: 'mapboxLayers',
@@ -164,6 +164,9 @@ const mapLayers = [
         paint: {
           'fill-color': 'rgba(51, 163, 255, 0.2)',
           'fill-outline-color': 'rgba(51, 163, 255, 1)'
+        },
+        layout: {
+          visibility: 'none'
         }
       }
     ]
@@ -185,16 +188,13 @@ const mapLayers = [
         id: 'classificatie-vs-legger-video',
         type: 'raster',
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         source: {
           type: 'video-tiled',
           tiles: [
             'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
           ],
-          layout: {
-            'visibility': 'none'
-          },
           tileSize: 256,
           durationSec: 1.8,
           dateBegin: '2000-01-01',
@@ -248,7 +248,7 @@ const mapLayers = [
           'raster-opacity': 0
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         source: {
           type: 'video-tiled',
@@ -319,7 +319,7 @@ const mapLayers = [
           url: 'mapbox://ellispenning.87a2u39q'
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         'source-layer': 'vegetatie-vlakken-596nr3',
         paint: {
@@ -424,7 +424,7 @@ const mapLayers = [
         id: 'ndvi-video',
         type: 'raster',
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         source: {
           type: 'video-tiled',
@@ -454,18 +454,15 @@ const mapLayers = [
       'Deze kaart toont het gekozen satellietbeeld waarop geclassificeerd wordt.',
     download: true,
     opacity: 100,
-    active: false,
+    active: true,
     dataset: 'satellite', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
     mapboxLayers: [
       {
         id: 'satellite-natural-video',
         type: 'raster',
-        paint: {
-          'raster-opacity': 0
-        },
         layout: {
-          'visibility': 'none'
+          visibility: 'visible'
         },
         source: {
           type: 'video-tiled',
@@ -476,6 +473,7 @@ const mapLayers = [
           durationSec: 1.8,
           dateBegin: '2000-01-01',
           dateEnd: '2018-01-01',
+          dateStart: '2018-01-01',
           maxzoom: 14,
           minzoom: 9,
           scheme: 'xyz',
