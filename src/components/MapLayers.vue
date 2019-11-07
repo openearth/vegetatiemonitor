@@ -5,107 +5,104 @@
         <h1 class="pa-4">
           Kaartlagen
         </h1>
-        <v-expansion-panels dense focusable accordion>
-          <draggable
-            id="draggable"
-            class="draggable"
-            v-model="filteredLayers"
-            @start="drag = true"
-            @end="drag = false"
-            v-bind="{ handle: '.draghandle' }"
-          >
-            <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
-              <v-expansion-panel-header class="pa-0">
-                <!-- <div slot="header" > -->
-                <v-layout align-center justify-space-end>
-                  <v-flex>
-                    <v-icon
-                      class="ma-2 draghandle"
-                      id="dragicon"
-                      title="Drag to change map layer drawing order"
-                      small
-                      >fa-grip-vertical</v-icon
-                    >
-                  </v-flex>
-                  <v-flex xs2 fill-height>
-                    <v-img contain max-height="100%" :src="layer.icon" />
-                  </v-flex>
-                  <v-flex xs5 class="pa-1">
-                    {{ layer.name }}
-                  </v-flex>
-                  <v-flex xs1>
-                    <v-tooltip v-if="layer.timeslider" bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-icon small v-on="on">fa-clock</v-icon>
-                      </template>
-                      <span
-                        >Deze laag is tijdsafhankelijk en kan bestuurd worden met de
-                        tijdsbalk.</span
+        <v-layout column class="scroll-panel ">
+          <v-expansion-panels dense focusable multiple accordion>
+            <draggable
+              id="draggable"
+              class="draggable"
+              v-model="filteredLayers"
+              @start="drag = true"
+              @end="drag = false"
+              v-bind="{ handle: '.draghandle' }"
+            >
+              <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
+                <v-expansion-panel-header class="pa-0">
+                  <v-layout align-center justify-space-end>
+                    <v-flex>
+                      <v-icon
+                        class="ma-2 draghandle"
+                        id="dragicon"
+                        title="Drag to change map layer drawing order"
+                        small
+                        >fa-grip-vertical</v-icon
                       >
-                    </v-tooltip>
-                  </v-flex>
-                  <v-flex xs2 @click.stop="">
-                    <v-switch
-                      class="ma-0"
-                      v-model="layer.active"
-                      @change="$emit('setLayer', layer)"
-                    />
-                  </v-flex>
-                  <v-flex>
-                    <v-icon class="ma-2" id="dragicon" title="Open details" small
-                      >fa-caret-down</v-icon
-                    >
-                  </v-flex>
-                </v-layout>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content
-                class="pa-0"
-                extra-small
-                expand-icon="fa-caret-down"
-                hide-actions
-              >
-                <div class="pa-2">
-                  <div class="infodiv" v-if="layer.info">
-                    <h4>Informatie</h4>
-                    {{ layer.info }}
-                    <v-divider />
-                  </div>
-                  <v-legend v-if="layer.legend" :layer="layer"></v-legend>
-                  <div class="opacity" v-if="layer.opacity">
-                    <h4>Transparantie: {{ 100 - layer.opacity }}%</h4>
-                    <v-slider
-                      hide-details
-                      class="pa-0 ma-0"
-                      title="transparantie"
-                      :min="1"
-                      :max="100"
-                      v-model="layer.opacity"
-                    ></v-slider>
-                    <v-divider />
-                  </div>
-                  <div class="settings" v-if="layer.settings">
-                    <h4>Extra settings</h4>
-                    <div v-for="setting in layer.settings" :key="setting.type">
-                      <v-select
-                        v-if="setting.type === 'select'"
-                        dense
-                        :items="setting.items"
-                        item-text="name"
-                        item-value="name"
-                        v-model="setting.selected"
-                        item
-                      ></v-select>
+                    </v-flex>
+                    <v-flex xs2 fill-height>
+                      <v-img contain max-height="100%" :src="layer.icon" />
+                    </v-flex>
+                    <v-flex xs5 class="pa-1">
+                      {{ layer.name }}
+                    </v-flex>
+                    <v-flex xs1>
+                      <v-tooltip v-if="layer.timeslider" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-icon small v-on="on">fa-clock</v-icon>
+                        </template>
+                        <span
+                          >Deze laag is tijdsafhankelijk en kan bestuurd worden met de
+                          tijdsbalk.</span
+                        >
+                      </v-tooltip>
+                    </v-flex>
+                    <v-flex xs2 @click.stop="">
+                      <v-switch
+                        class="ma-0"
+                        v-model="layer.active"
+                        @change="$emit('setLayer', layer)"
+                      />
+                    </v-flex>
+                  </v-layout>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content
+                  class="pa-0"
+                  extra-small
+                  expand-icon="fa-caret-down"
+                  hide-actions
+                >
+                  <div class="pa-2">
+                    <div class="infodiv" v-if="layer.info">
+                      <h4>Informatie</h4>
+                      {{ layer.info }}
+                      <v-divider />
                     </div>
-                    <v-divider />
+                    <v-legend v-if="layer.legend" :layer="layer"></v-legend>
+                    <div class="opacity" v-if="layer.opacity">
+                      <h4>Transparantie: {{ 100 - layer.opacity }}%</h4>
+                      <v-slider
+                        hide-details
+                        class="pa-0 ma-0"
+                        title="transparantie"
+                        :min="1"
+                        :max="100"
+                        v-model="layer.opacity"
+                      ></v-slider>
+                      <v-divider />
+                    </div>
+                    <div class="settings" v-if="layer.settings">
+                      <h4>Extra settings</h4>
+                      <div v-for="setting in layer.settings" :key="setting.type">
+                        <v-select
+                          v-if="setting.type === 'select'"
+                          dense
+                          :items="setting.items"
+                          item-text="name"
+                          item-value="name"
+                          v-model="setting.selected"
+                          item
+                        ></v-select>
+                      </div>
+                      <v-divider />
+                    </div>
+                    <difference-legend v-if="layer.legendtable === 'difference'">
+                    </difference-legend>
                   </div>
-                  <difference-legend v-if="layer.legendtable === 'difference'">
-                  </difference-legend>
-                </div>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </draggable>
-        </v-expansion-panels>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </draggable>
+          </v-expansion-panels>
+        </v-layout>
       </v-flex>
+      <v-divider class="ma-2"/>
       <v-flex grow>
         <div class="pa-4">
           <v-alert outlined type="warning" v-if="loadingLayers.length > 0">
@@ -341,5 +338,25 @@ export default {
 
 .theme--light.v-input--switch__thumb {
   color: #f8f8f8;
+}
+
+.scroll-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 70vh;
+}
+
+.scroll-panel::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius: 20px;
+}
+
+.scroll-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-panel::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 20px;
 }
 </style>

@@ -3,9 +3,8 @@
     <h1 class="pa-4">
       Colofon
     </h1>
-    <v-card small flat>
+    <v-card small flat max-width="338">
       <v-card-text class="py-0">
-        <p>
           Voor algemene vragen over de vegetatiemonitor en de achtergronden bij
           deze ontwikkeling:
           <a href="mailto:?subject=Vegetatiemonitor">Rijkswaterstaat</a>
@@ -17,7 +16,6 @@
             >hier</a
           >
           voor het instructiefilmpje.
-        </p>
       </v-card-text>
     </v-card>
   </div>
