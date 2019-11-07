@@ -6,7 +6,6 @@
           Kaartlagen
         </h1>
         <v-layout column class="scroll-panel ">
-          <!-- v-sheet ma-1 elevation-0 v-alert--outlined grey--text -->
           <v-expansion-panels dense focusable multiple accordion>
             <draggable
               id="draggable"
@@ -18,7 +17,6 @@
             >
               <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
                 <v-expansion-panel-header class="pa-0">
-                  <!-- <div slot="header" > -->
                   <v-layout align-center justify-space-end>
                     <v-flex>
                       <v-icon
