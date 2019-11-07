@@ -94,24 +94,20 @@ const speeds = [
 export default {
   name: "time-slider",
   props: {
-    layers: {
-      type: Array,
-      default: () => {
-        return [];
-      }
-    },
     timeModes: {
       type: Array,
       required: true
     },
     dates: {
       type: Array
+    },
+    step: {
+      type: Object
     }
   },
   data() {
     return {
       state: 'PAUSED',
-      step: moment().subtract(1, 'year').startOf('year'),
       // set in updateLaneGroup
       timeGrid: [],
       dataLanes: null,
@@ -130,19 +126,20 @@ export default {
       sliderWidth: 0,
       sliderHeight: 0,
       svgWidth: 0,
-      trackHeight: 90,
+      trackHeight: 30,
       dragging: false,
       speeds: speeds,
-      speed: null
+      speed: null,
+      layers: [{
+        name: 'Satelliet beelden'
+      }]
     }
   },
   watch: {
-    layers: {
-      handler: function () {
-        if (!this.layers) return;
-        this.redraw();
-      },
-      deep: true
+    step: {
+      handler() {
+        this.redraw()
+      }
     },
     dates: {
       handler() {
@@ -154,7 +151,7 @@ export default {
         // if current time is outside of current extent
         let outside = (this.step <= timeMode.extent[0]) || (this.step >= timeMode.extent[1])
         if (outside) {
-          this.step = timeMode.extent[1].clone().add(-1, this.timeMode.interval)
+          this.$emit('update:step', timeMode.extent[1].clone().add(-1, this.timeMode.interval))
         }
         this.redraw()
       }
@@ -216,7 +213,7 @@ export default {
     window.addEventListener("resize", () => {
       this.redraw();
     });
-    this.$emit('update-time-mode', timeMode)
+    this.$emit('update:time-mode', timeMode)
     this.updateImages()
 
 
@@ -233,7 +230,7 @@ export default {
         this.timeModes,
         this.timeMode
       )
-      this.$emit('update-time-mode', this.timeMode)
+      this.$emit('update:time-mode', this.timeMode)
       this.redraw()
       this.updateImages()
     },
@@ -254,7 +251,7 @@ export default {
       this.svgWidth = this.$el.clientWidth - 20;
       this.margin = 10;
       this.sliderWidth = this.svgWidth - this.labelWidth - 2 * this.margin;
-      this.sliderHeight = this.trackHeight + this.laneHeight * nLanes + this.periodHeight + this.margin
+      this.sliderHeight = this.trackHeight + this.laneHeight + this.periodHeight + this.margin
       const nt = parseInt(this.sliderWidth / 60)
       this.nTicks = nt > this.timeMode.ticks ? this.timeMode.ticks : nt
     },
@@ -288,9 +285,9 @@ export default {
           this.pause()
           this.dragging = true;
           let date = this.xScale.invert(d3.event.x)
-          this.step = moment(date).startOf(
+          this.$emit('update:step', moment(date).startOf(
             this.timeMode.interval
-          )
+          ))
           if (
             this.step <= this.timeMode.extent[0] ||
               this.step >= this.timeMode.extent[1]
@@ -373,7 +370,7 @@ export default {
       this.lanePeriod = this.slider
         .insert("rect")
         .attr("class", "lane-rect")
-        .attr("y", -this.layers.length * (this.laneHeight + this.laneSpacing))
+        .attr("y", - this.layers.length * (this.laneHeight + this.laneSpacing))
         .attr(
           "height",
           this.layers.length * (this.laneHeight + this.laneSpacing)
@@ -502,7 +499,7 @@ export default {
             .attr("height", this.laneHeight - margin)
             .style('transform-origin', d => d.transformOrigin)
             .on("click", x => {
-              this.step = moment(x.dateStart, x.dateFormat);
+              this.$emit('update:step', moment(x.dateStart, x.dateFormat))
               // this.$emit('select:interval', x)
               this.updateImages()
               this.redraw()
@@ -545,7 +542,7 @@ export default {
             .attr("width", 2)
             .attr("height", this.laneHeight - margin)
             .on("click", x => {
-              this.step = moment(x.date, x.dateFormat);
+              this.$emit('update:step', moment(x.date, x.dateFormat))
               // this.$emit('select:instance', x)
               this.updateImages()
               this.redraw();
@@ -583,13 +580,13 @@ export default {
 
         if (nextStep >= this.timeMode.extent[1]) {
           if (this.loop) {
-            this.step = this.timeMode.extent[0]
+            this.$emit('update:step', this.timeMode.extent[0])
           } else {
             this.state = 'PAUSED'
             return
           }
         } else {
-          this.step = nextStep;
+          this.$emit('update:step', nextStep)
         }
         this.updateHandle()
         this.last = now
@@ -607,7 +604,7 @@ export default {
       if (nextStep < this.timeMode.extent[0]) {
         return
       } else {
-        this.step = nextStep
+        this.$emit('update:step', nextStep)
       }
       this.snap(false)
 
@@ -620,7 +617,7 @@ export default {
       if (nextStep >= this.timeMode.extent[1]) {
         return
       } else {
-        this.step = nextStep
+        this.$emit('update:step', nextStep)
       }
       this.snap(true)
       this.redraw()
@@ -659,7 +656,7 @@ export default {
         return
       }
 
-      this.step = snapCandidate
+      this.$emit('update:step', snapCandidate)
 
     },
     updateHandle() {
@@ -689,7 +686,7 @@ export default {
     },
 
     updateImages() {
-      this.$emit("update-timeslider", {
+      this.$emit("update:timeslider", {
         dragging: this.dragging,
         beginDate: moment(this.step).format('YYYY-MM-DD'),
         endDate: moment(this.step).add(1, this.timeMode.interval).format('YYYY-MM-DD'),
@@ -704,7 +701,7 @@ export default {
 #slider {
   /* padding: 50px; */
   width: calc(100% - 20px);
-  height: 130px;
+  height: 70px;
 }
 /* scoped styles do not descent into d3, so use outer element */
 svg >>> .ticks {

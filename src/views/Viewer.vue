@@ -32,6 +32,7 @@
         :modes="modes"
         :timeMode.sync="timeMode"
         :loadingLayers.sync="loadingLayers"
+        @update:time-mode="timeMode = $event"
         @loading-layer="loadingLayers.push($event)"
         @done-loading-layer="loadingLayers.pop($event)"
       />
@@ -59,7 +60,9 @@ export default {
       dateBegin: '2018-07-25',
       dateEnd: '2018-07-28',
       openDrawer: false,
-      timeMode: null,
+      timeMode: {
+        timing: 'yearly'
+      },
       loadingLayers: []
     }
   },

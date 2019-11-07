@@ -22,11 +22,12 @@
       color="secondary">
       <time-slider
         ref="timeslider"
-        :layers="timesliderLayers"
         :timeModes="timeModes"
         :dates="dates"
-        @update-time-mode="$emit('update:time-mode', $event)"
-        @update-timeslider="updateTimeslider($event)"
+        :step.sync="step"
+        @update:time-mode="$emit('update:time-mode', $event)"
+        @update:timeslider="updateTimeslider($event)"
+        @update:step="updateStep($event)"
       >
       </time-slider>
     </v-card>
@@ -62,14 +63,6 @@ export default {
       type: Object
     }
   },
-  watch: {
-    layers: {
-      deep: true,
-      handler() {
-        this.fetchDates()
-      }
-    }
-  },
   data: function() {
     return {
       center: [5.2, 51.8],
@@ -90,7 +83,16 @@ export default {
       },
       polygons: [],
       scale: 10,
-      dates: []
+      dates: [],
+      step: moment().subtract(1, 'year').startOf('year')
+    }
+  },
+  watch: {
+    timeMode: {
+      handler() {
+        console.log('timemode changed', this.timeMode.timing)
+        this.fetchDates()
+      }
     }
   },
   computed: {
@@ -105,7 +107,9 @@ export default {
   },
   mounted() {
     this.map = this.$refs.map.map
+
     this.map.on('load', () => {
+
       // disable map rotation using right click + drag
       this.map.dragRotate.disable()
 
@@ -113,7 +117,15 @@ export default {
       this.map.touchZoomRotate.disableRotation()
       this.$emit('update:map', this.map)
       this.addMapboxLayers()
+
       this.fetchDates()
+
+      const event = {
+        beginDate: this.step[0],
+        endDate: this.step[1]
+      }
+      this.updateTimedLayers(event)
+
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
     })
@@ -127,6 +139,46 @@ export default {
   },
   methods: {
     deferredMountedTo() {},
+    updateTimeMode(timeMode){
+
+      this.fetchDates()
+    },
+    updateStep(step) {
+      step = step.format("YYYY-MM-DD")
+      if (this.timeMode.timing === 'daily') {
+        const dates = this.dates.map(t => t.date)
+        if (dates.length === 0){
+          return
+        } else if (dates.includes(step)) {
+          this.step = moment(step)
+          return
+        } else {
+          let diff = 365
+          let ind = dates.length - 1
+          // Find the nearest available date
+          dates.forEach((d, i) => {
+            const localDiff = Math.abs(moment(d).diff( moment(step), 'days'))
+            if(localDiff < diff) {
+              diff = localDiff
+              ind = i
+            }
+          })
+          this.step = moment(dates[ind])
+        }
+      } else if (this.timeMode.timing === 'yearly') {
+        const newStep = moment(step).startOf('year').format("YYYY-MM-DD")
+        if(!this.cachedYearlyDates) {
+          return
+        } else {
+          const dates = this.cachedYearlyDates.map(t => t.dateStart)
+          if (dates.includes(newStep)) {
+            this.step = moment(newStep)
+          } else {
+            this.step = moment(dates[dates.length - 1])
+          }
+        }
+      }
+    },
     updateTimeslider(event) {
       const extent = [
         event.beginDate,
@@ -210,6 +262,7 @@ export default {
         }
       }
 
+      // Remove old layer from map
       if (imageLayers && imageLayers.extent) {
         const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
         if (this.map.getSource(oldMapId)) {
@@ -226,6 +279,7 @@ export default {
         vis: layer.vis
       }
 
+      // If mapId already exists, remove from map
       if (this.map.getSource(mapId)) {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
@@ -239,27 +293,26 @@ export default {
           'Content-Type': 'application/json'
         }
       })
-        .then(res => {
-          return res.json()
-        })
-        .then(mapUrl => {
-          mapJson.source['tiles'] = [mapUrl['url']]
-          this.map.addLayer(mapJson)
-          layer.imageLayers[0] = mapJson
-          this.$emit('done-loading-layer', layer.name)
-        })
+      .then(res => {
+        return res.json()
+      })
+      .then(mapUrl => {
+        mapJson.source['tiles'] = [mapUrl['url']]
+        this.map.addLayer(mapJson)
+        layer.imageLayers[0] = mapJson
+        this.$emit('done-loading-layer', layer.name)
+      })
+      .catch(() => {
+        this.$emit('done-loading-layer', layer.name)
+      })
     },
     fetchDates() {
       // After each interaction with the map, fetch the new dates belonging to
       // the timed layers
-
-      const layers = this.timesliderLayers.filter(layer => layer.active)
-
-      // If there is no active timeslider layers, do nothing
-      if (layers.length === 0) {
+      const layer = this.layers.filter(layer => layer.name === 'Satelliet beelden')
+      if (!this.map) {
         return
       }
-
       // If not zoomed in enough, do nothing
       if (this.map.getZoom() < 9) {
         this.dates = []
@@ -273,7 +326,7 @@ export default {
         let region = this.getRegion()
         let body = JSON.stringify({ region: region })
 
-        let url = `${this.$store.state.SERVER_URL}/map/${layers[0].dataset}/times/${this.timeMode.timing}`
+        let url = `${this.$store.state.SERVER_URL}/map/${layer[0].dataset}/times/${this.timeMode.timing}`
 
         // ... testing querying times by tiles
         if(this.timeMode.timing === 'daily') {
@@ -296,8 +349,9 @@ export default {
           if(this.timeMode.timing === 'yearly') {
             this.cachedYearlyDates = dates
           }
-
           this.dates = dates
+          this.updateStep(this.step)
+
         })
       }
     },

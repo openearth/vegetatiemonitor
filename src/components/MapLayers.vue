@@ -165,6 +165,11 @@ export default {
         this.toggleLayers()
         this.sortLayers()
       }
+    },
+    loadingLayers: {
+      handler() {
+        this.sortLayers()
+      }
     }
   },
   computed: {
