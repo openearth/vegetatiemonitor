@@ -27,7 +27,7 @@ const modes = [
           moment().startOf("year")
         ],
         ticks: 2,
-        showLanes: false,
+        showLanes: true,
         showPlayer: false,
         showSlider: false,
         showBackForward: false
@@ -41,11 +41,11 @@ const modes = [
         extent: [
           moment()
             .startOf("day")
-            .subtract(6, "weeks"),
+            .subtract(6, "months"),
           moment().startOf("day")
         ],
         ticks: 6,
-        showLanes: false,
+        showLanes: true,
         showPlayer: false,
         showSlider: true,
         showBackForward: true

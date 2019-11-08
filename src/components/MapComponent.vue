@@ -305,12 +305,6 @@ export default {
         vis: layer.vis
       }
 
-      // If mapId already exists, remove from map
-      if (this.map.getSource(mapId)) {
-        this.map.removeLayer(mapId)
-        this.map.removeSource(mapId)
-      }
-
       let promise = fetchAndControl(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
         body: JSON.stringify(jsonBody),
@@ -321,6 +315,11 @@ export default {
       })
 
       let promises = [...this.loadingLayers]
+
+      // Remove old promises before creating a new promise with the same name
+      const oldReqs = promises.filter(p => p.name === layer.name)
+      oldReqs.forEach(p => p.controller.abort())
+
       // store the name of the layer in the promise
       promise.name = layer.name
       // add the promise to the  list of loading Layers
@@ -334,6 +333,11 @@ export default {
         })
         .then(mapUrl => {
           mapJson.source['tiles'] = [mapUrl['url']]
+          // If mapId already exists, remove from map
+          if (this.map.getSource(mapId)) {
+            this.map.removeLayer(mapId)
+            this.map.removeSource(mapId)
+          }
           this.map.addLayer(mapJson)
           layer.imageLayers[0] = mapJson
           // remove the promise from the list

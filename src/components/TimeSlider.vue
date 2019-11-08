@@ -140,7 +140,6 @@ export default {
   watch: {
     step: {
       handler() {
-        this.dragging = false
         this.redraw()
         this.updateImages()
       }
@@ -310,6 +309,8 @@ export default {
 
           this.lanePeriod.classed('dragging', false)
           this.handle.classed('dragging', false)
+          this.updateImages()
+
         })
 
 
