@@ -30,7 +30,23 @@ export function range(start, end) {
     .map((_, idx) => start + idx);
 }
 
+/***
+ * Returns named parameter from url.
+ */
 export function getUrlParam(name) {
   var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
   return (results && results[1]) || undefined;
+}
+
+/***
+ * Fetch and return the  promise with the abort controller as a property.
+ * api same as https://fetch.spec.whatwg.org/#dom-global-fetch
+ */
+export function fetchAndControl(input, init) {
+  let controller = new AbortController()
+  let signal = controller.signal
+  init = Object.assign({signal}, init)
+  let promise = fetch(input,  init)
+  promise.controller = controller
+  return promise
 }
