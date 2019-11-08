@@ -44,6 +44,7 @@
         :modes="modes"
         :map="map"
         :loadingLayers="loadingLayers"
+        :timeMode.sync='timeMode'
       />
       <v-analyse
         id="menu-open"

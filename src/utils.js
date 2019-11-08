@@ -50,3 +50,20 @@ export function fetchAndControl(input, init) {
   promise.controller = controller
   return promise
 }
+
+/***
+ * Returns map region as a GeoJSON
+ */
+export function getMapRegion(map) {
+  let bounds = map.getBounds()
+  let N = bounds.getNorth()
+  let E = bounds.getEast()
+  let S = bounds.getSouth()
+  let W = bounds.getWest()
+
+  return {
+    type: 'Polygon',
+    geodesic: true,
+    coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
+  }
+}

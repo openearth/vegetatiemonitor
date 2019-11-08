@@ -33,17 +33,13 @@
       >
       </time-slider>
     </v-card>
-    <v-snackbar v-model="snackbarAccuracy" :timeout="8000" top right>
-      {{ textAccuracy }}
-      <v-btn color="blue" text @click="snackbarAccuracy = false">Close</v-btn>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
-import { degreesToTiles, range, fetchAndControl, getUrlParam } from '../utils'
+import { degreesToTiles, range, fetchAndControl, getUrlParam, getMapRegion } from '../utils'
 import _ from 'lodash'
 
 export default {
@@ -94,9 +90,7 @@ export default {
       polygons: [],
       scale: 10,
       dates: [],
-      step: moment().subtract(1, 'year').startOf('year'),
-      textAccuracy: '',
-      snackbarAccuracy: false
+      step: moment().subtract(1, 'year').startOf('year')
     }
   },
   watch: {
@@ -230,6 +224,12 @@ export default {
         })
       })
     },
+    onClassify() {
+      console.log('on classify')
+    },
+    onClassifyClear() {
+      console.log('on classify clear')
+    },
     updateTimedLayers(extent) {
       this.layers.forEach(layer => {
         if (layer.timeslider) {
@@ -275,6 +275,11 @@ export default {
       }
     },
     updateImageLayer(layer, extent) {
+      // do not update if we have custom layer and it does not need to refresh (e.g. daily classification)
+      if(layer.customExtent && !layer.needsUpdate && this.timeMode.name === 'DAG') {
+          return
+      }
+
       const imageLayers = layer.imageLayers[0]
       var mapId = `${layer.dataset}_${extent.join('_')}`
 
@@ -283,13 +288,17 @@ export default {
         const oldMapId = `${layer.dataset}_${imageLayers.extent.join('_')}`
 
         // If existing gee layer on already has the correct dates and dataset, return
-        if (layer.imageLayers.length > 0 && oldMapId === mapId) {
+        if (layer.imageLayers.length > 0 && oldMapId === mapId && !layer.customExtent) {
           return
         }
         if (this.map.getSource(oldMapId)) {
           this.map.removeLayer(oldMapId)
           this.map.removeSource(oldMapId)
         }
+      }
+
+      if(layer.needsUpdate) {
+        layer.needsUpdate = false
       }
 
       var mapJson = {
@@ -303,7 +312,12 @@ export default {
         }
       }
 
-      const region = this.getRegion()
+      let region = getMapRegion(this.map)
+
+      // override classifcation region for the cases when map layers are initialized lazily
+      if(layer.customExtent) {
+        region = layer.classificationRegion
+      }
       
       var jsonBody = {
         dateBegin: extent[0],
@@ -340,9 +354,9 @@ export default {
           return res.json()
         })
         .then(mapUrl => {
-          if('accuracy' in mapUrl && getUrlParam('debug')) {
-            this.textAccuracy = 'Training accurracy is: ' + Math.floor(parseFloat(mapUrl['accuracy']) * 100) + '%'
-            this.snackbarAccuracy = true
+          if('accuracy' in mapUrl) {
+            let accuracyText = 'Training accurracy is: ' + Math.floor(parseFloat(mapUrl['accuracy']) * 100) + '%'
+            layer.classificationMessage = accuracyText + '\nDate: ' + extent[0] + ''
           }
           mapJson.source['tiles'] = [mapUrl['url']]
           this.map.addLayer(mapJson)
@@ -378,7 +392,7 @@ export default {
           return
         }
 
-        let region = this.getRegion()
+        let region = getMapRegion(this.map)
         let body = JSON.stringify({ region: region })
 
         let url = `${this.$store.state.SERVER_URL}/map/${layer[0].dataset}/times/${this.timeMode.timing}`
@@ -411,19 +425,8 @@ export default {
         })
       }
     },
-    getRegion() {
-      var N = this.map.getBounds().getNorth()
-      var E = this.map.getBounds().getEast()
-      var S = this.map.getBounds().getSouth()
-      var W = this.map.getBounds().getWest()
-      return {
-        type: 'Polygon',
-        geodesic: true,
-        coordinates: [[[W, N], [W, S], [E, S], [E, N], [W, N]]]
-      }
-    },
     getTiles() {
-      let region = this.getRegion()
+      let region = getMapRegion(this.map)
 
       let zoom = 10
       let tilesMax = degreesToTiles(region.coordinates[0][1][0], region.coordinates[0][1][1], zoom)

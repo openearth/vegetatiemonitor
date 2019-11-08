@@ -179,6 +179,7 @@ const mapLayers = [
       'Deze kaart vergelijkt de huidige classificatie met de legger in een kleurenschaal van groen (vegetatie is gladder dan de toegestane klasse) naar rood (vegetatie is ruwer dan de toegestane klasse).',
     opacity: 100,
     active: false,
+    customExtent: true,
     dataset: 'landuse-vs-legger',
     legendtable: 'difference',
     activeLayerType: 'mapboxLayers',
@@ -220,6 +221,7 @@ const mapLayers = [
     download: true,
     opacity: 100,
     active: false,
+    customExtent: true,
     dataset: 'landuse', // important! this argument is needed to call the service
     activeLayerType: 'mapboxLayers',
     legend: {
