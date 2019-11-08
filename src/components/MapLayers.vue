@@ -255,22 +255,25 @@ export default {
       }
     },
     sortLayers() {
+
+      let previousId = null
+
       // Function to sort the layers according to their position in the menu
-      for (var i = this.filteredLayers.length - 2; i >= 0; --i) {
-        this.layerTypes.forEach(data => {
-          if (!this.filteredLayers[i][data]) return
-          for (
-            var thislayer = 0;
-            thislayer < this.filteredLayers[i][data].length;
-            ++thislayer
-          ) {
-            const mapId = this.filteredLayers[i][data][thislayer].id
-            if (mapId && this.map.getSource(mapId)) {
-              this.map.moveLayer(this.filteredLayers[i][data][thislayer].id)
+      this.filteredLayers.forEach((filterLayer, i) => {
+        this.layerTypes.forEach(type => {
+          if (!filterLayer[type]) return
+          filterLayer[type].forEach((dataLayer, j) => {
+            const mapId = dataLayer.id
+            if (!previousId) {
+              previousId = mapId
             }
-          }
+            if (mapId && this.map.getSource(mapId)) {
+              this.map.moveLayer(mapId, previousId)
+              previousId = mapId
+            }
+          })
         })
-      }
+      })
     }
   },
   components: {

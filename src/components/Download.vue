@@ -70,7 +70,7 @@
           </v-btn>
           <v-btn
             class="mb-1"
-            :disabled="downloading || bbox.coordinates || map.getZoom() < 9"
+            :disabled="downloading || !bbox.coordinates || map.getZoom() < 9"
             block
             outlined
             color="btncolor"
@@ -131,7 +131,7 @@ export default {
   },
   data() {
     return {
-      bbox: '',
+      bbox: {},
       draw: {},
       downloading: false,
       error: ''
@@ -146,31 +146,44 @@ export default {
         trash: true
       }
     })
-    this.map.addControl(this.draw, 'top-right')
-
-    this.map.on('draw.create', () => {
+    this.createDrawTools()
+  },
+  beforeDestroy() {
+    this.map.removeControl(this.draw)
+    this.map.off('draw.create', this.createFunc)
+    this.map.off('draw.update', this.updateFunc)
+    this.map.off('draw.delete', this.deleteFunc)
+    this.draw = {}
+  },
+  methods: {
+    createDrawTools() {
+      // loaded checks tiles. Video tiles are loading dynamicly
+      // temporary monkeypatch loaded function, because video layers are not always loaded
+      // keep the old loaded function
+      let oldLoaded = this.map.loaded
+      // always return true
+      this.map.loaded = (() => true)
+      // add the control
+      this.map.addControl(this.draw, 'top-right')
+      // Now restore old loaded function
+      this.map.loaded = oldLoaded
+      this.map.on('draw.create', this.createFunc)
+      this.map.on('draw.update', this.updateFunc)
+      this.map.on('draw.delete', this.deleteFunc)
+    },
+    createFunc() {
       if (this.draw.getAll().features.length > 1) {
         const oldId = this.draw.getAll().features[0].id
         this.draw.delete(oldId)
       }
       this.bbox = this.draw.getAll().features[0].geometry
-    })
-
-    this.map.on('draw.update', () => {
+    },
+    updateFunc() {
       this.bbox = this.draw.getAll().features[0].geometry
-    })
-
-    this.map.on('draw.delete', () => {
+    },
+    deleteFunc() {
       this.bbox = {}
-    })
-  },
-  beforeDestroy() {
-    this.map.removeControl(this.draw)
-    this.map.off('draw.create')
-    this.map.off('draw.update')
-    this.map.off('draw.delete')
-  },
-  methods: {
+    },
     downloadCurrentView() {
       const bbox = this.getBbox()
       this.downloadGeotiff(bbox)
