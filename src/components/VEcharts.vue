@@ -93,7 +93,6 @@ export default {
   },
   methods: {
     fetchZonalData() {
-      console.log('this.timemode in echarts before sending requests', this.timeMode)
       const body = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
@@ -148,8 +147,10 @@ export default {
                 itemStyle: {
                   color: color.color
                 }
+
               }
             })
+            this.$emit('add-pie-data', data)
             this.createPieChart(data)
           } else if (this.zonalType === 'zonal-timeseries') {
             this.createLineChart(chartData[0])
