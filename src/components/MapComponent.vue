@@ -43,7 +43,7 @@
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
-import { degreesToTiles, range, fetchAndControl } from '../utils'
+import { degreesToTiles, range, fetchAndControl, getUrlParam } from '../utils'
 import _ from 'lodash'
 
 export default {
