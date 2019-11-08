@@ -31,13 +31,14 @@ export function range(start, end) {
 }
 
 /***
- * Fetch and return the  promise with the abort controller as a property
+ * Fetch and return the  promise with the abort controller as a property.
+ * api same as https://fetch.spec.whatwg.org/#dom-global-fetch
  */
-export function fetchAndControl(url, options) {
+export function fetchAndControl(input, init) {
   let controller = new AbortController()
   let signal = controller.signal
-  options.signal = signal
-  let promise = fetch(url, options)
+  init = Object.assign({signal}, init)
+  let promise = fetch(input,  init)
   promise.controller = controller
   return promise
 }

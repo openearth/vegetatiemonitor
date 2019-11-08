@@ -32,7 +32,6 @@
         :modes="modes"
         :timeMode.sync="timeMode"
         :loadingLayers.sync="loadingLayers"
-        @update:time-mode="timeMode = $event"
       />
     </v-content>
   </div>

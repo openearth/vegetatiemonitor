@@ -337,7 +337,6 @@ export default {
           this.map.addLayer(mapJson)
           layer.imageLayers[0] = mapJson
           // remove the promise from the list
-          console.log('completed', promise)
           let promises = [...this.loadingLayers]
           _.pull(promises, promise)
           // sync
@@ -345,7 +344,6 @@ export default {
         })
         .catch(() => {
           // remove  the promise from the list
-          console.log('error in request', promise)
           let promises = [...this.loadingLayers]
           _.pull(promises, promise)
           // sync

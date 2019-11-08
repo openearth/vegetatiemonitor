@@ -111,7 +111,7 @@
               v-for="(promise, index) in loadingLayers"
               :key="index"
               >
-              {{index}} {{ promise.name }}<v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
+              {{ promise.name }}<v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
             </span>
 
             <v-progress-linear
@@ -197,7 +197,6 @@ export default {
   },
   methods: {
     abort(promise) {
-      console.log('aborting', promise)
       promise.controller.abort()
       let promises = [...this.loadingLayers]
       _.pull(promises,  promise)
