@@ -216,6 +216,7 @@ export default {
           if (!layer[data]) return
           layer[data].forEach(sublayer => {
             if (!sublayer.id) return
+            if (!this.map.getSource(sublayer.id)) return
             if (layer.active && layer.activeLayerType === data) {
               if (!layerNames.includes(layer.name)) {
                 layer.active = false
