@@ -68,6 +68,9 @@ export default {
     zonalType: {
       type: String
     },
+    url: {
+      type: String
+    },
     polygon: {
       type: Object
     },
@@ -93,7 +96,6 @@ export default {
   },
   methods: {
     fetchZonalData() {
-      console.log('this.timemode in echarts before sending requests', this.timeMode)
       const body = {
         dateBegin: this.dateBegin,
         dateEnd: this.dateEnd,
@@ -114,7 +116,7 @@ export default {
       }
 
       // If in voorspel mode,  the timeseries
-      if (this.zonalType === 'zonal-timeseries') {
+      if (this.zonalType === 'zonal-timeseries' || this.zonalType === 'voorspel') {
         body.dateBegin = moment(2000, 'YYYY').format('YYYY-MM-DD')
         body.dateEnd = moment()
           .add(10, 'years')
@@ -122,10 +124,9 @@ export default {
       }
 
       const json_body = JSON.stringify(body)
+      console.log(`${this.$store.state.SERVER_URL}${this.url}`, json_body)
       fetch(
-        `${this.$store.state.SERVER_URL}/map/${this.datatype}/${
-          this.zonalType
-        }/`,
+        `${this.$store.state.SERVER_URL}${this.url}`,
         {
           method: 'POST',
           body: json_body,

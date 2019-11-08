@@ -34,10 +34,8 @@
         </v-alert>
       </div>
       <div v-for="(type, index) in datatypes" :key="index">
-        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode" @loaded="loading = $event" @add-graph="graphs.push($event)"></v-echarts>
+        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :url="type.url" :timeMode="timeMode" @loaded="loading = $event" @add-graph="graphs.push($event)"></v-echarts>
       </div>
-      <v-timeseries v-if="$route.name === 'voorspel'" :options="voorspelOptions">
-      </v-timeseries>
     </v-flex>
     <v-flex xs1>
       <!-- Add buttons to bottom of the menu -->
@@ -189,11 +187,17 @@ export default {
           // TODO: use modes (and adjust mode options config) to make this if statement...
           if (this.$route.name === 'Voorspel' && type === 'landuse') {
             datatypes.push({
+              url: `/map/${type}/${'zonal-timeseries'}/`,
               datatype: type,
               zonalType: 'zonal-timeseries'
             })
+
+            datatypes.push({
+              url: '/voorspel/',
+            })
           }
           datatypes.push({
+            url: `/map/${type}/${'zonal-info'}/`,
             datatype: type,
             zonalType: 'zonal-info'
           })

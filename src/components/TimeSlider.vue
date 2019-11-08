@@ -218,9 +218,7 @@ export default {
       this.redraw();
     });
     this.$emit('update:time-mode', timeMode)
-
-
-
+    this.updateImages()
   },
   methods: {
     changeSpeed() {
