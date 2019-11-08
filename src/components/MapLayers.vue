@@ -273,9 +273,6 @@ export default {
           })
         })
       })
-    },
-    loadingMessage() {
-      return `De volgende lagen worden nog geladen: ${this.loadingLayers.join(', ')}.`
     }
   },
   components: {

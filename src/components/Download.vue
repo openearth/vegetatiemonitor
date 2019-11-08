@@ -139,7 +139,6 @@ export default {
   },
   components: { SelectPeriod },
   mounted() {
-    console.log('mounted', JSON.parse(JSON.stringify(this.draw)))
     this.draw = new MapboxDraw({
       displayControlsDefault: false,
       controls: {
@@ -147,11 +146,9 @@ export default {
         trash: true
       }
     })
-    console.log(this.draw)
     this.createDrawTools()
   },
   beforeDestroy() {
-    console.log('before destroy')
     this.map.removeControl(this.draw)
     this.map.off('draw.create', this.createFunc)
     this.map.off('draw.update', this.updateFunc)
@@ -175,14 +172,11 @@ export default {
       this.map.on('draw.delete', this.deleteFunc)
     },
     createFunc() {
-      console.log('create', this.draw)
       if (this.draw.getAll().features.length > 1) {
         const oldId = this.draw.getAll().features[0].id
         this.draw.delete(oldId)
       }
-      console.log(this.draw)
       this.bbox = this.draw.getAll().features[0].geometry
-      console.log(this.map.getStyle().layers)
     },
     updateFunc() {
       this.bbox = this.draw.getAll().features[0].geometry
