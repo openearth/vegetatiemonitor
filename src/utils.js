@@ -29,3 +29,8 @@ export function range(start, end) {
     .fill()
     .map((_, idx) => start + idx);
 }
+
+export function getUrlParam(name) {
+  var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  return (results && results[1]) || undefined;
+}

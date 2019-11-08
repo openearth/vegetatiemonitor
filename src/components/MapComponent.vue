@@ -33,13 +33,17 @@
       >
       </time-slider>
     </v-card>
+    <v-snackbar v-model="snackbarAccuracy" :timeout="8000" top right>
+      {{ textAccuracy }}
+      <v-btn color="blue" text @click="snackbarAccuracy = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
-import { degreesToTiles, range } from '../utils'
+import { degreesToTiles, range, getUrlParam } from '../utils'
 
 export default {
   name: 'map-component',
@@ -86,7 +90,9 @@ export default {
       polygons: [],
       scale: 10,
       dates: [],
-      step: moment().subtract(1, 'year').startOf('year')
+      step: moment().subtract(1, 'year').startOf('year'),
+      textAccuracy: '',
+      snackbarAccuracy: false
     }
   },
   watch: {
@@ -294,6 +300,7 @@ export default {
       }
 
       const region = this.getRegion()
+      
       var jsonBody = {
         dateBegin: extent[0],
         dateEnd: extent[1],
@@ -319,6 +326,11 @@ export default {
         return res.json()
       })
       .then(mapUrl => {
+        if('accuracy' in mapUrl && getUrlParam('debug')) {
+          this.textAccuracy = 'Training accurracy is: ' + Math.floor(parseFloat(mapUrl['accuracy']) * 100) + '%'
+          this.snackbarAccuracy = true
+        }
+
         mapJson.source['tiles'] = [mapUrl['url']]
         this.map.addLayer(mapJson)
         layer.imageLayers[0] = mapJson
