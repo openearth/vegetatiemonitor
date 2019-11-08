@@ -103,8 +103,31 @@
         </v-layout>
       </v-flex>
       <v-divider class="ma-2"/>
+      <v-flex shrink>
+        <div class="pa-1">
+          <v-btn
+            class="mb-1"
+            v-show="classify.isShown()"
+            :disabled="!classify.canClassify() || !this.classify.isZoomedEnough()"
+            block
+            outlined
+            color="btncolor"
+            @click="onClassify()"
+          >
+            Classificeren
+          </v-btn>
+          <v-alert outlined type="warning" v-show="!this.classify.isZoomedEnough() && this.classify.isShown()">
+            Zoom-in at least to level {{ classify.minZoom }} to classify images, current zoom level is: 
+            {{ typeof(this.map.getZoom) !== 'undefined' && Math.floor(this.map.getZoom() * 10) / 10 }}.
+          </v-alert>
+          <v-alert outlined type="info" class="multi-line" v-show="this.classify.isZoomedEnough() && this.classify.canClassify() && this.classify.isShown()">
+            {{ this.classify.getText() }}
+          </v-alert>
+        </div>
+      </v-flex>
+
       <v-flex grow>
-        <div class="pa-4">
+        <div class="pa-1">
           <v-alert outlined type="warning" v-show="loadingLayers.length">
             De volgende layers worden nog geladen:
             <span
@@ -132,6 +155,7 @@
 import draggable from 'vuedraggable'
 import DifferenceLegend from './DifferenceLegend'
 import VLegend from './VLegend'
+import { getMapRegion } from '../utils'
 import _ from 'lodash'
 
 export default {
@@ -147,11 +171,36 @@ export default {
     },
     map: {
       type: Object
+    },
+    timeMode: {
+      type: Object
     }
   },
   data() {
     return {
-      layerTypes: ['imageLayers', 'mapboxLayers']
+      layerTypes: ['imageLayers', 'mapboxLayers'],
+
+      classify: {
+        minZoom: 11, // minimum zoom level for classification
+        last: null, // last classified image info
+        layer: null,
+        isShown: () => { 
+          return this.timeMode && this.timeMode.name === 'DAG' 
+        },
+        canClassify: () => {
+          return !(this.classify.layer && this.classify.layer.classificationMessage.startsWith('De huidige'))
+        },
+        isZoomedEnough: () => {
+          return typeof(this.map.getZoom) !== 'undefined' && this.map.getZoom() >= this.classify.minZoom 
+        },
+        getText: () => {
+          if(!this.classify.layer) {
+            return 'Selecteer een beeld en druk op CLASSIFECEREN om het beeld te classificeren.'
+          } else {
+            return this.classify.layer.classificationMessage
+          }
+        }
+      }
     }
   },
   watch: {
@@ -196,6 +245,23 @@ export default {
     }
   },
   methods: {
+    onClassify() {
+      let layers = this.layers.filter(l => l.customExtent)
+
+      layers.map(l => {
+        l.needsUpdate = true
+        l.classificationRegion = getMapRegion(this.map)
+
+        if(l.name === 'Classificatie') {
+          l.active = true
+
+          this.classify.layer = l
+          this.classify.layer.classificationMessage = "De huidige beeld wordt geclassifeceerd ..."
+        }
+
+        this.$emit('setLayer', l)
+      })
+    },
     abort(promise) {
       promise.controller.abort()
       let promises = [...this.loadingLayers]
@@ -359,7 +425,7 @@ export default {
 .scroll-panel {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 70vh;
+  height: 60vh;
 }
 
 .scroll-panel::-webkit-scrollbar-track {
@@ -374,5 +440,9 @@ export default {
 .scroll-panel::-webkit-scrollbar-thumb {
   background: #666;
   border-radius: 20px;
+}
+
+.multi-line {
+  white-space: pre-line;
 }
 </style>

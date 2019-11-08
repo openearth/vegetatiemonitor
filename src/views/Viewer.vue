@@ -77,7 +77,7 @@ export default {
       )
       hiddenLayers.forEach(layer => layers.push(layer))
       this.layers = layers
-    }
+    },
   },
   components: {
     Toolbar,

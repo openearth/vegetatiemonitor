@@ -44,6 +44,7 @@
         :modes="modes"
         :map="map"
         :loadingLayers="loadingLayers"
+        :timeMode.sync='timeMode'
       />
       <v-analyse
         id="menu-open"
@@ -74,6 +75,7 @@ import MapLayers from './MapLayers.vue'
 import Analyse from './Analyse.vue'
 import Download from './Download.vue'
 import Colofon from './Colofon.vue'
+import * as Cookies from 'tiny-cookie'
 
 export default {
   props: {
@@ -173,6 +175,12 @@ export default {
         this.mini = true
       }
     }
+
+    window.drawer = this
+
+    // restore selected from a Cookie
+    this.menuButton(Cookies.get('drawer-menu'))
+    this.$emit('update:open-drawer', this.menuOpen)
   },
   components: {
     "v-map-layers": MapLayers,
@@ -190,6 +198,9 @@ export default {
         this.menu = title
         this.mini = false
       }
+
+      // save selected menu as a Cookie
+      Cookies.set('drawer-menu', this.menu)
     },
     transitionEnd() {
       this.menuOpen = true
