@@ -34,7 +34,7 @@
         </v-alert>
       </div>
       <div v-for="(type, index) in datatypes" :key="index">
-        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode" @loaded="loading = $event" @add-graph="graphs.push($event)"></v-echarts>
+        <v-echarts :ref="index" :datatype="type.datatype" :polygon="polygon" :dateBegin="dateBegin" :dateEnd="dateEnd" :zonalType="type.zonalType" :timeMode="timeMode"  @loaded="loading = $event" @add-pie-data="updateGraphData($event)" @add-graph="graphs.push($event)"></v-echarts>
       </div>
       <v-timeseries v-if="$route.name === 'voorspel'" :options="voorspelOptions">
       </v-timeseries>
@@ -113,7 +113,8 @@ export default {
       landuseLabels: [],
       selectedLayer: {},
       leggerLabels: [],
-      graphs: []
+      graphs: [],
+      graphData: []
     }
   },
   mounted() {
@@ -123,6 +124,9 @@ export default {
     this.selectedLayer = activeLayers.shift()
   },
   methods: {
+    updateGraphData(data){
+      this.graphData.push(data)
+    },
     addEventListenersToMap(newLayers) {
       // Add all eventlisteners to the map for the selected layer
       this.map.on('mousemove', newLayers.baseLayer, this.onMouseMove)
@@ -185,6 +189,8 @@ export default {
         })[0]
         // this.datatypes = layer.datatypes
         const datatypes = []
+        this.graphdata = []
+
         layer.datatypes.forEach(type => {
           // TODO: use modes (and adjust mode options config) to make this if statement...
           if (this.$route.name === 'Voorspel' && type === 'landuse') {
@@ -214,6 +220,7 @@ export default {
       this.selectedProperty = ''
       this.properties = []
       this.datatypes = []
+      this.graphdata = []
       this.layers.forEach(layer => {
         if (layer.selectFilter) {
           this.map.setFilter(layer.selectFilter, [
@@ -231,30 +238,46 @@ export default {
       var W = doc.internal.pageSize.getWidth()
       var H = doc.internal.pageSize.getHeight()
 
-      const graphW = [W * 0.5, W * 0.05, W * 0.5]
-      const graphH = [H * 0.05, H * 0.3, H * 0.3]
+      const startY = [0.15 * H, 0.4 * H]
+
       let chartCanvas = document.querySelectorAll(".chart canvas")
       const graphs = [...chartCanvas]
       graphs.forEach((graph, i) => {
+        // Add the pieharts
         var gw = graph.width
         var gh = graph.height
         const data = graph.toDataURL()
         doc.addImage(
           data,
           'PNG',
-          graphW[i],
-          graphH[i],
-          0.25 * W,
-          ((0.25 * W) / gw) * gh
+           0.5 * W,
+          startY[i],
+          ((0.25 * H) / gh) * gw,
+          0.25 * H
         )
+      })
+
+
+      this.graphData.forEach((graph, i) => {
+        // Add the data from the piecharts
+        const table = []
+        let total = 0
+        graph.forEach(graph => total += parseFloat(graph.value))
+        graph.forEach(prop => {
+          table.push([prop.name, `${(parseFloat(prop.value)/total * 100).toFixed(2)}%`, parseFloat(prop.value).toFixed(2)])
+        })
+        doc.autoTable(['Verdeling', '%', '[m²]'], table, {
+          startY: startY[i],
+          tableWidth: 0.4 * W,
+        })
       })
       const table = []
       this.properties.forEach(prop => {
         table.push([prop.name, prop.data])
       })
       doc.autoTable(['Eigenschappen polygoon', ''], table, {
-        startY: 0.05 * H,
-        tableWidth: 0.4 * W,
+        startY: 0.03 * H,
+        tableWidth: W * 0.9,
       })
       this.takeScreenshot(this.map).then(data => {
         var canvas = this.map.getCanvas()
@@ -264,10 +287,10 @@ export default {
         doc.addImage(
           data,
           'JPEG',
-          W * 0.05,
-          0.5 * H,
-          0.9 * W,
-          ((0.9 * W) / mapw) * maph
+          (W - ((0.3 * H) / maph) * mapw) / 2 ,
+          0.65 * H,
+          ((0.3 * H) / maph) * mapw,
+          0.3 * H
         )
         const perceelnumber = this.properties.find(prop => prop.name === 'Perceel nummer')
         if (perceelnumber) {
