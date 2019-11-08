@@ -39,7 +39,8 @@
 <script>
 import TimeSlider from './TimeSlider'
 import moment from 'moment'
-import { degreesToTiles, range } from '../utils'
+import { degreesToTiles, range, fetchAndControl } from '../utils'
+import _ from 'lodash'
 
 export default {
   name: 'map-component',
@@ -63,6 +64,9 @@ export default {
     },
     timeMode: {
       type: Object
+    },
+    loadingLayers: {
+      type: Array
     }
   },
   data: function() {
@@ -306,8 +310,8 @@ export default {
         this.map.removeLayer(mapId)
         this.map.removeSource(mapId)
       }
-      this.$emit('loading-layer', layer.name)
-      fetch(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
+
+      let promise = fetchAndControl(`${this.$store.state.SERVER_URL}/map/${layer.dataset}/`, {
         method: 'POST',
         body: JSON.stringify(jsonBody),
         mode: 'cors',
@@ -315,17 +319,37 @@ export default {
           'Content-Type': 'application/json'
         }
       })
-      .then(res => {
-        return res.json()
-      })
-      .then(mapUrl => {
-        mapJson.source['tiles'] = [mapUrl['url']]
-        this.map.addLayer(mapJson)
-        layer.imageLayers[0] = mapJson
-        this.$emit('done-loading-layer', layer.name)
-      })
-      .catch(() => {
-        this.$emit('done-loading-layer', layer.name)
+
+      let promises = [...this.loadingLayers]
+      // store the name of the layer in the promise
+      promise.name = layer.name
+      // add the promise to the  list of loading Layers
+      promises.push(promise)
+      // sync
+      this.$emit('update:loadingLayers', promises)
+
+      promise
+        .then(res => {
+          return res.json()
+        })
+        .then(mapUrl => {
+          mapJson.source['tiles'] = [mapUrl['url']]
+          this.map.addLayer(mapJson)
+          layer.imageLayers[0] = mapJson
+          // remove the promise from the list
+          console.log('completed', promise)
+          let promises = [...this.loadingLayers]
+          _.pull(promises, promise)
+          // sync
+          this.$emit('update:loadingLayers', promises)
+        })
+        .catch(() => {
+          // remove  the promise from the list
+          console.log('error in request', promise)
+          let promises = [...this.loadingLayers]
+          _.pull(promises, promise)
+          // sync
+          this.$emit('update:loadingLayers', promises)
       })
     },
     fetchDates(updateStep) {

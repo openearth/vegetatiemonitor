@@ -105,8 +105,15 @@
       <v-divider class="ma-2"/>
       <v-flex grow>
         <div class="pa-4">
-          <v-alert outlined type="warning" v-if="loadingLayers.length > 0">
-            {{loadingMessage()}}
+          <v-alert outlined type="warning" v-show="loadingLayers.length">
+            De volgende layers worden nog geladen:
+            <span
+              v-for="(promise, index) in loadingLayers"
+              :key="index"
+              >
+              {{index}} {{ promise.name }}<v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
+            </span>
+
             <v-progress-linear
               color="orange accent-4"
               class="mt-4"
@@ -125,6 +132,7 @@
 import draggable from 'vuedraggable'
 import DifferenceLegend from './DifferenceLegend'
 import VLegend from './VLegend'
+import _ from 'lodash'
 
 export default {
   props: {
@@ -188,6 +196,13 @@ export default {
     }
   },
   methods: {
+    abort(promise) {
+      console.log('aborting', promise)
+      promise.controller.abort()
+      let promises = [...this.loadingLayers]
+      _.pull(promises,  promise)
+      this.$emit('update:loadingLayers', promises)
+    },
     toggleLayers() {
       // When layers in the menu are switched on or off update the map layers
       if (!this.filteredLayers) return
@@ -256,9 +271,6 @@ export default {
           }
         })
       }
-    },
-    loadingMessage() {
-      return `De volgende lagen worden nog geladen: ${this.loadingLayers.join(', ')}.`
     }
   },
   components: {

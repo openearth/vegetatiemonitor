@@ -20,7 +20,7 @@
         :timeMode.sync="timeMode"
         class="navdrawer"
         :modes="modes"
-        :loadingLayers="loadingLayers"
+        :loadingLayers.sync="loadingLayers"
       />
 
       <map-component
@@ -33,8 +33,6 @@
         :timeMode.sync="timeMode"
         :loadingLayers.sync="loadingLayers"
         @update:time-mode="timeMode = $event"
-        @loading-layer="loadingLayers.push($event)"
-        @done-loading-layer="loadingLayers.pop($event)"
       />
     </v-content>
   </div>

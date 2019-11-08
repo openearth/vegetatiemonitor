@@ -29,3 +29,15 @@ export function range(start, end) {
     .fill()
     .map((_, idx) => start + idx);
 }
+
+/***
+ * Fetch and return the  promise with the abort controller as a property
+ */
+export function fetchAndControl(url, options) {
+  let controller = new AbortController()
+  let signal = controller.signal
+  options.signal = signal
+  let promise = fetch(url, options)
+  promise.controller = controller
+  return promise
+}
