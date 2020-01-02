@@ -129,14 +129,14 @@ export default {
     },
     addEventListenersToMap(newLayers) {
       // Add all eventlisteners to the map for the selected layer
-      this.map.on('mousemove', newLayers.baseLayer, this.onMouseMove)
+      this.map.on('mouseenter', newLayers.baseLayer, this.onMouseMove)
       this.map.on('mouseleave', newLayers.baseLayer, this.onMouseLeave)
       this.map.on('click', newLayers.baseLayer, this.onClick)
     },
 
     removeEventListenersFromMap(oldLayers) {
       // Remove all eventlisteners to the map for the selected layer
-      this.map.off('mousemove', oldLayers.baseLayer, this.onMouseMove)
+      this.map.off('mouseenter', oldLayers.baseLayer, this.onMouseMove)
       this.map.off('mouseleave', oldLayers.baseLayer, this.onMouseLeave)
       this.map.off('click', oldLayers.baseLayer, this.onClick)
     },
