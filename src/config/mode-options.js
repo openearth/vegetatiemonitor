@@ -20,11 +20,12 @@ const modes = [
         interval: "year",
         timing: "yearly",
         momentFormat: "YYYY",
+        // TODO: This extent is dependent on the year you're in and if there is already
+        // a year classification available for that year. Now hardcoded, should be
+        // updated if there is a new map made for 2020...
         extent: [
-          moment()
-            .startOf("year")
-            .subtract(1, "year"),
-          moment().startOf("year")
+          moment(2018, "YYYY"),
+          moment(2019, "YYYY")
         ],
         ticks: 2,
         showLanes: true,
