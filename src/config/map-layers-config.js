@@ -72,22 +72,6 @@ const mapLayers = [
       'Deze kaart toont de kadasterpercelen in het gebied en kan worden gebruikt om een analyse per perceel op uit te voeren.',
     mapboxLayers: [
       {
-        id: 'Kadaster',
-        type: 'fill',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.5tu1qjtk'
-        },
-        layout: {
-          visibility: 'none'
-        },
-        'source-layer': 'kadaster-vlakken-1i9erw',
-        paint: {
-          'fill-color': 'rgba(32, 32, 32, 0.3)',
-          'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
-        }
-      },
-      {
         id: 'Kadasterlijnen',
         type: 'line',
         source: {
@@ -126,6 +110,22 @@ const mapLayers = [
           'line-width': 4
         },
         filter: ['==', 'ADMINPERCE', '']
+      },
+      {
+        id: 'Kadaster',
+        type: 'fill',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.5tu1qjtk'
+        },
+        layout: {
+          visibility: 'none'
+        },
+        'source-layer': 'kadaster-vlakken-1i9erw',
+        paint: {
+          'fill-color': 'rgba(32, 32, 32, 0.3)',
+          'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
+        }
       }
     ],
     tableProperties: [
@@ -314,6 +314,34 @@ const mapLayers = [
     selectProperty: 'OBJECTID',
     mapboxLayers: [
       {
+        id: 'Vegetatielijnen',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.87a2u39q'
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
+        id: 'VegetatieSelect',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.87a2u39q'
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
         id: 'Vegetatielegger',
         type: 'fill',
         source: {
@@ -343,34 +371,6 @@ const mapLayers = [
             default: 'rgba(0, 0, 0, 0)'
           }
         }
-      },
-      {
-        id: 'Vegetatielijnen',
-        type: 'line',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q'
-        },
-        'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
-          'line-color': 'rgb(0, 128, 0)',
-          'line-width': 2
-        },
-        filter: ['==', 'OBJECTID', '']
-      },
-      {
-        id: 'VegetatieSelect',
-        type: 'line',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q'
-        },
-        'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
-          'line-color': 'rgb(0, 128, 0)',
-          'line-width': 2
-        },
-        filter: ['==', 'OBJECTID', '']
       }
     ],
     tableProperties: [

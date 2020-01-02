@@ -86,6 +86,9 @@ export default {
     selectedLayer: {
       handler(newValue, oldValue) {
         if (newValue) {
+          if (oldValue) {
+            this.removeEventListenersFromMap(oldValue)
+          }
           this.layers.forEach(layer => {
             if (layer.name === newValue.name) {
               layer.active = true
@@ -96,9 +99,7 @@ export default {
           })
           this.addEventListenersToMap(newValue)
         }
-        if (oldValue) {
-          this.removeEventListenersFromMap(oldValue)
-        }
+
       }
     }
   },
@@ -114,7 +115,8 @@ export default {
       selectedLayer: {},
       leggerLabels: [],
       graphs: [],
-      graphData: []
+      graphData: [],
+      filter: ""
     }
   },
   mounted() {
@@ -129,22 +131,24 @@ export default {
     },
     addEventListenersToMap(newLayers) {
       // Add all eventlisteners to the map for the selected layer
-      this.map.on('mouseenter', newLayers.baseLayer, this.onMouseMove)
+      this.map.on('mousemove', newLayers.baseLayer, this.onMouseMove)
       this.map.on('mouseleave', newLayers.baseLayer, this.onMouseLeave)
       this.map.on('click', newLayers.baseLayer, this.onClick)
     },
 
     removeEventListenersFromMap(oldLayers) {
       // Remove all eventlisteners to the map for the selected layer
-      this.map.off('mouseenter', oldLayers.baseLayer, this.onMouseMove)
+      this.map.off('mousemove', oldLayers.baseLayer, this.onMouseMove)
       this.map.off('mouseleave', oldLayers.baseLayer, this.onMouseLeave)
       this.map.off('click', oldLayers.baseLayer, this.onClick)
     },
     onMouseMove(e) {
       const layer = this.selectedLayer
+      const filter = e.features[0].properties[layer.selectProperty]
+      if (this.filter === filter) return
       // if layer not active, no action
       this.map.getCanvas().style.cursor = 'pointer'
-      const filter = e.features[0].properties[layer.selectProperty]
+      console.log(filter, e.features, layer.selectProperty)
       this.map.setFilter(layer.hoverFilter, [
         '==',
         layer.selectProperty,
@@ -160,6 +164,7 @@ export default {
           })
         })
       }
+      this.filter = filter
     },
     onMouseLeave() {
       const layer = this.selectedLayer
@@ -256,7 +261,6 @@ export default {
           0.25 * H
         )
       })
-
 
       this.graphData.forEach((graph, i) => {
         // Add the data from the piecharts
