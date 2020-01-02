@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-dialog
+      id="disclaimer"
       v-model="disclaimer"
       persistent
       scrollable
@@ -33,7 +34,6 @@
 </template>
 
 <script>
-
 import * as Cookies from 'tiny-cookie'
 
 export default {
@@ -60,9 +60,8 @@ export default {
 </script>
 
 <style>
-.v-dialog,
-v-dialog {
-  min-width: 300px !important;
+.disclaimer {
+  min-width: 300px;
   width: 50vw;
   max-width: 40vw;
 }
