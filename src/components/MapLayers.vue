@@ -46,7 +46,7 @@
                     </v-flex>
                     <v-flex xs2 @click.stop="">
                       <v-switch
-                        class="ma-0"
+                        class="pa-auto ma-0"
                         v-model="layer.active"
                         @change="$emit('setLayer', layer)"
                       />
@@ -117,7 +117,7 @@
             Classificeren
           </v-btn>
           <v-alert outlined type="warning" v-show="!this.classify.isZoomedEnough() && this.classify.isShown()">
-            Zoom-in at least to level {{ classify.minZoom }} to classify images, current zoom level is: 
+            Zoom-in at least to level {{ classify.minZoom }} to classify images, current zoom level is:
             {{ typeof(this.map.getZoom) !== 'undefined' && Math.floor(this.map.getZoom() * 10) / 10 }}.
           </v-alert>
           <v-alert outlined type="info" class="multi-line" v-show="this.classify.isZoomedEnough() && this.classify.canClassify() && this.classify.isShown()">
@@ -184,14 +184,14 @@ export default {
         minZoom: 11, // minimum zoom level for classification
         last: null, // last classified image info
         layer: null,
-        isShown: () => { 
-          return this.timeMode && this.timeMode.name === 'DAG' 
+        isShown: () => {
+          return this.timeMode && this.timeMode.name === 'DAG'
         },
         canClassify: () => {
           return !(this.classify.layer && this.classify.layer.classificationMessage.startsWith('De huidige'))
         },
         isZoomedEnough: () => {
-          return typeof(this.map.getZoom) !== 'undefined' && this.map.getZoom() >= this.classify.minZoom 
+          return typeof(this.map.getZoom) !== 'undefined' && this.map.getZoom() >= this.classify.minZoom
         },
         getText: () => {
           if(!this.classify.layer) {
@@ -378,50 +378,6 @@ export default {
   }
 }
 
-/* Customize the switch buttons */
-.v-input--selection-controls:not(.v-input--hide-details) .v-input__slot {
-  margin: auto;
-}
-
-.v-input--switch__track {
-  border-radius: 9px;
-  height: 16px;
-  left: 2px;
-  opacity: 0.6;
-  position: absolute;
-  right: 2px;
-  top: calc(50% - 7px);
-}
-
-.v-input--switch__thumb {
-  border-radius: 50%;
-  top: calc(50% - 7px);
-  height: 16px;
-  position: relative;
-  width: 16px;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
-.v-input--switch.v-input--is-dirty .v-input--selection-controls__ripple,
-.v-input--switch.v-input--is-dirty .v-input--switch__thumb {
-  -webkit-transform: translate(20px, 0);
-  transform: translate(20px, 0);
-}
-
-.theme--light.v-input--switch__thumb {
-  color: #f8f8f8;
-}
-
 .scroll-panel {
   overflow-y: auto;
   overflow-x: hidden;
@@ -444,5 +400,9 @@ export default {
 
 .multi-line {
   white-space: pre-line;
+}
+
+.v-messages {
+  display: none;
 }
 </style>
