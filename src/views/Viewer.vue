@@ -98,7 +98,11 @@ export default {
   height: 100%;
 }
 
-@media only screen and (max-width: 600px) {
+/* general iPad layouts */
+@media only screen
+  and (min-device-width: 768px)
+  and (max-device-width: 1024px)
+  and (-webkit-min-device-pixel-ratio: 2) {
   #content {
     height: calc(100% - 49px);
   }
