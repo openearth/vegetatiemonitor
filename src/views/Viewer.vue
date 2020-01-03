@@ -98,6 +98,12 @@ export default {
   height: 100%;
 }
 
+@media only screen and (max-width: 600px) {
+  #content {
+    height: calc(100% - 49px);
+  }
+}
+
 .navdrawer {
   height: 100%;
 }
