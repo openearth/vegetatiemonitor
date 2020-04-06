@@ -6,7 +6,6 @@ const modes = [
     mapLayersItems: ['Kaartlagen', 'Analyse', 'Colofon'],
     mapLayersNames: [
       'Kadaster',
-      'Stroombanen',
       'Classificatie',
       'Classificatie vs Legger',
       'Vegetatielegger',
