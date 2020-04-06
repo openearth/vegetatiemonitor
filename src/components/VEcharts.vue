@@ -1,7 +1,7 @@
 <template>
   <div class="component-wrapper">
     <v-progress-circular
-      class="ma-6"
+      class="progress ma-6"
       v-if="loading && !error"
       indeterminate
     ></v-progress-circular>
@@ -60,7 +60,7 @@ var colors = [
 ]
 
 export default {
-  name: 'VPiechart',
+  name: 'VEchart',
   props: {
     datatype: {
       type: String
