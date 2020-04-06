@@ -148,7 +148,6 @@ export default {
       if (this.filter === filter) return
       // if layer not active, no action
       this.map.getCanvas().style.cursor = 'pointer'
-      console.log(filter, e.features, layer.selectProperty)
       this.map.setFilter(layer.hoverFilter, [
         '==',
         layer.selectProperty,

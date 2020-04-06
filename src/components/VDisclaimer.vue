@@ -4,7 +4,7 @@
       v-model="disclaimer"
       persistent
       scrollable
-      max-width="500"
+      max-width="500px"
     >
       <v-card light>
         <v-card-title>
@@ -60,9 +60,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#disclaimer {
-
-}
-</style>
