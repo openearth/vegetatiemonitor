@@ -180,8 +180,8 @@ export default {
 
     // restore selected from a Cookie if available else start with the maplayers
     const menu = Cookies.get('drawer-menu')
-    if(menu !== 'null') {
-      this.menuButton(Cookies.get('drawer-menu'))
+    if(menu) {
+      this.menuButton(menu)
     } else {
       this.menuButton('Kaartlagen')
     }
