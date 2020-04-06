@@ -14,7 +14,7 @@
     >
       <v-mapbox-geocoder></v-mapbox-geocoder>
       <v-mapbox-navigation-control></v-mapbox-navigation-control>
-      <v-mapbox-geolocate-control></v-mapbox-geolocate-control>
+      <v-mapbox-geolocate-control :options="{trackUserLocation: true}"></v-mapbox-geolocate-control>
     </v-mapbox>
     <v-card
       class="t-slider"
@@ -318,7 +318,7 @@ export default {
       if(layer.customExtent) {
         region = layer.classificationRegion
       }
-      
+
       var jsonBody = {
         dateBegin: extent[0],
         dateEnd: extent[1],
