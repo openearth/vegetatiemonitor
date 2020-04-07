@@ -23,8 +23,8 @@ const modes = [
         // a year classification available for that year. Now hardcoded, should be
         // updated if there is a new map made for 2020...
         extent: [
-          moment(2018, "YYYY"),
-          moment(2019, "YYYY")
+          moment(2019, "YYYY"),
+          moment(2020, "YYYY")
         ],
         ticks: 2,
         showLanes: true,
