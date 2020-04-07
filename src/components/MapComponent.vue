@@ -138,6 +138,7 @@ export default {
 
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
+      console.log('map created', this.map)
     })
   },
   provide() {
