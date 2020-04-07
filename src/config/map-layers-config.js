@@ -143,7 +143,120 @@ const mapLayers = [
       }
     ]
   },
-
+  {
+    name: 'Vegetatielegger',
+    icon: './images/legend-legger.png',
+    info:
+      'De vegetatielegger toont welke vegetatie formeel op een gegeven locatie mag voorkomen.',
+    opacity: 100,
+    active: false,
+    datatypes: ['landuse'],
+    activeLayerType: 'mapboxLayers',
+    type: 'group',
+    legend: {
+      colors: [
+        '#a3e0ff',
+        '#ff827e',
+        '#eefad4',
+        '#debdde',
+        '#73bf73',
+        '#d97a36',
+        '#ffec80',
+        '#f2d218',
+        '#d9bb16'
+      ],
+      labels: [
+        'water',
+        'bebouwd of verhard',
+        'gras en akker',
+        'riet en ruigte',
+        'bos',
+        'struweel',
+        'mengklasse 90/10',
+        'mengklasse 70/30',
+        'mengklasse 50/50'
+      ]
+    },
+    baseLayer: 'Vegetatielegger',
+    hoverFilter: 'Vegetatielijnen',
+    selectFilter: 'VegetatieSelect',
+    selectProperty: 'OBJECTID',
+    mapboxLayers: [
+      {
+        id: 'Vegetatielijnen',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.87a2u39q'
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
+        id: 'VegetatieSelect',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.87a2u39q'
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
+        id: 'Vegetatielegger',
+        type: 'fill',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.87a2u39q'
+        },
+        layout: {
+          visibility: 'none'
+        },
+        'source-layer': 'vegetatie-vlakken-596nr3',
+        paint: {
+          'fill-color': {
+            base: 1,
+            type: 'categorical',
+            property: 'KLASSE',
+            stops: [
+              ['Water', 'rgba(191, 239, 255, 255)'],
+              ['Verhard oppervlak', 'rgb(255, 129, 126)'],
+              ['Gras en Akker', 'rgb(238, 250, 212)'],
+              ['Riet en Ruigte', 'rgb(222, 189, 222)'],
+              ['Bos', 'rgb(115, 191, 115)'],
+              ['Struweel', 'rgb(217, 122, 54)'],
+              ['90-10', 'rgb(255, 236, 128)'],
+              ['70-30', 'rgb(242, 210, 24)'],
+              ['50-50', 'rgb(217, 187, 22)']
+            ],
+            default: 'rgba(0, 0, 0, 0)'
+          }
+        }
+      }
+    ],
+    tableProperties: [
+      {
+        name: 'Vegetatieklasse',
+        key: 'VL_KLASSE'
+      },
+      {
+        name: 'Mengklasse',
+        key: 'MENGKLASSE'
+      },
+      {
+        name: 'Stroombaan',
+        key: 'STROOMBAAN'
+      }
+    ]
+  },
   {
     name: 'Stroombanen',
     icon: './images/legend-stroombaan.png',
@@ -272,121 +385,6 @@ const mapLayers = [
     vis: {},
     timeslider: true,
     dates: []
-  },
-
-  {
-    name: 'Vegetatielegger',
-    icon: './images/legend-legger.png',
-    info:
-      'De vegetatielegger toont welke vegetatie formeel op een gegeven locatie mag voorkomen.',
-    opacity: 100,
-    active: false,
-    datatypes: ['landuse'],
-    activeLayerType: 'mapboxLayers',
-    type: 'group',
-    legend: {
-      colors: [
-        '#a3e0ff',
-        '#ff827e',
-        '#eefad4',
-        '#debdde',
-        '#73bf73',
-        '#d97a36',
-        '#ffec80',
-        '#f2d218',
-        '#d9bb16'
-      ],
-      labels: [
-        'water',
-        'bebouwd of verhard',
-        'gras en akker',
-        'riet en ruigte',
-        'bos',
-        'struweel',
-        'mengklasse 90/10',
-        'mengklasse 70/30',
-        'mengklasse 50/50'
-      ]
-    },
-    baseLayer: 'Vegetatielegger',
-    hoverFilter: 'Vegetatielijnen',
-    selectFilter: 'VegetatieSelect',
-    selectProperty: 'OBJECTID',
-    mapboxLayers: [
-      {
-        id: 'Vegetatielijnen',
-        type: 'line',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q'
-        },
-        'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
-          'line-color': 'rgb(0, 128, 0)',
-          'line-width': 2
-        },
-        filter: ['==', 'OBJECTID', '']
-      },
-      {
-        id: 'VegetatieSelect',
-        type: 'line',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q'
-        },
-        'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
-          'line-color': 'rgb(0, 128, 0)',
-          'line-width': 2
-        },
-        filter: ['==', 'OBJECTID', '']
-      },
-      {
-        id: 'Vegetatielegger',
-        type: 'fill',
-        source: {
-          type: 'vector',
-          url: 'mapbox://ellispenning.87a2u39q'
-        },
-        layout: {
-          visibility: 'none'
-        },
-        'source-layer': 'vegetatie-vlakken-596nr3',
-        paint: {
-          'fill-color': {
-            base: 1,
-            type: 'categorical',
-            property: 'KLASSE',
-            stops: [
-              ['Water', 'rgba(191, 239, 255, 255)'],
-              ['Verhard oppervlak', 'rgb(255, 129, 126)'],
-              ['Gras en Akker', 'rgb(238, 250, 212)'],
-              ['Riet en Ruigte', 'rgb(222, 189, 222)'],
-              ['Bos', 'rgb(115, 191, 115)'],
-              ['Struweel', 'rgb(217, 122, 54)'],
-              ['90-10', 'rgb(255, 236, 128)'],
-              ['70-30', 'rgb(242, 210, 24)'],
-              ['50-50', 'rgb(217, 187, 22)']
-            ],
-            default: 'rgba(0, 0, 0, 0)'
-          }
-        }
-      }
-    ],
-    tableProperties: [
-      {
-        name: 'Vegetatieklasse',
-        key: 'VL_KLASSE'
-      },
-      {
-        name: 'Mengklasse',
-        key: 'MENGKLASSE'
-      },
-      {
-        name: 'Stroombaan',
-        key: 'STROOMBAAN'
-      }
-    ]
   },
   {
     name: 'Vegetatie (NDVI)',
