@@ -7,7 +7,7 @@
         fa-bars
       </v-icon>
     </v-app-bar-nav-icon>
-    <v-toolbar-title class="hidden-sm-and-down"
+    <v-toolbar-title xs-3 class="hidden-sm-and-down"
       ><h3>Vegetatie Monitor</h3></v-toolbar-title
     >
     <v-spacer />
@@ -57,5 +57,6 @@ export default {
 .v-toolbar__content,
 .v-toolbar__extension {
   padding: 0 12px;
+  width: 100%;
 }
 </style>

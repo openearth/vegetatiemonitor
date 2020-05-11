@@ -4,6 +4,7 @@
       v-model="disclaimer"
       persistent
       scrollable
+      max-width="500px"
     >
       <v-card light>
         <v-card-title>
@@ -21,11 +22,13 @@
           garanderen. Aan de resultaten van de classificatie-beelden kunnen dus
           geen rechten worden ontleend.
         </v-card-text>
-        <v-card-actions class="text-xs-center">
-          <v-btn @click.stop="hideDisclaimer" color="primary" dark
-                 >Accepteer en naar website
-          </v-btn>
-          <!-- <v-btn tutorialDialog=true" round color="primary" dark>Decline</v-btn> -->
+        <v-card-actions>
+          <v-row justify="center" class="pa-0 ma-0">
+            <v-btn @click.stop="hideDisclaimer" color="primary" dark
+                   >Accepteer en naar website
+            </v-btn>
+            <!-- <v-btn tutorialDialog=true" round color="primary" dark>Decline</v-btn> -->
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -33,7 +36,6 @@
 </template>
 
 <script>
-
 import * as Cookies from 'tiny-cookie'
 
 export default {
@@ -58,12 +60,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.v-dialog,
-v-dialog {
-  min-width: 300px !important;
-  width: 50vw;
-  max-width: 40vw;
-}
-</style>

@@ -86,6 +86,9 @@ export default {
     selectedLayer: {
       handler(newValue, oldValue) {
         if (newValue) {
+          if (oldValue) {
+            this.removeEventListenersFromMap(oldValue)
+          }
           this.layers.forEach(layer => {
             if (layer.name === newValue.name) {
               layer.active = true
@@ -96,9 +99,7 @@ export default {
           })
           this.addEventListenersToMap(newValue)
         }
-        if (oldValue) {
-          this.removeEventListenersFromMap(oldValue)
-        }
+
       }
     }
   },
@@ -114,7 +115,8 @@ export default {
       selectedLayer: {},
       leggerLabels: [],
       graphs: [],
-      graphData: []
+      graphData: [],
+      filter: ""
     }
   },
   mounted() {
@@ -142,9 +144,10 @@ export default {
     },
     onMouseMove(e) {
       const layer = this.selectedLayer
+      const filter = e.features[0].properties[layer.selectProperty]
+      if (this.filter === filter) return
       // if layer not active, no action
       this.map.getCanvas().style.cursor = 'pointer'
-      const filter = e.features[0].properties[layer.selectProperty]
       this.map.setFilter(layer.hoverFilter, [
         '==',
         layer.selectProperty,
@@ -160,6 +163,7 @@ export default {
           })
         })
       }
+      this.filter = filter
     },
     onMouseLeave() {
       const layer = this.selectedLayer
@@ -256,7 +260,6 @@ export default {
           0.25 * H
         )
       })
-
 
       this.graphData.forEach((graph, i) => {
         // Add the data from the piecharts

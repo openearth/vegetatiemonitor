@@ -1,5 +1,5 @@
 <template>
-  <div class="viewer">
+  <div class="viewer mb-md-10">
     <v-disclaimer></v-disclaimer>
     <toolbar
       :drawerState.sync="drawerState"
