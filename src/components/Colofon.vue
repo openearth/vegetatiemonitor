@@ -7,7 +7,7 @@
       <v-card-text class="py-0">
           Voor algemene vragen over de vegetatiemonitor en de achtergronden bij
           deze ontwikkeling:
-          <a href="mailto:?subject=Vegetatiemonitor">Rijkswaterstaat</a>
+          <a href="mailto:teamuiterwaarden@rws.nl?subject=Vegetatiemonitor">Rijkswaterstaat</a>
           Voor technische vragen:
           <a href="mailto:?subject=Vegetatiemonitor">Deltares</a>
           Download <a href="docs/TRM.pdf" download>hier</a> de Technische

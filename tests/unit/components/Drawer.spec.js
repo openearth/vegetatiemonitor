@@ -1,30 +1,48 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import {
+  createLocalVue,
+  shallowMount
+} from '@vue/test-utils'
 import Vuex from 'vuex'
-import VueRouter from 'vue-router'
+import Vuetify from 'vuetify'
+
 import Drawer from '../../../src/components/Drawer.vue'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
-localVue.use(VueRouter)
-const router = new VueRouter({
-  name: 'route'
-})
+localVue.use(Vuetify)
+const $route = {
+  name: 'Veld'
+}
 
 describe('Drawer', () => {
   const wrapper = shallowMount(Drawer, {
     localVue,
-    router,
+    mocks: {
+      $route
+    },
     propsData: {
-      layers: []
+      layers: [],
+      drawerState: true,
+      dateBegin: "01-01-2020",
+      dateEnd: '01-02-2020',
+      modes: [{
+        name: 'Veld',
+        mapLayersItems: ['Kaartlagen', 'Analyse', 'Colofon'],
+        mapLayersNames: [
+          'Kadaster',
+          'Stroombanen']
+      }],
+      timeMode: {},
+      loadingLayers: []
     }
   })
 
   it('Has a navigation drawer', () => {
-    expect(wrapper.contains('v-navigation-drawer')).toBe(true)
+    expect(wrapper.contains('#navdrawer')).toBe(true)
   })
 
   it('Navigation drawer transitionEnd triggers drawer to be open', () => {
-    const navdrawer = wrapper.find('v-navigation-drawer')
+    const navdrawer = wrapper.find('#navdrawer')
     navdrawer.trigger('transitionend')
     expect(wrapper.vm.menuOpen).toBe(true)
   })

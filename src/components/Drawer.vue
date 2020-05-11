@@ -178,8 +178,13 @@ export default {
 
     window.drawer = this
 
-    // restore selected from a Cookie
-    this.menuButton(Cookies.get('drawer-menu'))
+    // restore selected from a Cookie if available else start with the maplayers
+    const menu = Cookies.get('drawer-menu')
+    if(menu) {
+      this.menuButton(menu)
+    } else {
+      this.menuButton('Kaartlagen')
+    }
     this.$emit('update:open-drawer', this.menuOpen)
   },
   components: {
