@@ -10,9 +10,9 @@
           <a href="mailto:?subject=Vegetatiemonitor">Rijkswaterstaat</a>
           Voor technische vragen:
           <a href="mailto:?subject=Vegetatiemonitor">Deltares</a>
-          Download <a href="static/docs/TRM.pdf" download>hier</a> de Technische
+          Download <a href="docs/TRM.pdf" download>hier</a> de Technische
           referentie handleiding. Klik
-          <a href="https://www.youtube.com/watch?v=mOjCRgauxyM&feature=youtu.be"
+          <a href="https://www.youtube.com/watch?v=ZQSqSiy-jM4"
             >hier</a
           >
           voor het instructiefilmpje.
