@@ -135,7 +135,7 @@
               :key="index"
               >
               {{ promise.name }}
-              <v-progress-circular :color="timeSpanColor(promise)" :value="timeSpan(promise)"></v-progress-circular>
+              <v-progress-circular :color="timeSpanColor(promise)" :value="timeSpan(promise)" :size="12" :width="2" :rotate="-90"></v-progress-circular>
               <v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
             </span>
 
@@ -350,7 +350,7 @@ export default {
     },
     timeSpan(promise) {
       let diff = this.now.diff(promise.start)
-      return Math.max(diff / 20000, 1) * 100
+      return Math.min(diff / 20000, 1) * 100
     },
     timeSpanColor(promise) {
       let diff = this.now.diff(promise.start)
