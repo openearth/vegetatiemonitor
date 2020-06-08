@@ -368,7 +368,7 @@ export default {
           layer.imageLayers[0] = mapJson
           // remove the promise from the list
           let promises = [...this.loadingLayers]
-          _.pull(promises, promise)
+          // _.pull(promises, promise)
           // sync
           this.$emit('update:loadingLayers', promises)
         })
