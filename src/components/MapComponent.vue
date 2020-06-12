@@ -25,7 +25,7 @@
         :timeModes="timeModes"
         :dates="dates"
         :step.sync="step"
-        @update:time-mode="$emit('update:time-mode', $event)"
+        @update:time-mode="$emit('update:time-mode', $event); filterLegger"
         @update:timeslider="updateTimeslider($event)"
         @update:step="updateStep($event, 'nearest')"
         @move-step-backward="updateStep($event, 'backward')"
@@ -213,6 +213,20 @@ export default {
       this.dragging = event.dragging
       if(this.map) {
         this.updateTimedLayers(extent)
+        this.filterLegger()
+      }
+
+    },
+    filterLegger() {
+      if(this.map.getLayer('Vegetatielegger')) {
+        // set filter for the vegetatielegger
+        const currentDate = parseInt(moment(event.endDate).format('X'))
+        const legger = this.map.setFilter('Vegetatielegger', [
+          "all",
+          [">=", ['get', 'start_date'], currentDate],
+          ["<=", ['get', 'end_date'], currentDate]
+        ])
+
       }
     },
     addMapboxLayers() {
