@@ -25,7 +25,7 @@
         :timeModes="timeModes"
         :dates="dates"
         :step.sync="step"
-        @update:time-mode="$emit('update:time-mode', $event); filterLegger"
+        @update:time-mode="$emit('update:time-mode', $event)"
         @update:timeslider="updateTimeslider($event)"
         @update:step="updateStep($event, 'nearest')"
         @move-step-backward="updateStep($event, 'backward')"
@@ -102,6 +102,7 @@ export default {
     layers: {
       handler() {
         this.updateTimedLayers([this.dateBegin, this.dateEnd])
+        this.filterLegger(this.dateBegin)
       }
     },
   },
@@ -138,7 +139,6 @@ export default {
 
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
-      console.log('map created', this.map)
     })
   },
   provide() {
@@ -217,15 +217,16 @@ export default {
       }
 
     },
-    filterLegger() {
+    filterLegger(endDate) {
       if(this.map.getLayer('Vegetatielegger')) {
         // set filter for the vegetatielegger
-        const currentDate = parseInt(moment(event.endDate).format('X'))
-        const legger = this.map.setFilter('Vegetatielegger', [
-          "all",
-          [">=", ['get', 'start_date'], currentDate],
-          ["<=", ['get', 'end_date'], currentDate]
-        ])
+        const currentDate = parseInt(moment(endDate).format('X'))
+        console.log(currentDate)
+        // const legger = this.map.setFilter('Vegetatielegger', [
+        //   "all",
+        //   [">=", ['get', 'start_date'], currentDate],
+        //   ["<=", ['get', 'end_date'], currentDate]
+        // ])
 
       }
     },

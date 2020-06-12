@@ -189,7 +189,7 @@ const mapLayers = [
           type: 'vector',
           url: 'mapbox://ellispenning.cl1igr1w',
         },
-        'source-layer': 'vegetatievlakken-c8a7d9',
+        'source-layer': 'vegetatievlakkencombo',
         paint: {
           'line-color': 'rgb(0, 128, 0)',
           'line-width': 2
@@ -203,7 +203,7 @@ const mapLayers = [
           type: 'vector',
           url: 'mapbox://ellispenning.cl1igr1w',
         },
-        'source-layer': 'vegetatievlakken-c8a7d9',
+        'source-layer': 'vegetatievlakkencombo',
         paint: {
           'line-color': 'rgb(0, 128, 0)',
           'line-width': 2
@@ -220,7 +220,7 @@ const mapLayers = [
         layout: {
           visibility: 'none'
         },
-        'source-layer': 'vegetatievlakken-c8a7d9',
+        'source-layer': 'vegetatievlakkencombo',
         paint: {
           'fill-color': {
             base: 1,
