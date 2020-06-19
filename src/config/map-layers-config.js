@@ -163,7 +163,8 @@ const mapLayers = [
         '#d97a36',
         '#ffec80',
         '#f2d218',
-        '#d9bb16'
+        '#d9bb16',
+        '#ff0000'
       ],
       labels: [
         'water',
@@ -174,7 +175,8 @@ const mapLayers = [
         'struweel',
         'mengklasse 90/10',
         'mengklasse 70/30',
-        'mengklasse 50/50'
+        'mengklasse 50/50',
+        'onbekend'
       ]
     },
     baseLayer: 'Vegetatielegger',
@@ -182,6 +184,34 @@ const mapLayers = [
     selectFilter: 'VegetatieSelect',
     selectProperty: 'OBJECTID',
     mapboxLayers: [
+      {
+        id: 'Vegetatielijnen',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.cl1igr1w',
+        },
+        'source-layer': 'vegetatievlakkencombo',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
+        id: 'VegetatieSelect',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.cl1igr1w',
+        },
+        'source-layer': 'vegetatievlakkencombo',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
       {
         id: 'Vegetatielegger',
         type: 'fill',
@@ -194,23 +224,50 @@ const mapLayers = [
         },
         'source-layer': 'vegetatievlakkencombo',
         paint: {
-          'fill-color': {
-            base: 1,
-            type: 'categorical',
-            property: 'VLKLASSE',
-            stops: [
-              ['Water', 'rgba(191, 239, 255, 255)'],
-              ['Verhard oppervlak', 'rgb(255, 129, 126)'],
-              ['Gras en Akker', 'rgb(238, 250, 212)'],
-              ['Riet en Ruigte', 'rgb(222, 189, 222)'],
-              ['Bos', 'rgb(115, 191, 115)'],
-              ['Struweel', 'rgb(217, 122, 54)'],
-              ['90-10', 'rgb(255, 236, 128)'],
-              ['70-30', 'rgb(242, 210, 24)'],
-              ['50-50', 'rgb(217, 187, 22)']
-            ],
-            default: 'rgba(0, 0, 0, 0)'
-          }
+          "fill-color": [
+            "case",
+            ["match", ["get", "VLKLASSE"], ['Water'], true, false],
+            'rgb(191, 239, 255)',
+            ["match", ["get", "VLKLASSE"], ['Verhard oppervlak'], true, false],
+            'rgb(255, 129, 126)',
+            ["match", ["get", "VLKLASSE"], ['Gras en Akker'], true, false],
+            'rgb(238, 250, 212)',
+            ["match", ["get", "VLKLASSE"], ['Riet en Ruigte'], true, false],
+            'rgb(222, 189, 222)',
+            ["match", ["get", "VLKLASSE"], ['Bos'], true, false],
+            'rgb(115, 191, 115)',
+            ["match", ["get", "VLKLASSE"], ['Struweel'], true, false],
+            'rgb(217, 122, 54)',
+            ["match", ["get", "VLKLASSE"], ['90-10'], true, false],
+            'rgb(255, 236, 128)',
+            ["match", ["get", "VLKLASSE"], ['70-30'], true, false],
+            'rgb(242, 210, 24)',
+            ["match", ["get", "VLKLASSE"], ['50-50'], true, false],
+            'rgb(217, 187, 22)',
+            ["match", ["get", "VLKLASSE"], [' '], true, false],
+            'rgba(255, 0, 0, 0.5)',
+            ["match", ["get", "VL_KLASSE"], ['Water'], true, false],
+            'rgb(191, 239, 255)',
+            ["match", ["get", "VL_KLASSE"], ['Verhard oppervlak'], true, false],
+            'rgb(255, 129, 126)',
+            ["match", ["get", "VL_KLASSE"], ['Gras en Akker'], true, false],
+            'rgb(238, 250, 212)',
+            ["match", ["get", "VL_KLASSE"], ['Riet en Ruigte'], true, false],
+            'rgb(222, 189, 222)',
+            ["match", ["get", "VL_KLASSE"], ['Bos'], true, false],
+            'rgb(115, 191, 115)',
+            ["match", ["get", "VL_KLASSE"], ['Struweel'], true, false],
+            'rgb(217, 122, 54)',
+            ["match", ["get", "VL_KLASSE"], ['90-10'], true, false],
+            'rgb(255, 236, 128)',
+            ["match", ["get", "VL_KLASSE"], ['70-30'], true, false],
+            'rgb(242, 210, 24)',
+            ["match", ["get", "VL_KLASSE"], ['50-50'], true, false],
+            'rgb(217, 187, 22)',
+            ["match", ["get", "VL_KLASSE"], [' '], true, false],
+            'rgba(255, 0, 0, 0.5)',
+            "rgba(255, 0, 0, 0.5)"
+          ]
         }
       }
     ],
