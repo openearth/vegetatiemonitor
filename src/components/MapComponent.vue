@@ -105,7 +105,7 @@ export default {
     layers: {
       handler() {
         this.updateTimedLayers([this.dateBegin, this.dateEnd])
-        this.filterLegger(this.dateBegin)
+        this.filterLegger(this.dateBegin, this.dateEnd)
       }
     },
   },
@@ -216,20 +216,26 @@ export default {
       this.dragging = event.dragging
       if(this.map) {
         this.updateTimedLayers(extent)
-        this.filterLegger()
+        this.filterLegger(event.beginDate, event.endDate)
       }
 
     },
-    filterLegger(endDate) {
+    filterLegger(startDate, endDate) {
       if(this.map.getLayer('Vegetatielegger')) {
         // set filter for the vegetatielegger
-        const currentDate = parseInt(moment(endDate).format('X'))
-        console.log(currentDate)
-        // const legger = this.map.setFilter('Vegetatielegger', [
-        //   "all",
-        //   [">=", ['get', 'start_date'], currentDate],
-        //   ["<=", ['get', 'end_date'], currentDate]
-        // ])
+        let currentDate = parseInt(moment(startDate).format('X'))
+        if (endDate) {
+          currentDate = parseInt(moment(endDate).format('X'))
+        }
+
+        console.log('setting date to', 'start', startDate, 'end', endDate, 'current', currentDate, 1262300400, '-', 1588197600, ' ', 1588284000, '-', 1924902000)
+        const legger = this.map.setFilter('Vegetatielegger', [
+          "all",
+          /* start date is smaller than current date */
+          ["<=", ['get', 'start_date'], currentDate],
+          /* end date is larger than current date */
+          [">=", ['get', 'end_date'], currentDate]
+        ])
 
       }
     },
