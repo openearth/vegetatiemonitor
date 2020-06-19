@@ -183,6 +183,34 @@ const mapLayers = [
     selectProperty: 'OBJECTID',
     mapboxLayers: [
       {
+        id: 'Vegetatielijnen',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.cl1igr1w',
+        },
+        'source-layer': 'vegetatievlakkencombo',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
+        id: 'VegetatieSelect',
+        type: 'line',
+        source: {
+          type: 'vector',
+          url: 'mapbox://ellispenning.cl1igr1w',
+        },
+        'source-layer': 'vegetatievlakkencombo',
+        paint: {
+          'line-color': 'rgb(0, 128, 0)',
+          'line-width': 2
+        },
+        filter: ['==', 'OBJECTID', '']
+      },
+      {
         id: 'Vegetatielegger',
         type: 'fill',
         source: {
