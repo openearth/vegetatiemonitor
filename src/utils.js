@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 /***
  * Converst degress to radians
  */
@@ -47,6 +49,7 @@ export function fetchAndControl(input, init) {
   let signal = controller.signal
   init = Object.assign({signal}, init)
   let promise = fetch(input,  init)
+  promise.start =  moment()
   promise.controller = controller
   return promise
 }

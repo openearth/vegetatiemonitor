@@ -8,13 +8,16 @@
       :pitch="0"
       :bearing="0"
       :min-zoom="5"
+      :interactive="true"
+      :drag-pan="true"
+      :scroll-zoom="true"
       class="map"
       ref="map"
       id="map"
     >
       <v-mapbox-geocoder></v-mapbox-geocoder>
       <v-mapbox-navigation-control></v-mapbox-navigation-control>
-      <v-mapbox-geolocate-control :options="{trackUserLocation: true}"></v-mapbox-geolocate-control>
+      <v-mapbox-geolocate-control :options="{trackUserLocation: true, positionOptions: { enableHighAccuracy: true }}"></v-mapbox-geolocate-control>
     </v-mapbox>
     <v-card
       class="t-slider"
@@ -102,6 +105,7 @@ export default {
     layers: {
       handler() {
         this.updateTimedLayers([this.dateBegin, this.dateEnd])
+        this.filterLegger(this.dateBegin)
       }
     },
   },
@@ -138,7 +142,6 @@ export default {
 
       this.map.on('zoomend', this.fetchDates)
       this.map.on('dragend', this.fetchDates)
-      console.log('map created', this.map)
     })
   },
   provide() {
@@ -213,6 +216,21 @@ export default {
       this.dragging = event.dragging
       if(this.map) {
         this.updateTimedLayers(extent)
+        this.filterLegger()
+      }
+
+    },
+    filterLegger(endDate) {
+      if(this.map.getLayer('Vegetatielegger')) {
+        // set filter for the vegetatielegger
+        const currentDate = parseInt(moment(endDate).format('X'))
+        console.log(currentDate)
+        // const legger = this.map.setFilter('Vegetatielegger', [
+        //   "all",
+        //   [">=", ['get', 'start_date'], currentDate],
+        //   ["<=", ['get', 'end_date'], currentDate]
+        // ])
+
       }
     },
     addMapboxLayers() {

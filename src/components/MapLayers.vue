@@ -129,12 +129,14 @@
       <v-flex grow>
         <div class="pa-1">
           <v-alert outlined type="warning" v-show="loadingLayers.length">
-            De volgende layers worden nog geladen:
+            De volgende lagen worden nog geladen:
             <span
               v-for="(promise, index) in loadingLayers"
               :key="index"
               >
-              {{ promise.name }}<v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
+              {{ promise.name }}
+              <v-progress-circular :color="timeSpanColor(promise)" :value="timeSpan(promise)" :size="12" :width="2" :rotate="-90"></v-progress-circular>
+              <v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
             </span>
 
             <v-progress-linear
@@ -152,6 +154,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import draggable from 'vuedraggable'
 import DifferenceLegend from './DifferenceLegend'
 import VLegend from './VLegend'
@@ -179,7 +182,7 @@ export default {
   data() {
     return {
       layerTypes: ['imageLayers', 'mapboxLayers'],
-
+      now: moment(),
       classify: {
         minZoom: 11, // minimum zoom level for classification
         last: null, // last classified image info
@@ -195,7 +198,7 @@ export default {
         },
         getText: () => {
           if(!this.classify.layer) {
-            return 'Selecteer een beeld en druk op CLASSIFECEREN om het beeld te classificeren.'
+            return 'Selecteer een beeld en druk op CLASSIFICEREN om het beeld te classificeren.'
           } else {
             return this.classify.layer.classificationMessage
           }
@@ -225,6 +228,10 @@ export default {
         this.sortLayers()
       }
     }
+  },
+  mounted () {
+    // keep updating now
+    setInterval(() => {this.now = moment()}, 1000)
   },
   computed: {
     filteredLayers: {
@@ -340,6 +347,20 @@ export default {
           })
         })
       })
+    },
+    timeSpan(promise) {
+      let diff = this.now.diff(promise.start)
+      return Math.min(diff / 20000, 1) * 100
+    },
+    timeSpanColor(promise) {
+      let diff = this.now.diff(promise.start)
+      if (diff < 5000) {
+        return 'success'
+      } else if (diff < 20000) {
+        return 'info'
+      } else {
+        return 'error'
+      }
     }
   },
   components: {
