@@ -228,7 +228,6 @@ export default {
           currentDate = parseInt(moment(endDate).format('X'))
         }
 
-        console.log('setting date to', 'start', startDate, 'end', endDate, 'current', currentDate, 1262300400, '-', 1588197600, ' ', 1588284000, '-', 1924902000)
         const legger = this.map.setFilter('Vegetatielegger', [
           "all",
           /* start date is smaller than current date */

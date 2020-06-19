@@ -268,11 +268,6 @@ const mapLayers = [
             'rgba(255, 0, 0, 0.5)',
             "rgba(255, 0, 0, 0.5)"
           ]
-
-          // 'fill-color': [
-          //   "case"
-          //   "hsl(0, 0%, 0%)"
-          // ]
         }
       }
     ],
