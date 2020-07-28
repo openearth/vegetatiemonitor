@@ -189,7 +189,7 @@ const mapLayers = [
         type: 'line',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.cl1igr1w',
+          url: 'mapbox://ellispenning.cl1igr1w'
         },
         'source-layer': 'vegetatievlakkencombo',
         paint: {
@@ -203,7 +203,7 @@ const mapLayers = [
         type: 'line',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.cl1igr1w',
+          url: 'mapbox://ellispenning.cl1igr1w'
         },
         'source-layer': 'vegetatievlakkencombo',
         paint: {
@@ -217,56 +217,68 @@ const mapLayers = [
         type: 'fill',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.cl1igr1w',
+          url: 'mapbox://ellispenning.cl1igr1w'
         },
         layout: {
           visibility: 'none'
         },
         'source-layer': 'vegetatievlakkencombo',
         paint: {
-          "fill-color": [
-            "case",
-            ["match", ["get", "VLKLASSE"], ['Water'], true, false],
+          'fill-color': [
+            'case',
+            ['match', ['get', 'VLKLASSE'], ['Water'], true, false],
             'rgb(191, 239, 255)',
-            ["match", ["get", "VLKLASSE"], ['Verhard oppervlak'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['Verhard oppervlak'], true, false],
             'rgb(255, 129, 126)',
-            ["match", ["get", "VLKLASSE"], ['Gras en Akker'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['Gras en Akker'], true, false],
             'rgb(238, 250, 212)',
-            ["match", ["get", "VLKLASSE"], ['Riet en Ruigte'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['Riet en Ruigte'], true, false],
             'rgb(222, 189, 222)',
-            ["match", ["get", "VLKLASSE"], ['Bos'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['Bos'], true, false],
             'rgb(115, 191, 115)',
-            ["match", ["get", "VLKLASSE"], ['Struweel'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['Struweel'], true, false],
             'rgb(217, 122, 54)',
-            ["match", ["get", "VLKLASSE"], ['90-10'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['90-10'], true, false],
             'rgb(255, 236, 128)',
-            ["match", ["get", "VLKLASSE"], ['70-30'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['70-30'], true, false],
             'rgb(242, 210, 24)',
-            ["match", ["get", "VLKLASSE"], ['50-50'], true, false],
+            ['match', ['get', 'VLKLASSE'], ['50-50'], true, false],
             'rgb(217, 187, 22)',
-            ["match", ["get", "VLKLASSE"], [' '], true, false],
+            ['match', ['get', 'MENGKLASSE'], ['90-10'], true, false],
+            'rgb(255, 236, 128)',
+            ['match', ['get', 'MENGKLASSE'], ['70-30'], true, false],
+            'rgb(242, 210, 24)',
+            ['match', ['get', 'MENGKLASSE'], ['50-50'], true, false],
+            'rgb(217, 187, 22)',
+            ['match', ['get', 'VLKLASSE'], [' '], true, false],
             'rgba(255, 0, 0, 0.5)',
-            ["match", ["get", "VL_KLASSE"], ['Water'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Water'], true, false],
             'rgb(191, 239, 255)',
-            ["match", ["get", "VL_KLASSE"], ['Verhard oppervlak'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Verhard oppervlak'], true, false],
             'rgb(255, 129, 126)',
-            ["match", ["get", "VL_KLASSE"], ['Gras en Akker'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Gras en Akker'], true, false],
             'rgb(238, 250, 212)',
-            ["match", ["get", "VL_KLASSE"], ['Riet en Ruigte'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Riet en Ruigte'], true, false],
             'rgb(222, 189, 222)',
-            ["match", ["get", "VL_KLASSE"], ['Bos'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Bos'], true, false],
             'rgb(115, 191, 115)',
-            ["match", ["get", "VL_KLASSE"], ['Struweel'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['Struweel'], true, false],
             'rgb(217, 122, 54)',
-            ["match", ["get", "VL_KLASSE"], ['90-10'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['90-10'], true, false],
             'rgb(255, 236, 128)',
-            ["match", ["get", "VL_KLASSE"], ['70-30'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['70-30'], true, false],
             'rgb(242, 210, 24)',
-            ["match", ["get", "VL_KLASSE"], ['50-50'], true, false],
+            ['match', ['get', 'VL_KLASSE'], ['50-50'], true, false],
             'rgb(217, 187, 22)',
-            ["match", ["get", "VL_KLASSE"], [' '], true, false],
+            ['match', ['get', 'VLKLASSE'], ['90/10'], true, false],
+            'rgb(255, 236, 128)',
+            ['match', ['get', 'VLKLASSE'], ['70/30'], true, false],
+            'rgb(242, 210, 24)',
+            ['match', ['get', 'VLKLASSE'], ['50/50'], true, false],
+            'rgb(217, 187, 22)',
+            ['match', ['get', 'VL_KLASSE'], [' '], true, false],
             'rgba(255, 0, 0, 0.5)',
-            "rgba(255, 0, 0, 0.5)"
+            'rgba(255, 0, 0, 0.5)'
           ]
         }
       }
@@ -536,7 +548,7 @@ const mapLayers = [
           'raster-opacity': 0
         },
         layout: {
-          'visibility': 'none'
+          visibility: 'none'
         },
         source: {
           type: 'raster',
