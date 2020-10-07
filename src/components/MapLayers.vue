@@ -1,156 +1,102 @@
 <template>
-  <div>
-    <v-layout column fill-height>
-      <v-flex xs4 align-stretch>
-        <h1 class="pa-4">
-          Kaartlagen
-        </h1>
-        <v-layout column class="scroll-panel ">
-          <v-expansion-panels dense focusable multiple accordion>
-            <draggable
-              id="draggable"
-              class="draggable"
-              v-model="filteredLayers"
-              @start="drag = true"
-              @end="drag = false"
-              v-bind="{ handle: '.draghandle' }"
-            >
-              <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
-                <v-expansion-panel-header class="pa-0">
-                  <v-layout align-center justify-space-end>
-                    <v-flex>
-                      <v-icon
-                        class="ma-2 draghandle"
-                        id="dragicon"
-                        title="Drag to change map layer drawing order"
-                        small
-                        >fa-grip-vertical</v-icon
-                      >
-                    </v-flex>
-                    <v-flex xs2 fill-height>
-                      <v-img contain max-height="100%" :src="layer.icon" />
-                    </v-flex>
-                    <v-flex xs5 class="pa-1">
-                      {{ layer.name }}
-                    </v-flex>
-                    <v-flex xs1>
-                      <v-tooltip v-if="layer.timeslider" bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-icon small v-on="on">fa-clock</v-icon>
-                        </template>
-                        <span
-                          >Deze laag is tijdsafhankelijk en kan bestuurd worden met de
-                          tijdsbalk.</span
-                        >
-                      </v-tooltip>
-                    </v-flex>
-                    <v-flex xs2 @click.stop="">
-                      <v-switch
-                        class="pa-auto ma-0"
-                        v-model="layer.active"
-                        @change="$emit('setLayer', layer)"
-                      />
-                    </v-flex>
-                  </v-layout>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content
-                  class="pa-0"
-                  extra-small
-                  expand-icon="fa-caret-down"
-                  hide-actions
-                >
-                  <div class="pa-2">
-                    <div class="infodiv" v-if="layer.info">
-                      <h4>Informatie</h4>
-                      {{ layer.info }}
-                      <v-divider />
-                    </div>
-                    <v-legend v-if="layer.legend" :layer="layer"></v-legend>
-                    <div class="opacity" v-if="layer.opacity">
-                      <h4>Transparantie: {{ 100 - layer.opacity }}%</h4>
-                      <v-slider
-                        hide-details
-                        class="pa-0 ma-0"
-                        title="transparantie"
-                        :min="1"
-                        :max="100"
-                        v-model="layer.opacity"
-                      ></v-slider>
-                      <v-divider />
-                    </div>
-                    <div class="settings" v-if="layer.settings">
-                      <h4>Extra settings</h4>
-                      <div v-for="setting in layer.settings" :key="setting.type">
-                        <v-select
-                          v-if="setting.type === 'select'"
-                          dense
-                          :items="setting.items"
-                          item-text="name"
-                          item-value="name"
-                          v-model="setting.selected"
-                          item
-                        ></v-select>
-                      </div>
-                      <v-divider />
-                    </div>
-                    <difference-legend v-if="layer.legendtable === 'difference'">
-                    </difference-legend>
+<div>
+  <v-layout column fill-height>
+    <v-flex xs4 align-stretch>
+      <h1 class="pa-4">
+        Kaartlagen
+      </h1>
+      <v-layout column class="scroll-panel ">
+        <v-expansion-panels dense focusable multiple accordion>
+          <draggable id="draggable" class="draggable" v-model="filteredLayers" @start="drag = true" @end="drag = false" v-bind="{ handle: '.draghandle' }">
+            <v-expansion-panel v-for="layer in filteredLayers" :key="layer.id">
+              <v-expansion-panel-header class="pa-0">
+                <v-layout align-center justify-space-end>
+                  <v-flex>
+                    <v-icon class="ma-2 draghandle" id="dragicon" title="Drag to change map layer drawing order" small>fa-grip-vertical</v-icon>
+                  </v-flex>
+                  <v-flex xs2 fill-height>
+                    <v-img contain max-height="100%" :src="layer.icon" />
+                  </v-flex>
+                  <v-flex xs5 class="pa-1">
+                    {{ layer.name }}
+                  </v-flex>
+                  <v-flex xs1>
+                    <v-tooltip v-if="layer.timeslider" bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon small v-on="on">fa-clock</v-icon>
+                      </template>
+                      <span>Deze laag is tijdsafhankelijk en kan bestuurd worden met de
+                        tijdsbalk.</span>
+                    </v-tooltip>
+                  </v-flex>
+                  <v-flex xs2 @click.stop="">
+                    <v-switch class="pa-auto ma-0" v-model="layer.active" @change="$emit('setLayer', layer)" />
+                  </v-flex>
+                </v-layout>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content class="pa-0" extra-small expand-icon="fa-caret-down" hide-actions>
+                <div class="pa-2">
+                  <div class="infodiv" v-if="layer.info">
+                    <h4>Informatie</h4>
+                    {{ layer.info }}
+                    <v-divider />
                   </div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </draggable>
-          </v-expansion-panels>
-        </v-layout>
-      </v-flex>
-      <v-divider class="ma-2"/>
-      <v-flex shrink>
-        <div class="pa-1">
-          <v-btn
-            class="mb-1"
-            v-show="classify.isShown()"
-            :disabled="!classify.canClassify() || !this.classify.isZoomedEnough()"
-            block
-            outlined
-            color="btncolor"
-            @click="onClassify()"
-          >
-            Classificeren
-          </v-btn>
-          <v-alert outlined type="warning" v-show="!this.classify.isZoomedEnough() && this.classify.isShown()">
-            Zoom-in at least to level {{ classify.minZoom }} to classify images, current zoom level is:
-            {{ typeof(this.map.getZoom) !== 'undefined' && Math.floor(this.map.getZoom() * 10) / 10 }}.
-          </v-alert>
-          <v-alert outlined type="info" class="multi-line" v-show="this.classify.isZoomedEnough() && this.classify.canClassify() && this.classify.isShown()">
-            {{ this.classify.getText() }}
-          </v-alert>
-        </div>
-      </v-flex>
+                  <v-legend v-if="layer.legend" :layer="layer"></v-legend>
+                  <div class="opacity" v-if="layer.opacity">
+                    <h4>Transparantie: {{ 100 - layer.opacity }}%</h4>
+                    <v-slider hide-details class="pa-0 ma-0" title="transparantie" :min="1" :max="100" v-model="layer.opacity"></v-slider>
+                    <v-divider />
+                  </div>
+                  <div class="settings" v-if="layer.settings">
+                    <h4>Extra settings</h4>
+                    <div v-for="setting in layer.settings" :key="setting.type">
+                      <v-select v-if="setting.type === 'select'" dense :items="setting.items" item-text="name" item-value="name" v-model="setting.selected" item></v-select>
+                    </div>
+                    <v-divider />
+                  </div>
+                  <difference-legend v-if="layer.legendtable === 'difference'">
+                  </difference-legend>
+                </div>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </draggable>
+        </v-expansion-panels>
+      </v-layout>
+    </v-flex>
+    <v-divider class="ma-2" />
+    <v-flex shrink>
+      <div class="pa-1">
+        <v-btn class="mb-1" v-show="isShown" :disabled="!canClassify || !isZoomedEnough" block outlined color="btncolor" @click="onClassify()">
+          Classificeren
+        </v-btn>
+        <v-alert outlined type="warning" v-show="!isZoomedEnough && isShown">
+          Zoom-in at least to level {{ classify.minZoom }} to classify images, current zoom level is:
+          {{ typeof(this.map.getZoom) !== 'undefined' && Math.floor(this.map.getZoom() * 10) / 10 }}.
+        </v-alert>
+        <v-alert outlined type="info" class="multi-line" v-show="isZoomedEnough && canClassify && isShown">
+          {{ getText }}
+        </v-alert>
+      </div>
+    </v-flex>
 
-      <v-flex grow>
-        <div class="pa-1">
-          <v-alert outlined type="warning" v-show="loadingLayers.length">
-            De volgende lagen worden nog geladen:
-            <span
-              v-for="(promise, index) in loadingLayers"
-              :key="index"
-              >
-              {{ promise.name }}
-              <v-progress-circular :color="timeSpanColor(promise)" :value="timeSpan(promise)" :size="12" :width="2" :rotate="-90"></v-progress-circular>
-              <v-btn text icon x-small @click="abort(promise)"><v-icon>close</v-icon></v-btn>
-            </span>
+    <v-flex grow>
+      <div class="pa-1">
+        <v-alert outlined type="warning" v-show="loadingLayers.length">
+          De volgende lagen worden nog geladen:
+          <span v-for="(promise, index) in loadingLayers" :key="index">
+            {{ promise.name }}
+            <v-progress-circular :color="timeSpanColor(promise)" :value="timeSpan(promise)" :size="12" :width="2" :rotate="-90"></v-progress-circular>
+            <v-btn text icon x-small @click="abort(promise)">
+              <v-icon>close</v-icon>
+            </v-btn>
+          </span>
 
-            <v-progress-linear
-              color="orange accent-4"
-              class="mt-4"
-              indeterminate
-              rounded
-              height="6"
-            ></v-progress-linear>
-          </v-alert>
-        </div>
-      </v-flex>
-    </v-layout>
-  </div>
+          <v-progress-linear color="orange accent-4" class="mt-4" indeterminate rounded height="6"></v-progress-linear>
+        </v-alert>
+      </div>
+    </v-flex>
+  </v-layout>
+</div>
 </template>
 
 <script>
@@ -158,7 +104,9 @@ import moment from 'moment'
 import draggable from 'vuedraggable'
 import DifferenceLegend from './DifferenceLegend'
 import VLegend from './VLegend'
-import { getMapRegion } from '../utils'
+import {
+  getMapRegion
+} from '../utils'
 import _ from 'lodash'
 
 export default {
@@ -186,23 +134,7 @@ export default {
       classify: {
         minZoom: 11, // minimum zoom level for classification
         last: null, // last classified image info
-        layer: null,
-        isShown: () => {
-          return this.timeMode && this.timeMode.name === 'DAG'
-        },
-        canClassify: () => {
-          return !(this.classify.layer && this.classify.layer.classificationMessage.startsWith('De huidige'))
-        },
-        isZoomedEnough: () => {
-          return typeof(this.map.getZoom) !== 'undefined' && this.map.getZoom() >= this.classify.minZoom
-        },
-        getText: () => {
-          if(!this.classify.layer) {
-            return 'Selecteer een beeld en druk op CLASSIFICEREN om het beeld te classificeren.'
-          } else {
-            return this.classify.layer.classificationMessage
-          }
-        }
+        layer: null
       }
     }
   },
@@ -229,9 +161,11 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     // keep updating now
-    setInterval(() => {this.now = moment()}, 1000)
+    setInterval(() => {
+      this.now = moment()
+    }, 1000)
   },
   computed: {
     filteredLayers: {
@@ -249,6 +183,22 @@ export default {
       set(val) {
         this.$emit('setLayerOrder', val)
       }
+    },
+    isShown() {
+      return this.timeMode && this.timeMode.name === 'DAG'
+    },
+    canClassify() {
+      return !(this.classify.layer && this.classify.layer.classificationMessage.startsWith('De huidige'))
+    },
+    isZoomedEnough() {
+      return typeof(this.map.getZoom) !== 'undefined' && this.map.getZoom() >= this.classify.minZoom
+    },
+    getText() {
+      if (!this.classify.layer) {
+        return 'Selecteer een beeld en druk op CLASSIFICEREN om het beeld te classificeren.'
+      } else {
+        return this.classify.layer.classificationMessage
+      }
     }
   },
   methods: {
@@ -259,11 +209,11 @@ export default {
         l.needsUpdate = true
         l.classificationRegion = getMapRegion(this.map)
 
-        if(l.name === 'Classificatie') {
+        if (l.name === 'Classificatie') {
           l.active = true
 
           this.classify.layer = l
-          this.classify.layer.classificationMessage = "De huidige beeld wordt geclassifeceerd ..."
+          this.classify.layer.classificationMessage = "Het huidige beeld wordt geclassificeerd ..."
         }
 
         this.$emit('setLayer', l)
@@ -272,7 +222,7 @@ export default {
     abort(promise) {
       promise.controller.abort()
       let promises = [...this.loadingLayers]
-      _.pull(promises,  promise)
+      _.pull(promises, promise)
       this.$emit('update:loadingLayers', promises)
     },
     toggleLayers() {
@@ -384,6 +334,7 @@ export default {
   box-shadow: none;
   webkit-box-shadow: none;
 }
+
 .fa-grip-vertical:hover {
   color: black;
   cursor: grab;
@@ -391,11 +342,16 @@ export default {
 
 .infodiv {
   .wordwrap {
-    white-space: pre-wrap; /* CSS3 */
-    white-space: -moz-pre-wrap; /* Firefox */
-    white-space: -pre-wrap; /* Opera <7 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-    word-wrap: break-word; /* IE */
+    white-space: pre-wrap;
+    /* CSS3 */
+    white-space: -moz-pre-wrap;
+    /* Firefox */
+    white-space: -pre-wrap;
+    /* Opera <7 */
+    white-space: -o-pre-wrap;
+    /* Opera 7 */
+    word-wrap: break-word;
+    /* IE */
   }
 }
 

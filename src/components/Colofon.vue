@@ -16,6 +16,11 @@
             >hier</a
           >
           voor het instructiefilmpje.
+
+          <br>
+          Klik <a href="http://publicaties.minienm.nl/documenten/beeldenboek-vegetatiebeheer-grote-rivieren"
+          >hier</a
+          > voor het Beeldenboek vegetatiebeheer grote rivieren voor informatie over de vegetatieklassen.
       </v-card-text>
     </v-card>
   </div>
