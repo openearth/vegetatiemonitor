@@ -24,7 +24,7 @@ const modes = [
         // updated if there is a new map made for 2020...
         extent: [
           moment(2019, "YYYY"),
-          moment(2020, "YYYY")
+          moment(2021, "YYYY")
         ],
         ticks: 2,
         showLanes: true,
@@ -72,13 +72,10 @@ const modes = [
         timing: "yearly",
         momentFormat: "YYYY",
         extent: [
-          moment()
-            .startOf("year")
-            .subtract(19, "year"),
-          moment()
-            .startOf("year")
+          moment(2000, "YYYY"),
+          moment(2021, "YYYY")
         ],
-        ticks: 19,
+        ticks: 21,
         showLanes: true,
         showPlayer: true,
         showSlider: true,
@@ -127,12 +124,10 @@ const modes = [
         timing: 'yearly',
         momentFormat: 'YYYY',
         extent: [
-          moment()
-            .startOf('year')
-            .subtract(19, 'year'),
-          moment().startOf('year')
+          moment(2000, "YYYY"),
+          moment(2021, "YYYY")
         ],
-        ticks: 19,
+        ticks: 21,
         showLanes: true,
         showPlayer: true,
         showSlider: true,

@@ -444,7 +444,9 @@ export default {
         .then(dates => {
           // cache yearly dates
           if(this.timeMode.timing === 'yearly') {
+            // TODO: FIX THIS LIST IN BE!!!
             this.cachedYearlyDates = dates
+            this.cachedYearlyDates.push({"dateEnd":"2021-01-01","dateFormat":"YYYY-MM-DD","dateStart":"2020-01-01","type":"interval"})
           }
           this.dates = dates
           if(updateStep) {

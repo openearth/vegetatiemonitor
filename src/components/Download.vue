@@ -237,7 +237,7 @@ export default {
       // Downlaod the seasonal map for latest year, entire netherlands
       // TODO: URL doesn't give the correct tiff back yet.
       window.open(
-        `https://storage.cloud.google.com/vegetatiemonitor/yearly-classified-geotiffs/classified-image-2019.tif`
+        `https://storage.cloud.google.com/vegetatiemonitor/yearly-classified-geotiffs/classified-image-2020.tif`
       )
     }
   }
