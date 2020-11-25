@@ -348,7 +348,7 @@ const mapLayers = [
         source: {
           type: 'video-tiled',
           tiles: [
-            'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger_v2-video/{z}/{x}/{y}.webm'
+            'https://storage.googleapis.com/vegetatiemonitor/classificatie-vs-legger-video/{z}/{x}/{y}.webm'
           ],
           tileSize: 256,
           durationSec: 2.1,
