@@ -524,9 +524,9 @@ const mapLayers = [
     imageLayers: [{}],
     vis: {
       bands: ['red', 'green', 'blue'],
-      min: 0.05,
-      max: [0.35, 0.35, 0.45],
-      gamma: 1.4
+      min: 0.065,
+      max: [0.2, 0.2, 0.3],
+      gamma: 1.2
     },
     timeslider: true,
     dates: []
