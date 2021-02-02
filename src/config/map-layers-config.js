@@ -65,7 +65,7 @@ const mapLayers = [
     baseLayer: 'Kadaster',
     hoverFilter: 'Kadasterlijnen',
     selectFilter: 'KadasterSelect',
-    selectProperty: 'ADMINPERCE',
+    selectProperty: 'gml_id',
     datatypes: ['landuse', 'legger'],
     activeLayerType: 'mapboxLayers',
     info:
@@ -76,12 +76,12 @@ const mapLayers = [
         type: 'line',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.5tu1qjtk'
+          url: 'mapbox://ellispenning.1rb84l4c'
         },
         layout: {
           visibility: 'none'
         },
-        'source-layer': 'kadaster-vlakken-1i9erw',
+        'source-layer': 'kadastervlakken-01-2021-49an77',
         paint: {
           'line-color': {
             type: 'identity',
@@ -89,19 +89,19 @@ const mapLayers = [
           },
           'line-width': 4
         },
-        filter: ['==', 'ADMINPERCE', '']
+        filter: ['==', 'gml_id', '']
       },
       {
         id: 'KadasterSelect',
         type: 'line',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.5tu1qjtk'
+          url: 'mapbox://ellispenning.1rb84l4c'
         },
         layout: {
           visibility: 'none'
         },
-        'source-layer': 'kadaster-vlakken-1i9erw',
+        'source-layer': 'kadastervlakken-01-2021-49an77',
         paint: {
           'line-color': {
             type: 'identity',
@@ -109,19 +109,19 @@ const mapLayers = [
           },
           'line-width': 4
         },
-        filter: ['==', 'ADMINPERCE', '']
+        filter: ['==', 'gml_id', '']
       },
       {
         id: 'Kadaster',
         type: 'fill',
         source: {
           type: 'vector',
-          url: 'mapbox://ellispenning.5tu1qjtk'
+          url: 'mapbox://ellispenning.1rb84l4c'
         },
         layout: {
           visibility: 'none'
         },
-        'source-layer': 'kadaster-vlakken-1i9erw',
+        'source-layer': 'kadastervlakken-01-2021-49an77',
         paint: {
           'fill-color': 'rgba(32, 32, 32, 0.3)',
           'fill-outline-color': 'rgba(0, 0, 0, 0.3)'
@@ -131,15 +131,15 @@ const mapLayers = [
     tableProperties: [
       {
         name: 'Perceel nummer',
-        key: 'ADMINPERCE'
+        key: 'gml_id'
       },
       {
         name: 'Gemeente',
-        key: 'GEMEENTE'
+        key: 'nationalCa'
       },
       {
         name: 'Grootte',
-        key: 'GROOTTE'
+        key: 'areaValue'
       }
     ]
   },
