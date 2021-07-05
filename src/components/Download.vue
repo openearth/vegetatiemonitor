@@ -48,7 +48,7 @@
           <v-alert outlined type="info" v-if="downloading">
             {{downloadText}}
           </v-alert>
-          <v-alert outlined type="warning" v-if="map.getZoom() < 9">
+          <v-alert outlined type="warning" v-if="map.getZoom() < 11">
             Zoom in op de kaart om het te downloaden gebied te verkleinen.
           </v-alert>
           <v-alert outlined type="error" v-if="error != ''">
@@ -60,7 +60,7 @@
         <div class="pa-4">
           <v-btn
             class="mb-1"
-            :disabled="downloading || map.getZoom() < 9"
+            :disabled="downloading || map.getZoom() < 11"
             block
             outlined
             color="btncolor"
@@ -70,7 +70,7 @@
           </v-btn>
           <v-btn
             class="mb-1"
-            :disabled="downloading || !bbox.coordinates || map.getZoom() < 9"
+            :disabled="downloading || !bbox.coordinates || map.getZoom() < 11"
             block
             outlined
             color="btncolor"
